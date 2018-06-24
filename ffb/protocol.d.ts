@@ -1,203 +1,198 @@
 
-declare namespace FFB {
-    namespace Protocol {
-        namespace Messages {
+declare namespace FFB.Protocol.Messages {
+    type Coordinate = Array<number>;
 
-            type Coordinate = Array<integer>;
+    type BloodSpotType = {
+        coordinate: Coordinate;
+        injury: number;
+    }
 
-            type BloodSpotType = {
-                coordinate: Coordinate;
-                injury: integer;
-            }
+    type ModelChangeType = {
+        modelChangeId: string;
+        modelChangeKey: string;
+        modelChangeValue: any;
+    }
 
-            type ModelChangeType = {
-                modelChangeId: string;
-                modelChangeKey: string;
-                modelChangeValue: any;
-            }
+    type ModelChangeListType = {
+        modelChangeArray: ModelChangeType[];
+    }
 
-            type ModelChangeListType = {
-                modelChangeArray: ModelChangeType[];
-            }
+    type PlayerDataType = {
+        playerId: string;
+        playerCoordinate: Coordinate;
+        playerState: number;
+        cardEffects: any[];
+        cards: any[];
+    }
 
-            type PlayerDataType = {
-                playerId: string;
-                playerCoordinate: Coordinate;
-                playerState: integer;
-                cardEffects: any[];
-                cards: any[];
-            }
+    type PlayerMarkerType = {
+        playerId: string;
+        homeText: string;
+        awayText: string;
+    }
 
-            type PlayerMarkerType = {
-                playerId: string;
-                homeText: string;
-                awayText: string;
-            }
+    type TrackNumberType = {
+        number: number;
+        coordinate: Coordinate;
+    }
 
-            type TrackNumberType = {
-                number: integer;
-                coordinate: Coordinate;
-            }
+    type FieldModelType = {
+        ballCoordinate: Coordinate;
+        ballInPlay: boolean;
+        ballMoving: boolean;
+        bloodspotArray: BloodSpotType[];
+        bombCoordinate: Coordinate;
+        bombMoving: boolean;
+        diceDecorationArray: any[];
+        fieldMarkerArray: any[];
+        moveSquareArray: any[];
+        playerDataArray: PlayerDataType[];
+        playerMarkerArray: PlayerMarkerType[];
+        pushbackSquareArray: any[];
+        trackNumberArray: TrackNumberType[];
+        weather: string;
+    }
 
-            type FieldModelType = {
-                ballCoordinate: Coordinate;
-                ballInPlay: boolean;
-                ballMoving: boolean;
-                bloodspotArray: BloodSpotType[];
-                bombCoordinate: Coordinate;
-                bombMoving: boolean;
-                diceDecorationArray: any[];
-                fieldMarkerArray: any[];
-                moveSquareArray: any[];
-                playerDataArray: PlayerDataType[];
-                playerMarkerArray: PlayerMarkerType[];
-                pushbackSquareArray: any[];
-                trackNumberArray: TrackNumberType[];
-                weather: string;
-            }
+    type PlayerType = {
+        agility: number;
+        armour: number;
+        lastingInjuries: string[];
+        movement: number;
+        nrOfIcons: number;
+        playerGender: string;
+        playerId: string;
+        playerName: string;
+        playerNr: number;
+        playerType: string;
+        positionIconIndex: number;
+        positionId: string;
+        recoveringInjury: any;
+        skillArray: string[];
+        strength: number;
+        urlIconSet: string;
+        urlPortrait: string;
+    }
 
-            type PlayerType = {
-                agility: integer;
-                armour: integer;
-                lastingInjuries: string[];
-                movement: integer;
-                nrOfIcons: integer;
-                playerGender: string;
-                playerId: string;
-                playerName: string;
-                playerNr: integer;
-                playerType: string;
-                positionIconIndex: integer;
-                positionId: string;
-                recoveringInjury: any;
-                skillArray: string[];
-                strength: integer;
-                urlIconSet: string;
-                urlPortrait: string;
-            }
+    type PositionType = {
+        agility: number;
+        armour: number;
+        cost: number;
+        displayName: string;
+        movement: number;
+        nrOfIcons: number;
+        playerGender: string;
+        playerType: string;
+        positionId: string;
+        positionName: string;
+        quantity: number;
+        race: any;
+        shorthand: string;
+        skillArray: string[];
+        skillCategoriesDouble: string[];
+        skillCategoriesNormal: string[];
+        skillValues: any[];
+        strength: number;
+        teamWithPositionId: string;
+        thrall: boolean;
+        undead: boolean;
+        urlIconSet: string;
+        urlPortrait: string;
+    }
 
-            type PositionType = {
-                agility: integer;
-                armour: integer;
-                cost: integer;
-                displayName: string;
-                movement: integer;
-                nrOfIcons: integer;
-                playerGender: string;
-                playerType: string;
-                positionId: string;
-                positionName: string;
-                quantity: integer;
-                race: any;
-                shorthand: string;
-                skillArray: string[];
-                skillCategoriesDouble: string[];
-                skillCategoriesNormal: string[];
-                skillValues: any[];
-                strength: integer;
-                teamWithPositionId: string;
-                thrall: boolean;
-                undead: boolean;
-                urlIconSet: string;
-                urlPortrait: string;
-            }
+    type RosterType = {
+        apothecary: boolean;
+        baseIconPath: string;
+        logoUrl: string;
+        maxReRolls: number;
+        necromancer: boolean;
+        positionArray: PositionType[];
+        raisedPositionId: string;
+        reRollCost: number;
+        rosterId: string;
+        rosterName: string;
+        undead: boolean;
+    }
 
-            type RosterType = {
-                apothecary: boolean;
-                baseIconPath: string;
-                logoUrl: string;
-                maxReRolls: integer;
-                necromancer: boolean;
-                positionArray: PositionType[];
-                raisedPositionId: string;
-                reRollCost: integer;
-                rosterId: string;
-                rosterName: string;
-                undead: boolean;
-            }
+    type TeamType = {
+        apothecaries: number;
+        assistantCoaches: number;
+        baseIconPath: string;
+        cheerleaders: number;
+        coach: string;
+        fanFactor: number;
+        logoUrl: string;
+        playerArray: PlayerType[];
+        race: string;
+        reRolls: number;
+        roster: RosterType;
+        teamId: string;
+        teamName: string;
+        teamValue: number;
+        treasury: number;
+    }
 
-            type TeamType = {
-                apothecaries: integer;
-                assistantCoaches: integer;
-                baseIconPath: string;
-                cheerleaders: integer;
-                coach: string;
-                fanFactor: integer;
-                logoUrl: string;
-                playerArray: PlayerType[];
-                race: string;
-                reRolls: integer;
-                roster: RosterType;
-                teamId: string;
-                teamName: string;
-                teamValue: integer;
-                treasury: integer;
-            }
+    type GameType = {
+        actingPlayer: any;
+        connectionPossible: boolean;
+        defenderAction: any;
+        defenderId: any;
+        fieldModel: FieldModelType;
+        finished: boolean;
+        gameId: number;
+        gameOptions: any;
+        gameResult: any;
+        gameTime: number;
+        half: number;
+        homeFirstOffense: boolean;
+        homePlaying: boolean;
+        lastTurnMode: string;
+        passCoordinate: any;
+        scheduled: string;
+        setupOffense: boolean;
+        started: string;
+        teamAway: TeamType;
+        teamHome: TeamType;
+        testing: boolean;
+        throwerAction: any;
+        throwerId: any;
+        timeoutEnforced: boolean;
+        timeoutPossible: boolean;
+        turnDataAway: any;
+        turnDataHome: any;
+        turnMode: string;
+        turnTime: number;
+        waitingForOpponent: boolean;
+    }
 
-            type GameType = {
-                actingPlayer: any;
-                connectionPossible: boolean;
-                defenderAction: any;
-                defenderId: any;
-                fieldModel: FieldModelType;
-                finished: boolean;
-                gameId: integer;
-                gameOptions: any;
-                gameResult: any;
-                gameTime: integer;
-                half: integer;
-                homeFirstOffense: boolean;
-                homePlaying: boolean;
-                lastTurnMode: string;
-                passCoordinate: any;
-                scheduled: string;
-                setupOffense: boolean;
-                started: string;
-                teamAway: TeamType;
-                teamHome: TeamType;
-                testing: boolean;
-                throwerAction: any;
-                throwerId: any;
-                timeoutEnforced: boolean;
-                timeoutPossible: boolean;
-                turnDataAway: any;
-                turnDataHome: any;
-                turnMode: string;
-                turnTime: integer;
-                waitingForOpponent: boolean;
-            }
+    interface NetCommand {
+        netCommandId: string;
+        [key: string]: any;
+    }
 
-            interface NetCommand {
-                netCommandId: string;
-                [key: string]: any;
-            }
+    interface ClientCommand extends NetCommand {
+        entropy: number;
+    }
 
-            interface ClientCommand extends NetCommand {
-                entropy: integer;
-            }
+    interface ServerCommand extends NetCommand {
+        commandNr: number;
+    }
 
-            interface ServerCommand extends NetCommand {
-                commandNr: integer;
-            }
+    interface ServerModelSync extends NetCommand {
+        commandNr: number;
+        modelChangeList: ModelChangeListType
+        reportList: any[];
+        animation: any[];
+        sound: string;
+        gameTime: number;
+        turnTime: number;
+    }
 
-            interface ServerModelSync extends NetCommand {
-                commandNr: integer;
-                modelChangeList: ModelChangeListType
-                reportList: any[];
-                animation: any[];
-                sound: string;
-                gameTime: integer;
-                turnTime: integer;
-            }
+    interface ServerGameTime extends NetCommand {
+        gameTime: number;
+        turnTime: number;
+    }
 
-            interface ServerGameTime extends NetCommand {
-                gameTime: integer;
-                turnTime: integer;
-            }
-
-            interface ServerGameState extends NetCommand {
-                game: GameType;
-            }
-        }
+    interface ServerGameState extends NetCommand {
+        game: GameType;
     }
 }

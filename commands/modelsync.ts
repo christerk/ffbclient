@@ -3,12 +3,6 @@ import Coordinate from "../types/coordinate";
 import Controller from "../controller";
 import Command from "./command";
 
-type ModelChange = {
-    modelChangeId: string,
-    modelChangeKey: string,
-    modelChangeValue: any
-};
-
 export default class CommandModelSync extends Command {
     private handlers: { [id: string] : (ModelChange) => void };
 

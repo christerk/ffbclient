@@ -6,13 +6,13 @@ export default class MainScene extends Phaser.Scene {
 
     private pitch: Phaser.GameObjects.Image;
     private pitchScale: number;
-    private frameNumber: integer;
+    private frameNumber: number;
     private cursors: CursorKeys;
     private i: Phaser.Input.InputPlugin;
-    private dragStart: integer[];
+    private dragStart: number[];
     private scale: number;
-    private width: integer;
-    private height: integer;
+    private width: number;
+    private height: number;
     private controller: any;
 
     public constructor(controller: any) {

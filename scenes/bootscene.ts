@@ -3,8 +3,8 @@ import Phaser from "phaser"
 export default class BootScene extends Phaser.Scene {
 
     private controller: any;
-    private width: integer;
-    private height: integer;
+    private width: number;
+    private height: number;
     private assets;
     private spritesheets;
     private phase;

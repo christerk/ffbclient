@@ -1,15 +1,15 @@
 import Coordinate from "../types/coordinate";
 
 export default class Player {
-    public number: integer;
+    public number: number;
     public name: string;
     public positionId: string;
-    public movement: integer;
-    public strength: integer;
-    public agility: integer;
-    public armour: integer;
+    public movement: number;
+    public strength: number;
+    public agility: number;
+    public armour: number;
     public icon;
-    public state: integer;
+    public state: number;
     public coordinate: Coordinate;
 
     public constructor(data: FFB.Protocol.Messages.PlayerType) {
@@ -22,7 +22,7 @@ export default class Player {
         this.armour = data.armour;
     }
 
-    public setState(state: integer) {
+    public setState(state: number) {
         this.state = state;
     }
 
