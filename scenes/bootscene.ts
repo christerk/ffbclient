@@ -1,8 +1,9 @@
 import Phaser from "phaser"
+import Controller from "../controller";
 
 export default class BootScene extends Phaser.Scene {
 
-    private controller: any;
+    private controller: Controller;
     private width: number;
     private height: number;
     private assets;
@@ -10,19 +11,21 @@ export default class BootScene extends Phaser.Scene {
     private phase;
     private loadingText;
 
-    public constructor(controller: any) {
+    public constructor(controller: Controller) {
         super({
             key: 'bootScene'
         });
-        console.log("Boot Scene: constructed");
+        console.log("Boot Scene: constructed", controller);
         this.controller = controller;
     }
 
     public init(config) {
         console.log('Boot Scene: init', config);
 
+        console.log(this);
+
         this.phase = 1;
-        this.assets = config.game.getAssets();
+        this.assets = this.controller.getGameState().getAssets();
         this.spritesheets = {};
 
         this.controller.scene = this.scene;

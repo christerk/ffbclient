@@ -53,22 +53,16 @@ export default class MainScene extends Phaser.Scene {
         this.input.setDraggable(this.pitch);
         
         this.input.on('dragstart', (pointer, gameObject) => {
-            console.log('dragstart', gameObject, this.cameras.main.scrollX, this.cameras.main.scrollY);
             this.dragStart = [this.cameras.main.scrollX, this.cameras.main.scrollY];
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            console.log('drag', dragX, dragY);
             let scaling = this.cameras.main.zoom;
             let sX = this.dragStart[0]-dragX / scaling;
             let sY = this.dragStart[1]-dragY / scaling;
 
             this.cameras.main.setScroll(sX, sY);
         });
-
-
-
-
 
         let game = this.controller.getGameState();
 
@@ -100,12 +94,6 @@ export default class MainScene extends Phaser.Scene {
         }
 
         this.redraw(this.controller.getGameState());    
-
-        
-
-
-
-
 
         this.cameras.main.setBounds(0, 0, 0, 0);
     }

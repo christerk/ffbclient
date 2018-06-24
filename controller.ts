@@ -2,14 +2,22 @@ import Network from "./network";
 import CommandHandler from "./commandhandler";
 import Game from "./model/game";
 import Coordinate from "./types/coordinate";
+import { AbstractCommand } from "./model/clientcommands";
+import CommandManager from "./model/commandmanager";
 
 export default class Controller {
     private currentScene: string;
     public scene;
-    private gameState: Game;
+    private game: Game;
+    private commandManager: CommandManager;
 
-    public constructor() {
-
+    /**
+     * Core message passing class. Used to interface between the network and
+     * the core model.
+     */
+    public constructor(game: Game, commandManager: CommandManager) {
+        this.commandManager = commandManager;
+        this.game = game;
     }
 
     public setScene(scene: string, data: any = undefined) {
@@ -23,16 +31,17 @@ export default class Controller {
 
     public updateGameState(game: Game) {
         console.log("updateGameState", game);
-        this.gameState = game;
+        this.game = game;
         this.setScene('bootScene', { game: game });
     }
 
-    public movePlayer(id: string, coordinate: Coordinate) {
-        this.gameState.movePlayer(id, coordinate);
+    public enqueueCommand(command: AbstractCommand) {
+        this.commandManager.enqueueCommand(command);
+        this.game.dirty = true;
     }
 
     public getGameState() {
-        return this.gameState;
+        return this.game;
     }
 
     public connect(config: any) {

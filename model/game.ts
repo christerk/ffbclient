@@ -2,18 +2,25 @@ import Team from "./team";
 import Coordinate from "../types/coordinate";
 import Player from "./player";
 
-
 export default class Game {
     public teamHome: Team;
     public teamAway: Team;
     public dirty;
 
-    public constructor(data: FFB.Protocol.Messages.ServerGameState) {
+    /**
+     * Root internal model class.
+     *
+     * Maintains the internal state of the application.
+     */
+    public constructor() {
+        this.dirty = false;
+    }
+
+    public initialize(data: FFB.Protocol.Messages.ServerGameState) {
         this.teamHome = new Team(data.game.teamHome);
         this.teamAway = new Team(data.game.teamAway);
 
         this.applyFieldModel(data.game.fieldModel);
-        this.dirty = false;
     }
 
     public getAssets() {

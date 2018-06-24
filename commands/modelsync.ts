@@ -2,6 +2,7 @@ import Game from "../model/game";
 import Coordinate from "../types/coordinate";
 import Controller from "../controller";
 import Command from "./command";
+import * as ClientCommands from "../model/clientcommands";
 
 export default class CommandModelSync extends Command {
     private handlers: { [id: string] : (ModelChange) => void };
@@ -10,7 +11,8 @@ export default class CommandModelSync extends Command {
         super(controller);
 
         this.handlers = {
-            "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate
+            "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
+            "fieldModelSetPlayerState": this.handleSetPlayerState,
         };
     }
 
@@ -28,9 +30,17 @@ export default class CommandModelSync extends Command {
     }
 
     private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
-        let playerId = change['modelChangeKey'];
-        let [x, y] = change['modelChangeValue'];
+        let playerId = change.modelChangeKey;
+        let [x, y] = change.modelChangeValue;
         let coordinate:Coordinate = new Coordinate(x,y);
-        let player = this.controller.movePlayer(playerId, coordinate);
+
+        this.controller.enqueueCommand(new ClientCommands.MovePlayer(playerId, coordinate));
+    }
+
+    private handleSetPlayerState(change: FFB.Protocol.Messages.ModelChangeType) {
+        let playerId = change.modelChangeKey;
+        let state = parseInt(change.modelChangeValue);
+
+        this.controller.enqueueCommand(new ClientCommands.SetState(playerId, state));
     }
 }

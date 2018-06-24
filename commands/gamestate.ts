@@ -1,6 +1,7 @@
 import Game from "../model/game";
 import Command from "./command";
 import Controller from "../controller";
+import * as ClientCommands from "../model/clientcommands";
 
 export default class CommandGameState extends Command {
     public constructor(controller: Controller) {
@@ -10,7 +11,7 @@ export default class CommandGameState extends Command {
     public processCommand(data: FFB.Protocol.Messages.ServerGameState) {
         console.log("Processing game state command", data);
 
-        let game = new Game(data);
-        this.controller.updateGameState(game);
+        this.controller.enqueueCommand(new ClientCommands.Initialize(data));
+        this.controller.setScene('bootScene');
     }
 }

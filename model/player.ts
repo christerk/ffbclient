@@ -26,6 +26,10 @@ export default class Player {
         this.state = state;
     }
 
+    public getPosition(): Coordinate {
+        return this.coordinate;
+    }
+
     public setPosition(coordinate: Coordinate) {
         this.coordinate = coordinate;
     }
