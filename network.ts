@@ -17,7 +17,7 @@ export default class Network {
 
         ws.onopen = (evt) => {
             console.log('Open');
-            commandHandler.connected();
+            this.join();
         };
 
         ws.onmessage = (evt) => {
@@ -33,7 +33,7 @@ export default class Network {
         this.ws = ws;
     }
 
-    public join(gameId: integer) {
+    public join() {
         let requestVersionMessage = {
             netCommandId: "clientRequestVersion"
         };

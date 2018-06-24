@@ -1,6 +1,7 @@
 import Network from "./network";
 import CommandHandler from "./commandhandler";
 import Game from "./model/game";
+import Coordinate from "./types/coordinate";
 
 export default class Controller {
     private currentScene: string;
@@ -26,8 +27,8 @@ export default class Controller {
         this.setScene('bootScene', { game: game });
     }
 
-    public movePlayer(id: string, x: integer, y: integer) {
-        this.gameState.movePlayer(id, x, y);
+    public movePlayer(id: string, coordinate: Coordinate) {
+        this.gameState.movePlayer(id, coordinate);
     }
 
     public getGameState() {

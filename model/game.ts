@@ -1,16 +1,20 @@
 import Team from "./team";
-import FieldModel from "./fieldmodel";
+import FieldModel from "../types/fieldmodel";
+import Coordinate from "../types/coordinate";
+import Player from "./player";
+
 
 export default class Game {
     public teamHome: Team;
     public teamAway: Team;
-    public fieldModel: FieldModel;
     public dirty;
 
     public constructor(data: any) {
         this.teamHome = new Team(data['game']['teamHome']);
         this.teamAway = new Team(data['game']['teamAway']);
-        this.fieldModel = new FieldModel(data['game']['fieldModel']);
+
+
+        this.applyFieldModel(data['game']['fieldModel']);
         this.dirty = false;
     }
 
@@ -33,12 +37,26 @@ export default class Game {
         return assets;
     }
 
-    public movePlayer(id: string, x: integer, y: integer) {
-        this.fieldModel.movePlayer(id, x, y);
+    public getPlayers(): Player[] {
+        let result = [];
+        let players = this.teamHome.getPlayers();
+        for (let i in players) {
+            result.push(players[i]);
+        }
+        players = this.teamAway.getPlayers();
+        for (let i in players) {
+            result.push(players[i]);
+        }
+        return result;
+    }
+
+    public movePlayer(id: string, coordinate: Coordinate) {
+        let player = this.getPlayer(id);
+        player.setPosition(coordinate);
         this.dirty = true;
     }
 
-    public getPlayer(id: string) {
+    public getPlayer(id: string): Player {
         let player = this.teamHome.getPlayer(id);
 
         if (!player) {
@@ -46,5 +64,15 @@ export default class Game {
         }
 
         return player;
+    }
+
+    private applyFieldModel(data: FieldModel) {
+        for (let i in data['playerDataArray']) {
+            let pData = data['playerDataArray'][i];
+
+            let player = this.getPlayer(pData.playerId);
+            player.setState(pData.playerState);
+            player.setPosition(pData.playerCoordinate);
+        }
     }
 }

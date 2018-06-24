@@ -12,16 +12,18 @@ export default class App extends Phaser.Game {
 
         let controller = new Controller();
 
-        let connectScene = new ConnectScene(controller);
-        let bootScene = new BootScene(controller);
-        let mainScene = new MainScene(controller);
+        let scenes = [
+            new ConnectScene(controller),
+            new BootScene(controller),
+            new MainScene(controller),
+        ];
 
         let config:GameConfig = {
             parent: 'phaserapp',
             type: Phaser.AUTO,
             width: 960,
             height: 554,
-            scene: [ connectScene, bootScene, mainScene ],
+            scene: scenes,
             "render.pixelArt": true
         };
         super(config);

@@ -1,10 +1,10 @@
 import Game from "../model/game";
+import Command from "./command";
+import Controller from "../controller";
 
-export default class CommandGameState {
-    private controller;
-
-    public constructor(controller: any) {
-        this.controller = controller;
+export default class CommandGameState extends Command {
+    public constructor(controller: Controller) {
+        super(controller);
     }
 
     public processCommand(data: any) {

@@ -87,14 +87,14 @@ export default class MainScene extends Phaser.Scene {
 
         for (let i in game.teamAway.players) {
             let player = game.teamAway.players[i];
-            player.icon = this.add.sprite(0,0,icons[player.position], 2);
+            player.icon = this.add.sprite(0,0,icons[player.positionId], 2);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
         }
 
         for (let i in game.teamHome.players) {
             let player = game.teamHome.players[i];
-            player.icon = this.add.sprite(0,0,icons[player.position], 0);
+            player.icon = this.add.sprite(0,0,icons[player.positionId], 0);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
         }
@@ -143,13 +143,9 @@ export default class MainScene extends Phaser.Scene {
     }
 
     public redraw(game: Game) {
-        for (let playerId in game.fieldModel.playerData) {
-            let pData = game.fieldModel.playerData[playerId];
-
-            let player = game.getPlayer(playerId);
-
+        for (let player of game.getPlayers()) {
             if (player) {
-                let [x, y] = pData['coordinate']
+                let [x, y] = player.coordinate;
                 if (x >= 0 && x <= 25) {
                     player.icon.visible = true;
                     let pX = this.pitchScale * (15 + x * 30) - player.icon.width / 2;

@@ -3,7 +3,7 @@ import Player from "./player";
 
 export default class Team {
     public roster: Roster;
-    public players: any;
+    public players: { [key: string]: Player };
 
     public constructor(data: any) {
         this.roster = new Roster(data['roster']);
@@ -27,6 +27,10 @@ export default class Team {
         }
 
         return assets;
+    }
+
+    public getPlayers(): {[key: string]: Player} {
+        return this.players;
     }
 
     public getPlayer(id: string) {

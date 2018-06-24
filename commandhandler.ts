@@ -1,14 +1,16 @@
 import CommandGameState from "./commands/gamestate";
 import CommandModelSync from "./commands/modelsync";
 import CommandGameTime from "./commands/gametime";
+import Command from "./commands/command";
 import Network from "./network";
+import Controller from "./controller";
 
 export default class CommandHandler {
-    private commandHandlers;
-    private network;
-    private controller;
+    private commandHandlers: {[id:string]:Command};
+    private network: Network;
+    private controller: Controller;
 
-    public constructor(network: any, controller: any) {
+    public constructor(network: Network, controller: Controller) {
         this.commandHandlers = {
             "serverGameState": new CommandGameState(controller),
             "serverModelSync": new CommandModelSync(controller),
@@ -16,10 +18,6 @@ export default class CommandHandler {
         };
         this.network = network;
         this.controller = controller;
-    }
-
-    public connected() {
-        this.network.join();
     }
 
     public handleCommand(data: any) {
