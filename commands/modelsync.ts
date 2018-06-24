@@ -20,13 +20,11 @@ export default class CommandModelSync extends Command {
         };
     }
 
-    public processCommand(data: any) {
+    public processCommand(data: FFB.Protocol.Messages.ServerModelSync) {
         console.log("Processing model sync command", data);
 
-        for (let i in data['modelChangeList']['modelChangeArray']) {
-            let change:ModelChange = data['modelChangeList']['modelChangeArray'][i];
-
-            let changeId = change['modelChangeId'];
+        for (let change of data.modelChangeList.modelChangeArray) {
+            let changeId = change.modelChangeId;
             if (this.handlers[changeId]) {
                 this.handlers[changeId].call(this, change);
             } else {
@@ -35,7 +33,7 @@ export default class CommandModelSync extends Command {
         }
     }
 
-    private handleSetPlayerCoordinate(change: ModelChange) {
+    private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
         let playerId = change['modelChangeKey'];
         let [x, y] = change['modelChangeValue'];
         let coordinate:Coordinate = new Coordinate(x,y);

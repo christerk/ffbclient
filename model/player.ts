@@ -12,14 +12,14 @@ export default class Player {
     public state: integer;
     public coordinate: Coordinate;
 
-    public constructor(data: any) {
-        this.number = data['playerNr'];
-        this.name = data['playerName'];
-        this.positionId = data['positionId'];
-        this.movement = data['movement'];
-        this.strength = data['strength'];
-        this.agility = data['agility'];
-        this.armour = data['armour'];
+    public constructor(data: FFB.Protocol.Messages.PlayerType) {
+        this.number = data.playerNr;
+        this.name = data.playerName;
+        this.positionId = data.positionId;
+        this.movement = data.movement;
+        this.strength = data.strength;
+        this.agility = data.agility;
+        this.armour = data.armour;
     }
 
     public setState(state: integer) {

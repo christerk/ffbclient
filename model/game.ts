@@ -1,5 +1,4 @@
 import Team from "./team";
-import FieldModel from "../types/fieldmodel";
 import Coordinate from "../types/coordinate";
 import Player from "./player";
 
@@ -9,12 +8,11 @@ export default class Game {
     public teamAway: Team;
     public dirty;
 
-    public constructor(data: any) {
-        this.teamHome = new Team(data['game']['teamHome']);
-        this.teamAway = new Team(data['game']['teamAway']);
+    public constructor(data: FFB.Protocol.Messages.ServerGameState) {
+        this.teamHome = new Team(data.game.teamHome);
+        this.teamAway = new Team(data.game.teamAway);
 
-
-        this.applyFieldModel(data['game']['fieldModel']);
+        this.applyFieldModel(data.game.fieldModel);
         this.dirty = false;
     }
 
@@ -66,13 +64,12 @@ export default class Game {
         return player;
     }
 
-    private applyFieldModel(data: FieldModel) {
-        for (let i in data['playerDataArray']) {
-            let pData = data['playerDataArray'][i];
-
+    private applyFieldModel(data: FFB.Protocol.Messages.FieldModelType) {
+        for (let pData of data.playerDataArray) {
             let player = this.getPlayer(pData.playerId);
             player.setState(pData.playerState);
-            player.setPosition(pData.playerCoordinate);
+            let [x,y] = pData.playerCoordinate;
+            player.setPosition(new Coordinate(x, y));
         }
     }
 }

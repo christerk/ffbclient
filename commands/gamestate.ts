@@ -7,7 +7,7 @@ export default class CommandGameState extends Command {
         super(controller);
     }
 
-    public processCommand(data: any) {
+    public processCommand(data: FFB.Protocol.Messages.ServerGameState) {
         console.log("Processing game state command", data);
 
         let game = new Game(data);

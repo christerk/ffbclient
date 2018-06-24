@@ -5,13 +5,13 @@ export default class Roster {
     public name: string;
     public positions:any;
 
-    public constructor(data: any) {
-        this.id = data['rosterId'];
-        this.name = data['rosterName'];
+    public constructor(data: FFB.Protocol.Messages.RosterType) {
+        this.id = data.rosterId;
+        this.name = data.rosterName;
 
         this.positions = {};
-        for (let position of data['positionArray']) {
-            this.positions[position['positionId']] = new Position(position);
+        for (let position of data.positionArray) {
+            this.positions[position.positionId] = new Position(position);
         }
     }
 
