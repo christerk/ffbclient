@@ -1,11 +1,6 @@
 {
     "files": [
-        "app.ts",
-        "commandhandler.ts",
-        "controller.ts",
-        "commands/*.ts",
-        "scenes/*.ts",
-        "types/*.ts"
+           "src/**/*.ts"
     ],
     "compilerOptions": {
         "target": "es5",
@@ -13,14 +8,25 @@
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+        "sourceMap": true,
         "lib": [
             "dom",
             "es5",
             "es2015",
             "es2015.promise"
+        ]}
+        ,
+        "include": [
+            "app.ts",
+            "commandhandler.ts",
+            "controller.ts",
+            "commands/*.ts",
+            "scenes/*.ts",
+            "types/*.ts"
+        ],
+        "typeRoots": [
+            "node_modules/@types"
         ]
-    },
-    "include": [
-        "*/*.ts",
-	]
 }
