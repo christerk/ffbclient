@@ -4,6 +4,7 @@
   "description": "HTML5 FFB client",
   "main": "app.ts",
   "scripts": {
+    "dev": "webpack --mode development && webpack-dev-server --disable-host-check --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +27,8 @@
     "webpack": "^4.12.1",
     "webpack-cli": "^3.0.8",
     "ws": "^5.2.1"
+  },
+  "dependencies": {
+    "webpack-dev-server": "^3.1.4"
   }
 }

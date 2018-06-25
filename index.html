@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>ffbclient</title>
+        <script src="build/bundle.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+
+            $(document).ready(function(){
+
+                $("#authenticate-button").click(function(event){
+                    event.preventDefault();
+
+                    $.get( "auth.json", function( data ) {
+                        console.log(data);
+
+                        var client_id = data.client_id;
+                        var secret = data.secret;
+
+                        $.ajax({
+                            type:"POST",
+                            url: "https://fumbbl.com/api/oauth/token",
+                            crossDomain: true,
+                            success: function(data){
+                                console.log(data);
+                            }
+                        });
+
+
+                    }).fail(function(){
+                        alert("Failed to locate auth.json");
+                    });
+
+                 /*   $.ajax({
+                        headers: {
+                            'access-control-allow-origin': '*'
+                        },
+                        url: $("form #url").val(),
+                        success: function(data){
+                            console.log(data);
+                        }
+                    });*/
+
+                });
+
+                $("form").submit(function(event){
+                    event.preventDefault();
+
+                 /*   $.ajax({
+                        headers: {
+                            'Access-Control-Allow-Origin': '*'
+                        },
+                        url: $("form #url").val(),
+                        success: function(data){
+                            console.log(data);
+                        }
+                    });*/
+
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <button id="authenticate-button" type="button">Authenticate</button>
+            <form>
+                <label for="url">Enter an FUMBBL replay URL:</label>
+                <input type="url" name="url" id="url"
+                                             value="https://fumbbl.com/ffblive.jnlp?replay=1076363"
+                                             placeholder="https://fumbbl.com"
+                                             pattern="https://.*" size="20" required />
+                <input type="submit" value="Submit">
+            </form>
+            <div id="phaserapp"></div>
+            <div class="wrapper">
+            </div>
+        </div>
+    </body>
+
+
+</html>
