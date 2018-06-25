@@ -1,26 +1,29 @@
 import Phaser from "phaser";
 import CommandHandler from "../commandhandler";
 import Game from "../model/game";
+import Controller from "../controller";
 
 export default class MainScene extends Phaser.Scene {
 
     private pitch: Phaser.GameObjects.Image;
     private pitchScale: number;
-    private frameNumber: integer;
+    private frameNumber: number;
     private cursors: CursorKeys;
     private i: Phaser.Input.InputPlugin;
-    private dragStart: integer[];
+    private dragStart: number[];
     private scale: number;
-    private width: integer;
-    private height: integer;
-    private controller: any;
+    private width: number;
+    private height: number;
+    private controller: Controller;
+    private moveSquareIcons: Phaser.GameObjects.Graphics[];
 
-    public constructor(controller: any) {
+    public constructor(controller: Controller) {
         super({
             key: 'mainScene'
         });
         console.log("Main Scene: constructed");
         this.controller = controller;
+        this.moveSquareIcons = [];
     }
 
     public init(config) {
@@ -53,22 +56,16 @@ export default class MainScene extends Phaser.Scene {
         this.input.setDraggable(this.pitch);
         
         this.input.on('dragstart', (pointer, gameObject) => {
-            console.log('dragstart', gameObject, this.cameras.main.scrollX, this.cameras.main.scrollY);
             this.dragStart = [this.cameras.main.scrollX, this.cameras.main.scrollY];
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            console.log('drag', dragX, dragY);
             let scaling = this.cameras.main.zoom;
             let sX = this.dragStart[0]-dragX / scaling;
             let sY = this.dragStart[1]-dragY / scaling;
 
             this.cameras.main.setScroll(sX, sY);
         });
-
-
-
-
 
         let game = this.controller.getGameState();
 
@@ -85,27 +82,23 @@ export default class MainScene extends Phaser.Scene {
 
         console.log(icons);
 
-        for (let i in game.teamAway.players) {
-            let player = game.teamAway.players[i];
-            player.icon = this.add.sprite(0,0,icons[player.positionId], 2);
+        let awayPlayers = game.teamAway.getPlayers();
+        for (let i in awayPlayers) {
+            let player = awayPlayers[i];
+            player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 2);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
         }
 
-        for (let i in game.teamHome.players) {
-            let player = game.teamHome.players[i];
-            player.icon = this.add.sprite(0,0,icons[player.positionId], 0);
+        let homePlayers = game.teamHome.getPlayers();
+        for (let i in homePlayers) {
+            let player = homePlayers[i];
+            player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 0);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
         }
 
-        this.redraw(this.controller.getGameState());    
-
-        
-
-
-
-
+        this.redraw(this.controller.getGameState());
 
         this.cameras.main.setBounds(0, 0, 0, 0);
     }
@@ -155,6 +148,35 @@ export default class MainScene extends Phaser.Scene {
                     player.icon.visible = false;
                 }
             }
+        }
+
+        for (let icon of this.moveSquareIcons) {
+            icon.visible = false;
+        }
+
+        let i=0;
+        let squares = game.getMoveSquares();
+        console.log(squares);
+        for (let index in squares) {
+            let coordinate = squares[i]
+            if (i == this.moveSquareIcons.length) {
+                let icon = this.add.graphics();
+                icon.clear();
+                icon.fillStyle(0xffffff, 0.25);
+                icon.fillRect(0, 0, 30, 30);
+                this.moveSquareIcons.push(icon);
+            }
+            let icon = this.moveSquareIcons[i];
+
+            let [x,y] = coordinate;
+            let pX = this.pitchScale * (15 + x * 30) - 15;
+            let pY = this.pitchScale * (15 + y * 30) - 15;
+
+            console.log('square', pX, pY);
+
+            icon.setPosition(pX, pY);
+            icon.visible = true;
+            i++;
         }
     }
 }

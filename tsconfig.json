@@ -1,11 +1,6 @@
 {
-    "files": [
-        "app.ts",
-        "commandhandler.ts",
-        "controller.ts",
-        "commands/*.ts",
-        "scenes/*.ts",
-        "types/*.ts"
+    "include": [
+        "./**/*.ts",
     ],
     "compilerOptions": {
         "target": "es5",
@@ -18,9 +13,11 @@
             "es5",
             "es2015",
             "es2015.promise"
-        ]
-    },
-    "include": [
-        "*/*.ts",
-	]
+        ],
+        "outDir": "./build",
+        "baseUrl": "",
+        "paths": {
+            "phaser": [ "node_modules/phaser/dist/phaser"]
+        }
+    }
 }

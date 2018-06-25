@@ -5,12 +5,18 @@ import MainScene from "./scenes/mainscene";
 import Controller from "./controller";
 import Network from "./network";
 import CommandHandler from "./commandhandler";
+import CommandManager from "./model/commandmanager";
+import Game from "./model/game";
 
 export default class App extends Phaser.Game {
     constructor() {
         console.log("Starting Phaser App");
 
-        let controller = new Controller();
+        let game = new Game();
+        let commandManager = new CommandManager(game);
+        let controller = new Controller(game, commandManager);
+
+        commandManager.setController(controller);
 
         let scenes = [
             new ConnectScene(controller),
@@ -33,12 +39,12 @@ export default class App extends Phaser.Game {
         let el = document.getElementById('wrapper');
         let user = el.getAttribute('user');
         let auth = el.getAttribute('auth');
-        let game = el.getAttribute('game');
+        let gameAttr = el.getAttribute('game');
 
         controller.setScene('connectScene', {
             user: user,
             auth: auth,
-            game: game
+            gameId: gameAttr
         });
 
         let fullscreenButton = document.getElementById('fullscreen');

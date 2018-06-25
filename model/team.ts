@@ -5,11 +5,11 @@ export default class Team {
     public roster: Roster;
     public players: { [key: string]: Player };
 
-    public constructor(data: any) {
-        this.roster = new Roster(data['roster']);
+    public constructor(data: FFB.Protocol.Messages.TeamType) {
+        this.roster = new Roster(data.roster);
 
         this.players = {};
-        for (let player of data['playerArray']) {
+        for (let player of data.playerArray) {
             this.players[player['playerId']] = new Player(player);
         }
     }

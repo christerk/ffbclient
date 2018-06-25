@@ -2,12 +2,7 @@ import Game from "../model/game";
 import Coordinate from "../types/coordinate";
 import Controller from "../controller";
 import Command from "./command";
-
-type ModelChange = {
-    modelChangeId: string,
-    modelChangeKey: string,
-    modelChangeValue: any
-};
+import * as ClientCommands from "../model/clientcommands";
 
 export default class CommandModelSync extends Command {
     private handlers: { [id: string] : (ModelChange) => void };
@@ -16,17 +11,18 @@ export default class CommandModelSync extends Command {
         super(controller);
 
         this.handlers = {
-            "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate
+            "fieldModelAddMoveSquare": this.handleAddMoveSquare,
+            "fieldModelRemoveMoveSquare": this.handleRemoveMoveSquare,
+            "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
+            "fieldModelSetPlayerState": this.handleSetPlayerState,
         };
     }
 
-    public processCommand(data: any) {
+    public processCommand(data: FFB.Protocol.Messages.ServerModelSync) {
         console.log("Processing model sync command", data);
 
-        for (let i in data['modelChangeList']['modelChangeArray']) {
-            let change:ModelChange = data['modelChangeList']['modelChangeArray'][i];
-
-            let changeId = change['modelChangeId'];
+        for (let change of data.modelChangeList.modelChangeArray) {
+            let changeId = change.modelChangeId;
             if (this.handlers[changeId]) {
                 this.handlers[changeId].call(this, change);
             } else {
@@ -35,10 +31,30 @@ export default class CommandModelSync extends Command {
         }
     }
 
-    private handleSetPlayerCoordinate(change: ModelChange) {
-        let playerId = change['modelChangeKey'];
-        let [x, y] = change['modelChangeValue'];
-        let coordinate:Coordinate = new Coordinate(x,y);
-        let player = this.controller.movePlayer(playerId, coordinate);
+    private handleAddMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.AddMoveSquare(coordinate));
+    }
+
+    private handleRemoveMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.RemoveMoveSquare(coordinate));
+    }
+
+    private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
+        let playerId = change.modelChangeKey;
+        let [x, y] = change.modelChangeValue;
+        let coordinate = new Coordinate(x,y);
+
+        this.controller.enqueueCommand(new ClientCommands.MovePlayer(playerId, coordinate));
+    }
+
+    private handleSetPlayerState(change: FFB.Protocol.Messages.ModelChangeType) {
+        let playerId = change.modelChangeKey;
+        let state = parseInt(change.modelChangeValue);
+
+        this.controller.enqueueCommand(new ClientCommands.SetPlayerState(playerId, state));
     }
 }

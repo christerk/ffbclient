@@ -1,21 +1,29 @@
 import Team from "./team";
-import FieldModel from "../types/fieldmodel";
 import Coordinate from "../types/coordinate";
 import Player from "./player";
-
 
 export default class Game {
     public teamHome: Team;
     public teamAway: Team;
     public dirty;
 
-    public constructor(data: any) {
-        this.teamHome = new Team(data['game']['teamHome']);
-        this.teamAway = new Team(data['game']['teamAway']);
+    private moveSquares: Coordinate[];
 
-
-        this.applyFieldModel(data['game']['fieldModel']);
+    /**
+     * Root internal model class.
+     *
+     * Maintains the internal state of the application.
+     */
+    public constructor() {
+        this.moveSquares = [];
         this.dirty = false;
+    }
+
+    public initialize(data: FFB.Protocol.Messages.ServerGameState) {
+        this.teamHome = new Team(data.game.teamHome);
+        this.teamAway = new Team(data.game.teamAway);
+
+        this.applyFieldModel(data.game.fieldModel);
     }
 
     public getAssets() {
@@ -66,13 +74,45 @@ export default class Game {
         return player;
     }
 
-    private applyFieldModel(data: FieldModel) {
-        for (let i in data['playerDataArray']) {
-            let pData = data['playerDataArray'][i];
-
+    private applyFieldModel(data: FFB.Protocol.Messages.FieldModelType) {
+        for (let pData of data.playerDataArray) {
             let player = this.getPlayer(pData.playerId);
             player.setState(pData.playerState);
-            player.setPosition(pData.playerCoordinate);
+            let [x,y] = pData.playerCoordinate;
+            player.setPosition(new Coordinate(x, y));
         }
+    }
+
+    public hasMoveSquare(coordinate: Coordinate): boolean {
+        for(let c of this.moveSquares) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public addMoveSquare(coordinate: Coordinate) {
+        for (let c of this.moveSquares) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return;
+            }
+        }
+
+        this.moveSquares.push(coordinate);
+    }
+
+    public removeMoveSquare(coordinate: Coordinate) {
+        let result: Coordinate[] = [];
+        for (let c of this.moveSquares) {
+            if (c[0] != coordinate[0] || c[1] != coordinate[1]) {
+                result.push(c);
+            }
+        }
+        this.moveSquares = result;
+    }
+
+    public getMoveSquares(): Coordinate[] {
+        return this.moveSquares;
     }
 }

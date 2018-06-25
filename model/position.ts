@@ -4,10 +4,10 @@ export default class Position {
     public name: string;
     public iconURI: string;
 
-    public constructor(data: any) {
-        this.id = data['positionId'];
-        this.name = data['positionName'];
-        this.iconURI = data['urlIconSet'];
+    public constructor(data: FFB.Protocol.Messages.PositionType) {
+        this.id = data.positionId;
+        this.name = data.positionName;
+        this.iconURI = data.urlIconSet;
     }
 
     public getAssets() {

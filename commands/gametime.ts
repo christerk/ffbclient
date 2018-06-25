@@ -7,6 +7,6 @@ export default class CommandGameTime extends Command {
         super(controller);
     }
 
-    public processCommand(data: any) {
+    public processCommand(data: FFB.Protocol.Messages.ServerGameTime) {
     }
 }

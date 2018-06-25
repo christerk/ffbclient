@@ -43,7 +43,7 @@ export default class Network {
             clientMode: 'spectator',
             coach: this.config.user,
             password: this.config.auth,
-            gameId: parseInt(this.config.game),
+            gameId: parseInt(this.config.gameId),
             gameName: '',
             teamId: '',
             teamName: '',
