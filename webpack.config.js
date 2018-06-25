@@ -29,5 +29,53 @@ module.exports = {
                 loader: 'ts-loader',
             },
         ]
+    },
+    devServer: {
+        port:8080,
+        disableHostCheck:true,
+        after: function(app) {
+            var fs = require('fs');
+            var https = require('https');
+            var querystring = require('querystring');
+            fs.readFile('auth.json', function(err, data) {
+                if (err) throw err;
+                var json_data = JSON.parse(data);
+
+                var form = {
+                    grant_type: "client_credentials",
+                    client_id: json_data.client_id, 
+                    client_secret: json_data.secret, 
+                };
+                var formData = querystring.stringify(form);
+                var contentLength = formData.length;
+
+                var options = {
+                    host:"fumbbl.com",
+                    path:"/api/oauth/token",
+                    method:"POST",
+                    headers:{"Content-Type":"application/x-www-form-urlencoded" }
+                };
+
+                callback = function(response) {
+                    var str = ''
+                    response.on('data', function (chunk) {
+                        str += chunk;
+                    });
+
+                    response.on('end', function () {
+                        console.log(str);
+                    });
+                }
+                
+                console.log("HERE");
+                var req = https.request(options, callback);
+                req.write(querystring.stringify(form));
+                console.log("now here");
+                req.end();
+
+
+                console.log(json_data); 
+            });
+        }
     }
 }
