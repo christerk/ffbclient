@@ -106,3 +106,55 @@ export class SetPlayerState extends PlayerCommand {
         this.player.setState(this.oldState);
     }
 }
+
+export class AddMoveSquare extends AbstractCommand {
+    private coordinate: Coordinate;
+    private hasMoveSquare: boolean;
+
+    public constructor(coordinate: Coordinate) {
+        super();
+        this.coordinate = coordinate;
+    }
+
+    public init(game: Game) {
+        this.hasMoveSquare = game.hasMoveSquare(this.coordinate);
+    }
+
+    public do(game: Game) {
+        if (!this.hasMoveSquare) {
+            game.addMoveSquare(this.coordinate);
+        }
+    }
+
+    public undo(game: Game) {
+        if (!this.hasMoveSquare) {
+            game.removeMoveSquare(this.coordinate);
+        }
+    }
+}
+
+export class RemoveMoveSquare extends AbstractCommand {
+    private coordinate: Coordinate;
+    private hasMoveSquare: boolean;
+
+    public constructor(coordinate: Coordinate) {
+        super();
+        this.coordinate = coordinate;
+    }
+
+    public init(game: Game) {
+        this.hasMoveSquare = game.hasMoveSquare(this.coordinate);
+    }
+
+    public do(game: Game) {
+        if (this.hasMoveSquare) {
+            game.removeMoveSquare(this.coordinate);
+        }
+    }
+
+    public undo(game: Game) {
+        if (this.hasMoveSquare) {
+            game.addMoveSquare(this.coordinate);
+        }
+    }
+}

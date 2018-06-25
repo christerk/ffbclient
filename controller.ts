@@ -29,12 +29,6 @@ export default class Controller {
         this.currentScene = scene;
     }
 
-    public updateGameState(game: Game) {
-        console.log("updateGameState", game);
-        this.game = game;
-        this.setScene('bootScene', { game: game });
-    }
-
     public enqueueCommand(command: AbstractCommand) {
         this.commandManager.enqueueCommand(command);
         this.game.dirty = true;

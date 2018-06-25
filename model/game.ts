@@ -7,12 +7,15 @@ export default class Game {
     public teamAway: Team;
     public dirty;
 
+    private moveSquares: Coordinate[];
+
     /**
      * Root internal model class.
      *
      * Maintains the internal state of the application.
      */
     public constructor() {
+        this.moveSquares = [];
         this.dirty = false;
     }
 
@@ -78,5 +81,38 @@ export default class Game {
             let [x,y] = pData.playerCoordinate;
             player.setPosition(new Coordinate(x, y));
         }
+    }
+
+    public hasMoveSquare(coordinate: Coordinate): boolean {
+        for(let c of this.moveSquares) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public addMoveSquare(coordinate: Coordinate) {
+        for (let c of this.moveSquares) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return;
+            }
+        }
+
+        this.moveSquares.push(coordinate);
+    }
+
+    public removeMoveSquare(coordinate: Coordinate) {
+        let result: Coordinate[] = [];
+        for (let c of this.moveSquares) {
+            if (c[0] != coordinate[0] || c[1] != coordinate[1]) {
+                result.push(c);
+            }
+        }
+        this.moveSquares = result;
+    }
+
+    public getMoveSquares(): Coordinate[] {
+        return this.moveSquares;
     }
 }

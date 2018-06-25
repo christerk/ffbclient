@@ -11,6 +11,8 @@ export default class CommandModelSync extends Command {
         super(controller);
 
         this.handlers = {
+            "fieldModelAddMoveSquare": this.handleAddMoveSquare,
+            "fieldModelRemoveMoveSquare": this.handleRemoveMoveSquare,
             "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
             "fieldModelSetPlayerState": this.handleSetPlayerState,
         };
@@ -29,10 +31,22 @@ export default class CommandModelSync extends Command {
         }
     }
 
+    private handleAddMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.AddMoveSquare(coordinate));
+    }
+
+    private handleRemoveMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.RemoveMoveSquare(coordinate));
+    }
+
     private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
         let playerId = change.modelChangeKey;
         let [x, y] = change.modelChangeValue;
-        let coordinate:Coordinate = new Coordinate(x,y);
+        let coordinate = new Coordinate(x,y);
 
         this.controller.enqueueCommand(new ClientCommands.MovePlayer(playerId, coordinate));
     }
@@ -41,6 +55,6 @@ export default class CommandModelSync extends Command {
         let playerId = change.modelChangeKey;
         let state = parseInt(change.modelChangeValue);
 
-        this.controller.enqueueCommand(new ClientCommands.SetState(playerId, state));
+        this.controller.enqueueCommand(new ClientCommands.SetPlayerState(playerId, state));
     }
 }
