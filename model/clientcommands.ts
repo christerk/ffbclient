@@ -158,3 +158,55 @@ export class RemoveMoveSquare extends AbstractCommand {
         }
     }
 }
+
+export class AddTrackNumber extends AbstractCommand {
+    private coordinate: Coordinate;
+    private hasTrackNumber: boolean;
+
+    public constructor(trackNumber: number, coordinate: Coordinate) {
+        super();
+        this.coordinate = coordinate;
+    }
+
+    public init(game: Game) {
+        this.hasTrackNumber = game.hasTrackNumber(this.coordinate);
+    }
+
+    public do(game: Game) {
+        if (!this.hasTrackNumber) {
+            game.addTrackNumber(this.coordinate);
+        }
+    }
+
+    public undo(game: Game) {
+        if (!this.hasTrackNumber) {
+            game.removeTrackNumber(this.coordinate);
+        }
+    }
+}
+
+export class RemoveTrackNumber extends AbstractCommand {
+    private coordinate: Coordinate;
+    private hasTrackNumber: boolean;
+
+    public constructor(trackNumber: number, coordinate: Coordinate) {
+        super();
+        this.coordinate = coordinate;
+    }
+
+    public init(game: Game) {
+        this.hasTrackNumber = game.hasTrackNumber(this.coordinate);
+    }
+
+    public do(game: Game) {
+        if (this.hasTrackNumber) {
+            game.removeTrackNumber(this.coordinate);
+        }
+    }
+
+    public undo(game: Game) {
+        if (this.hasTrackNumber) {
+            game.addTrackNumber(this.coordinate);
+        }
+    }
+}

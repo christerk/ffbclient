@@ -4,12 +4,14 @@ import Game from "./model/game";
 import Coordinate from "./types/coordinate";
 import { AbstractCommand } from "./model/clientcommands";
 import CommandManager from "./model/commandmanager";
+import { EventListener, EventType } from "./types/eventlistener";
 
 export default class Controller {
     private currentScene: string;
     public scene;
     private game: Game;
     private commandManager: CommandManager;
+    private eventListeners: EventListener[];
 
     /**
      * Core message passing class. Used to interface between the network and
@@ -18,6 +20,11 @@ export default class Controller {
     public constructor(game: Game, commandManager: CommandManager) {
         this.commandManager = commandManager;
         this.game = game;
+        this.eventListeners = [];
+    }
+
+    public addEventListener(listener: EventListener) {
+        this.eventListeners.push(listener);
     }
 
     public setScene(scene: string, data: any = undefined) {
@@ -31,7 +38,7 @@ export default class Controller {
 
     public enqueueCommand(command: AbstractCommand) {
         this.commandManager.enqueueCommand(command);
-        this.game.dirty = true;
+        this.eventListeners.forEach((listener) => listener.handleEvent(EventType.ModelChanged));
     }
 
     public getGameState() {

@@ -13,6 +13,8 @@ export default class CommandModelSync extends Command {
         this.handlers = {
             "fieldModelAddMoveSquare": this.handleAddMoveSquare,
             "fieldModelRemoveMoveSquare": this.handleRemoveMoveSquare,
+            "fieldModelAddTrackNumber": this.handleAddTrackNumber,
+            "fieldModelRemoveTrackNumber": this.handleRemoveTrackNumber,
             "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
             "fieldModelSetPlayerState": this.handleSetPlayerState,
         };
@@ -41,6 +43,20 @@ export default class CommandModelSync extends Command {
         let [x,y] = change.modelChangeValue.coordinate;
         let coordinate = new Coordinate(x, y);
         this.controller.enqueueCommand(new ClientCommands.RemoveMoveSquare(coordinate));
+    }
+
+    private handleAddTrackNumber(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let trackNumber = change.modelChangeValue.number;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.AddTrackNumber(trackNumber, coordinate));
+    }
+
+    private handleRemoveTrackNumber(change: FFB.Protocol.Messages.ModelChangeType) {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let trackNumber = change.modelChangeValue.number;
+        let coordinate = new Coordinate(x, y);
+        this.controller.enqueueCommand(new ClientCommands.RemoveTrackNumber(trackNumber, coordinate));
     }
 
     private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
