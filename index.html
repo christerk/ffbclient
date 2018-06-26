@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
     <head>
+<style>
+</style>
         <meta charset="UTF-8" />
         <title>ffbclient</title>
         <script src="build/bundle.js"></script>
@@ -10,7 +12,6 @@
         <script>
 
             $(document).ready(function(){
-
                 $.getJSON('/matches',function(data){
                     for(var i in data)
                     {
@@ -25,7 +26,7 @@
                             $("#wrapper").attr("game", match_id);
                             $("#wrapper").attr("user", data.client_id);
                             $("#wrapper").attr("auth", data.token);
-                            EntryPoint.default();
+                            new EntryPoint.default();
                         });
                     });
                 });
@@ -40,8 +41,9 @@
             </ul>
             <div class="phaserapppage" id="wrapper" game="" user="" auth="">
                 <button id="fullscreen">Full Screen</button>
-                <div id="phaserapp">
-                </div>
+                <div id="game"></div>
+                <div id="app"></div>
+                <div id="phaserapp"></div>
             </div>
 
         </div>
