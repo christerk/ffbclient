@@ -39,11 +39,11 @@ export default class BootScene extends Phaser.Scene {
 
         for (let sprite of this.assets['sprites']) {
             let key = ('sprite_'+sprite).replace(/[/]/g,'_');
-            let sheet = this.load.image(key, '/'+sprite);
+            let sheet = this.load.image(key, 'https://fumbbl.com/'+sprite);
             this.spritesheets[key] = '/'+sprite;
         }
 
-        this.load.image('pitch', '/i/561518');
+        this.load.image('pitch', 'https://fumbbl.com/i/561518');
 
         this.initialize();
     }
@@ -95,9 +95,8 @@ export default class BootScene extends Phaser.Scene {
                 for (let key in this.spritesheets) {
                     let img = this.add.image(0, 0, key);
                     img.visible=false;
-                    console.log('img', this.spritesheets[key], img.width);
 
-                    this.load.spritesheet(this.spritesheets[key], this.spritesheets[key], {
+                    this.load.spritesheet(this.spritesheets[key], 'https://fumbbl.com'+this.spritesheets[key], {
                         frameWidth: img.width/4
                     });
                 }
