@@ -12,9 +12,11 @@
         <script>
 
             $(document).ready(function(){
+                var application;
                 $.getJSON('/matches',function(data){
                     for(var i in data)
                     {
+                        console.log(data[i]);
                         var text = data[i].id + " " + data[i].division ;
                         var output='<li class="list-group-item"><a class="match-link" match='+ data[i].id + ' href="#">'+text+'</a></li>';
                         $('#match-list').append(output);
@@ -24,9 +26,9 @@
                         var match_id = $(event.target).attr("match");
                         $.getJSON('/auth',function(data){
                             $("#wrapper").attr("game", match_id);
-                            $("#wrapper").attr("user", data.client_id);
-                            $("#wrapper").attr("auth", data.token);
-                            new EntryPoint.default();
+                            $("#wrapper").attr("user", data.user_id);
+                            $("#wrapper").attr("a rememuth", data.token);
+                            application = new EntryPoint.default();
                         });
                     });
                 });
@@ -46,6 +48,4 @@
 
         </div>
     </body>
-
-
 </html>
