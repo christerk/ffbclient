@@ -6,7 +6,8 @@ module.exports = {
     entry:'./app.ts',
     output: {
         path: path.resolve(__dirname, 'build'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
+        library: 'EntryPoint'
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -29,5 +30,18 @@ module.exports = {
                 loader: 'ts-loader',
             },
         ]
+    },
+    devServer: {
+        port:8080,
+        disableHostCheck:true,
+        before: function(app) {
+            var api = require("./fumbblapi");
+            app.get("/matches", function(req_in, res) {
+                    api.get_current_matches(res);
+            });
+            app.get("/auth", function(req_in, res) {
+                    api.authenticate(res);
+            });
+        }
+        }
     }
-}
