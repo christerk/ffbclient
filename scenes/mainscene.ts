@@ -2,8 +2,9 @@ import Phaser from "phaser";
 import CommandHandler from "../commandhandler";
 import Game from "../model/game";
 import Controller from "../controller";
+import { EventListener, EventType } from "../types/eventlistener";
 
-export default class MainScene extends Phaser.Scene {
+export default class MainScene extends Phaser.Scene implements EventListener {
 
     private pitch: Phaser.GameObjects.Image;
     private pitchScale: number;
@@ -16,6 +17,8 @@ export default class MainScene extends Phaser.Scene {
     private height: number;
     private controller: Controller;
     private moveSquareIcons: Phaser.GameObjects.Graphics[];
+    private trackNumberIcons: Phaser.GameObjects.Graphics[];
+    private dirty: boolean;
 
     public constructor(controller: Controller) {
         super({
@@ -24,6 +27,15 @@ export default class MainScene extends Phaser.Scene {
         console.log("Main Scene: constructed");
         this.controller = controller;
         this.moveSquareIcons = [];
+        this.trackNumberIcons = [];
+
+        controller.addEventListener(this);
+    }
+
+    public handleEvent(event: EventType) {
+        if (event == EventType.ModelChanged) {
+            this.dirty = true;
+        }
     }
 
     public init(config) {
@@ -106,9 +118,9 @@ export default class MainScene extends Phaser.Scene {
     public update() {
         let game = this.controller.getGameState();
 
-        if (game.dirty) {
+        if (this.dirty) {
             this.redraw(this.controller.getGameState());
-            game.dirty = false;
+            this.dirty = false;
         }
 
         if (this.cursors.shift.isDown) {
@@ -150,13 +162,10 @@ export default class MainScene extends Phaser.Scene {
             }
         }
 
-        for (let icon of this.moveSquareIcons) {
-            icon.visible = false;
-        }
+        this.moveSquareIcons.map((i) => i.visible = false);
 
         let i=0;
         let squares = game.getMoveSquares();
-        console.log(squares);
         for (let index in squares) {
             let coordinate = squares[i]
             if (i == this.moveSquareIcons.length) {
@@ -172,11 +181,33 @@ export default class MainScene extends Phaser.Scene {
             let pX = this.pitchScale * (15 + x * 30) - 15;
             let pY = this.pitchScale * (15 + y * 30) - 15;
 
-            console.log('square', pX, pY);
+            icon.setPosition(pX, pY);
+            icon.visible = true;
+            i++;
+        }
+
+        this.trackNumberIcons.map((i) => i.visible = false);
+        i=0;
+        squares = game.getTrackNumbers();
+        for (let index in squares) {
+            let coordinate = squares[i]
+            if (i == this.trackNumberIcons.length) {
+                let icon = this.add.graphics();
+                icon.clear();
+                icon.fillStyle(0xff9F00, 1);
+                icon.fillCircle(0, 0, 5);
+                this.trackNumberIcons.push(icon);
+            }
+            let icon = this.trackNumberIcons[i];
+
+            let [x,y] = coordinate;
+            let pX = this.pitchScale * (15 + x * 30);
+            let pY = this.pitchScale * (15 + y * 30);
 
             icon.setPosition(pX, pY);
             icon.visible = true;
             i++;
         }
+
     }
 }

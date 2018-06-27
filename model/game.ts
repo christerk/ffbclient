@@ -5,9 +5,9 @@ import Player from "./player";
 export default class Game {
     public teamHome: Team;
     public teamAway: Team;
-    public dirty;
 
     private moveSquares: Coordinate[];
+    private trackNumbers: Coordinate[];
 
     /**
      * Root internal model class.
@@ -16,7 +16,7 @@ export default class Game {
      */
     public constructor() {
         this.moveSquares = [];
-        this.dirty = false;
+        this.trackNumbers = [];
     }
 
     public initialize(data: FFB.Protocol.Messages.ServerGameState) {
@@ -61,7 +61,6 @@ export default class Game {
     public movePlayer(id: string, coordinate: Coordinate) {
         let player = this.getPlayer(id);
         player.setPosition(coordinate);
-        this.dirty = true;
     }
 
     public getPlayer(id: string): Player {
@@ -115,4 +114,38 @@ export default class Game {
     public getMoveSquares(): Coordinate[] {
         return this.moveSquares;
     }
+
+    public hasTrackNumber(coordinate: Coordinate): boolean {
+        for(let c of this.trackNumbers) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public addTrackNumber(coordinate: Coordinate) {
+        for (let c of this.trackNumbers) {
+            if (c[0] == coordinate[0] && c[1] == coordinate[1]) {
+                return;
+            }
+        }
+
+        this.trackNumbers.push(coordinate);
+    }
+
+    public removeTrackNumber(coordinate: Coordinate) {
+        let result: Coordinate[] = [];
+        for (let c of this.trackNumbers) {
+            if (c[0] != coordinate[0] || c[1] != coordinate[1]) {
+                result.push(c);
+            }
+        }
+        this.trackNumbers = result;
+    }
+
+    public getTrackNumbers(): Coordinate[] {
+        return this.trackNumbers;
+    }
+
 }
