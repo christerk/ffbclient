@@ -2,6 +2,13 @@
 <html lang="en">
     <head>
 <style>
+    .team-logo{
+        width:24px;
+        height:24px;
+    }
+    a:link{
+        text-align:center;
+    }
 </style>
         <meta charset="UTF-8" />
         <title>ffbclient</title>
@@ -14,23 +21,29 @@
             $(document).ready(function(){
                 var application;
                 $.getJSON('/matches',function(data){
-                    for(var i in data)
-                    {
-                        console.log(data[i]);
-                        var text = data[i].id + " " + data[i].division ;
-                        var output='<li class="list-group-item"><a class="match-link" match='+ data[i].id + ' href="#">'+text+'</a></li>';
+                    data.forEach(function(match){
+                        console.log(match);
+                        var colour_class = match.division == "Blackbox" ? "list-group-item-danger" : match.division == "Ranked" ? "list-group-item-warning" : "list-group-item-info";
+                        var text = "<img class='team-logo pull-left' src='https://fumbbl.com/" + match.teams[0].logo+"'>" + 
+                            match.teams[0].name +
+                            " vs " +"<img class='team-logo pull-right' src='https://fumbbl.com/" + match.teams[1].logo+"'>" + 
+                            match.teams[1].name + 
+                            " Turn: " + match.turn ;
+                        var output='<a class="list-group-item match-link ' + colour_class + ' " match='+ match.id + ' href="#">'+text+'</li>';
                         $('#match-list').append(output);
-                    }
+                    });
                     $(".match-link").click(function(event){
                         event.preventDefault();
                         var match_id = $(event.target).attr("match");
                         $.getJSON('/auth',function(data){
                             $("#wrapper").attr("game", match_id);
                             $("#wrapper").attr("user", data.user_id);
-                            $("#wrapper").attr("a rememuth", data.token);
+                            $("#wrapper").attr("auth", data.token);
                             application = new EntryPoint.default();
+                            $("#match-list").css("display", "none");
                         });
                     });
+
                 });
 
             });
@@ -38,9 +51,13 @@
     </head>
     <body>
         <div class="container">
-            <h2>Active Matches</h2>
-            <ul id="match-list" class="list-group">
-            </ul>
+            <div id="match-list" class="list-group">
+                <h2>Active Matches</h2>
+                <span class="label label-danger">Blackbox</span>
+                <span class="label label-warning">Ranked</span>
+                <span class="label label-info">League</span>
+            </div>
+
             <div class="phaserapppage" id="wrapper" game="" user="" auth="">
                 <button id="fullscreen">Full Screen</button>
                 <div id="phaserapp"></div>
