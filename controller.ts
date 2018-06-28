@@ -43,8 +43,12 @@ export default class Controller {
         console.log('Command enqueued', command);
 
         if (command.triggerModelChanged == true) {
-            this.eventListeners.forEach((listener) => listener.handleEvent(EventType.ModelChanged));
+            this.triggerModelChange();
         }
+    }
+
+    public triggerModelChange() {
+        this.eventListeners.forEach((listener) => listener.handleEvent(EventType.ModelChanged));
     }
 
     public getGameState() {

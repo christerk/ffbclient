@@ -34,4 +34,42 @@ export default class CommandManager {
             this.queuePosition++;
         }
     }
+
+    public moveToEnd() {
+        while (this.queuePosition < this.commandQueue.length) {
+            let command = this.commandQueue[this.queuePosition]
+            // We need to apply() here as the game may have progressed
+            // while we were looking at the history.
+            command.apply(this.game);
+            this.queuePosition++;
+        }
+        
+        this.controller.triggerModelChange();
+    }
+
+    public moveForward() {
+        if (this.queuePosition < this.commandQueue.length) {
+            let command = this.commandQueue[this.queuePosition]
+            // We need to apply() here as the game may have progressed
+            // while we were looking at the history.
+            command.apply(this.game);
+            this.queuePosition++;
+
+            // Note: This should probably check if there's an actual
+            // model change in the command set...
+            this.controller.triggerModelChange();
+        }
+    }
+
+    public moveBack() {
+        console.log('moveBack', this.commandQueue, this.queuePosition);
+        if (this.queuePosition > 0) {
+            this.queuePosition--;
+            this.commandQueue[this.queuePosition].undo();
+
+            // Note: This should probably check if there's an actual
+            // model change in the command set...
+            this.controller.triggerModelChange();
+        }
+    }
 }

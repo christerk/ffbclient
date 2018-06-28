@@ -3,6 +3,7 @@ import Coordinate from "../types/coordinate";
 import Player from "./player";
 
 export default class Game {
+    private isInitialized: boolean;
     public teamHome: Team;
     public teamAway: Team;
 
@@ -17,13 +18,17 @@ export default class Game {
     public constructor() {
         this.moveSquares = [];
         this.trackNumbers = [];
+        this.isInitialized = false;
     }
 
     public initialize(data: FFB.Protocol.Messages.ServerGameState) {
-        this.teamHome = new Team(data.game.teamHome);
-        this.teamAway = new Team(data.game.teamAway);
+        if (!this.isInitialized) {
+            this.isInitialized = true;
+            this.teamHome = new Team(data.game.teamHome);
+            this.teamAway = new Team(data.game.teamAway);
 
-        this.applyFieldModel(data.game.fieldModel);
+            this.applyFieldModel(data.game.fieldModel);
+        }
     }
 
     public getAssets() {
