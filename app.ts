@@ -48,14 +48,18 @@ export default class App extends Phaser.Game {
         });
 
         let fullscreenButton = document.getElementById('fullscreen');
-        fullscreenButton.addEventListener('click', () => {
-            this.canvas[this.device.fullscreen.request]();
-        });
-
+        if (fullscreenButton != null) {
+            fullscreenButton.addEventListener('click', () => {
+                this.canvas[this.device.fullscreen.request]();
+            });
+        }
+        
         let quitButton = document.getElementById('quit');
-        quitButton.addEventListener('click', () => {
-            controller.disconnect();
-            super.destroy(true);
-        });
+        if (quitButton != null) {
+            quitButton.addEventListener('click', () => {
+                controller.disconnect();
+                super.destroy(true);
+            });
+        }
     }
 }
