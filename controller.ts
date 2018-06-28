@@ -12,7 +12,7 @@ export default class Controller {
     private game: Game;
     private commandManager: CommandManager;
     private eventListeners: EventListener[];
-
+    private network: Network;
     /**
      * Core message passing class. Used to interface between the network and
      * the core model.
@@ -21,6 +21,7 @@ export default class Controller {
         this.commandManager = commandManager;
         this.game = game;
         this.eventListeners = [];
+        this.network = new Network();
     }
 
     public addEventListener(listener: EventListener) {
@@ -46,8 +47,11 @@ export default class Controller {
     }
 
     public connect(config: any) {
-        let network = new Network();
-        let commandHandler = new CommandHandler(network, this);
-        network.connect(commandHandler, config);
+        let commandHandler = new CommandHandler(this.network, this);
+        this.network.connect(commandHandler, config);
+    }
+
+    public disconnect() {
+        this.network.leave();
     }
 }

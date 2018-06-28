@@ -11,7 +11,7 @@ export default class MainScene extends Phaser.Scene implements EventListener {
     private frameNumber: number;
     private cursors: CursorKeys;
     private i: Phaser.Input.InputPlugin;
-    private dragStart: number[];
+    private dragStart: Phaser.Geom.Point;
     private scale: number;
     private width: number;
     private height: number;
@@ -68,13 +68,13 @@ export default class MainScene extends Phaser.Scene implements EventListener {
         this.input.setDraggable(this.pitch);
         
         this.input.on('dragstart', (pointer, gameObject) => {
-            this.dragStart = [this.cameras.main.scrollX, this.cameras.main.scrollY];
+            this.dragStart = new Phaser.Geom.Point(this.cameras.main.scrollX, this.cameras.main.scrollY);
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             let scaling = this.cameras.main.zoom;
-            let sX = this.dragStart[0]-dragX / scaling;
-            let sY = this.dragStart[1]-dragY / scaling;
+            let sX = this.dragStart.x -dragX / scaling;
+            let sY = this.dragStart.y -dragY / scaling;
 
             this.cameras.main.setScroll(sX, sY);
         });

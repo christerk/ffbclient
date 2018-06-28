@@ -52,5 +52,10 @@ export default class App extends Phaser.Game {
             this.canvas[this.device.fullscreen.request]();
         });
 
+        let quitButton = document.getElementById('quit');
+        quitButton.addEventListener('click', () => {
+            controller.disconnect();
+            super.destroy(true);
+        });
     }
 }
