@@ -3,7 +3,7 @@ HTML5 ffb client
 
 ``` git clone https://github.com/christerk/ffbclient.git ```
 
-``` creat Auth.json in the root directory (see Auth.Example.json) ```
+``` create Auth.json in the root directory (see Auth.Example.json) ```
 
 ``` npm install ```
 
