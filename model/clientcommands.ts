@@ -5,23 +5,63 @@ import Coordinate from "../types/coordinate";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
+    protected game: Game;
+    public triggerModelChanged: boolean;
 
     public constructor() {
         this.applied = false;
+        this.triggerModelChanged = true;
     }
 
     public apply(game: Game) {
         if (!this.applied) {
+            this.game = game;
             this.applied = true;
-            this.init(game);
+            this.init();
         }
 
-        this.do(game);
+        this.do();
     }
 
-    public abstract init(game: Game): void;
-    public abstract do(game: Game): void;
-    public abstract undo(game: Game): void;
+    public setGame(game: Game) {
+        this.game = game;
+    }
+
+    public abstract init(): void;
+    public abstract do(): void;
+    public abstract undo(): void;
+}
+
+export class CompoundCommand extends AbstractCommand {
+    private commandList: AbstractCommand[];
+
+    public constructor() {
+        super();
+        this.commandList = [];
+    }
+
+    public addCommand(command: AbstractCommand) {
+        this.commandList.push(command);
+    }
+
+    public init() {
+        for (let command of this.commandList) {
+            command.setGame(this.game);
+            command.init();
+        }
+    }
+
+    public do() {
+        for (let command of this.commandList) {
+            command.do();
+        }
+    }
+
+    public undo() {
+        for (let command of this.commandList.reverse()) {
+            command.undo();
+        }
+    }
 }
 
 export class Initialize extends AbstractCommand {
@@ -32,14 +72,14 @@ export class Initialize extends AbstractCommand {
         this.data = data;
     }
 
-    public init(game: Game) {
+    public init() {
     }
 
-    public do(game: Game) {
-        game.initialize(this.data);
+    public do() {
+        this.game.initialize(this.data);
     }
 
-    public undo(game: Game) {
+    public undo() {
     }
 }
 
@@ -52,12 +92,12 @@ abstract class PlayerCommand extends AbstractCommand {
         this.playerId = playerId;
     }
 
-    public init(game: Game) {
-        this.player = game.getPlayer(this.playerId);
+    public init() {
+        this.player = this.game.getPlayer(this.playerId);
     }
 
-    public abstract do(game: Game): void;
-    public abstract undo(game: Game): void;
+    public abstract do(): void;
+    public abstract undo(): void;
 
 }
 
@@ -70,16 +110,16 @@ export class MovePlayer extends PlayerCommand {
         this.newCoordinate = coordinate;
     }
 
-    public init(game: Game) {
-        super.init(game);
+    public init() {
+        super.init();
         this.oldCoordinate = this.player.getPosition();
     }
 
-    public do(game: Game) {
+    public do() {
         this.player.setPosition(this.newCoordinate);
     }
 
-    public undo(game: Game) {
+    public undo() {
         this.player.setPosition(this.oldCoordinate);
     }
 }
@@ -93,16 +133,16 @@ export class SetPlayerState extends PlayerCommand {
         this.newState = newState;
     }
 
-    public init(game: Game) {
-        super.init(game);
+    public init() {
+        super.init();
         this.oldState = this.player.state;
     }
 
-    public do(game: Game) {
+    public do() {
         this.player.setState(this.newState);
     }
 
-    public undo(game: Game) {
+    public undo() {
         this.player.setState(this.oldState);
     }
 }
@@ -116,19 +156,19 @@ export class AddMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Game) {
-        this.hasMoveSquare = game.hasMoveSquare(this.coordinate);
+    public init() {
+        this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
-    public do(game: Game) {
+    public do() {
         if (!this.hasMoveSquare) {
-            game.addMoveSquare(this.coordinate);
+            this.game.addMoveSquare(this.coordinate);
         }
     }
 
-    public undo(game: Game) {
+    public undo() {
         if (!this.hasMoveSquare) {
-            game.removeMoveSquare(this.coordinate);
+            this.game.removeMoveSquare(this.coordinate);
         }
     }
 }
@@ -142,19 +182,19 @@ export class RemoveMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Game) {
-        this.hasMoveSquare = game.hasMoveSquare(this.coordinate);
+    public init() {
+        this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
-    public do(game: Game) {
+    public do() {
         if (this.hasMoveSquare) {
-            game.removeMoveSquare(this.coordinate);
+            this.game.removeMoveSquare(this.coordinate);
         }
     }
 
-    public undo(game: Game) {
+    public undo() {
         if (this.hasMoveSquare) {
-            game.addMoveSquare(this.coordinate);
+            this.game.addMoveSquare(this.coordinate);
         }
     }
 }
@@ -168,19 +208,19 @@ export class AddTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Game) {
-        this.hasTrackNumber = game.hasTrackNumber(this.coordinate);
+    public init() {
+        this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
-    public do(game: Game) {
+    public do() {
         if (!this.hasTrackNumber) {
-            game.addTrackNumber(this.coordinate);
+            this.game.addTrackNumber(this.coordinate);
         }
     }
 
-    public undo(game: Game) {
+    public undo() {
         if (!this.hasTrackNumber) {
-            game.removeTrackNumber(this.coordinate);
+            this.game.removeTrackNumber(this.coordinate);
         }
     }
 }
@@ -194,19 +234,19 @@ export class RemoveTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Game) {
-        this.hasTrackNumber = game.hasTrackNumber(this.coordinate);
+    public init() {
+        this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
-    public do(game: Game) {
+    public do() {
         if (this.hasTrackNumber) {
-            game.removeTrackNumber(this.coordinate);
+            this.game.removeTrackNumber(this.coordinate);
         }
     }
 
-    public undo(game: Game) {
+    public undo() {
         if (this.hasTrackNumber) {
-            game.addTrackNumber(this.coordinate);
+            this.game.addTrackNumber(this.coordinate);
         }
     }
 }

@@ -23,54 +23,57 @@ export default class CommandModelSync extends Command {
     public processCommand(data: FFB.Protocol.Messages.ServerModelSync) {
         console.log("Processing model sync command", data);
 
+        let compoundCommand = new ClientCommands.CompoundCommand();
         for (let change of data.modelChangeList.modelChangeArray) {
             let changeId = change.modelChangeId;
             if (this.handlers[changeId]) {
-                this.handlers[changeId].call(this, change);
+                let command: ClientCommands.AbstractCommand = this.handlers[changeId].call(this, change);
+                compoundCommand.addCommand(command);
             } else {
                 console.log("Unhandled model change", changeId);
             }
         }
+        this.controller.enqueueCommand(compoundCommand);
     }
 
-    private handleAddMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+    private handleAddMoveSquare(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let [x,y] = change.modelChangeValue.coordinate;
         let coordinate = new Coordinate(x, y);
-        this.controller.enqueueCommand(new ClientCommands.AddMoveSquare(coordinate));
+        return new ClientCommands.AddMoveSquare(coordinate);
     }
 
-    private handleRemoveMoveSquare(change: FFB.Protocol.Messages.ModelChangeType) {
+    private handleRemoveMoveSquare(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let [x,y] = change.modelChangeValue.coordinate;
         let coordinate = new Coordinate(x, y);
-        this.controller.enqueueCommand(new ClientCommands.RemoveMoveSquare(coordinate));
+        return new ClientCommands.RemoveMoveSquare(coordinate);
     }
 
-    private handleAddTrackNumber(change: FFB.Protocol.Messages.ModelChangeType) {
-        let [x,y] = change.modelChangeValue.coordinate;
-        let trackNumber = change.modelChangeValue.number;
-        let coordinate = new Coordinate(x, y);
-        this.controller.enqueueCommand(new ClientCommands.AddTrackNumber(trackNumber, coordinate));
-    }
-
-    private handleRemoveTrackNumber(change: FFB.Protocol.Messages.ModelChangeType) {
+    private handleAddTrackNumber(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let [x,y] = change.modelChangeValue.coordinate;
         let trackNumber = change.modelChangeValue.number;
         let coordinate = new Coordinate(x, y);
-        this.controller.enqueueCommand(new ClientCommands.RemoveTrackNumber(trackNumber, coordinate));
+        return new ClientCommands.AddTrackNumber(trackNumber, coordinate);
     }
 
-    private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType) {
+    private handleRemoveTrackNumber(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let [x,y] = change.modelChangeValue.coordinate;
+        let trackNumber = change.modelChangeValue.number;
+        let coordinate = new Coordinate(x, y);
+        return new ClientCommands.RemoveTrackNumber(trackNumber, coordinate);
+    }
+
+    private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let playerId = change.modelChangeKey;
         let [x, y] = change.modelChangeValue;
         let coordinate = new Coordinate(x,y);
 
-        this.controller.enqueueCommand(new ClientCommands.MovePlayer(playerId, coordinate));
+        return new ClientCommands.MovePlayer(playerId, coordinate);
     }
 
-    private handleSetPlayerState(change: FFB.Protocol.Messages.ModelChangeType) {
+    private handleSetPlayerState(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let playerId = change.modelChangeKey;
         let state = parseInt(change.modelChangeValue);
 
-        this.controller.enqueueCommand(new ClientCommands.SetPlayerState(playerId, state));
+        return new ClientCommands.SetPlayerState(playerId, state);
     }
 }
