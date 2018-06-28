@@ -43,7 +43,7 @@ export default class CommandManager {
             command.apply(this.game);
             this.queuePosition++;
         }
-        
+
         this.controller.triggerModelChange();
     }
 
@@ -62,7 +62,6 @@ export default class CommandManager {
     }
 
     public moveBack() {
-        console.log('moveBack', this.commandQueue, this.queuePosition);
         if (this.queuePosition > 0) {
             this.queuePosition--;
             this.commandQueue[this.queuePosition].undo();

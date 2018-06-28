@@ -250,3 +250,25 @@ export class RemoveTrackNumber extends AbstractCommand {
         }
     }
 }
+
+export class SetBallCoordinate extends AbstractCommand {
+    private coordinate: Coordinate;
+    private oldCoordinate: Coordinate;
+
+    public constructor(coordinate: Coordinate) {
+        super();
+        this.coordinate = coordinate;
+    }
+
+    public init() {
+        this.oldCoordinate = this.game.getBallCoordinate();
+    }
+
+    public do() {
+        this.game.setBallCoordinate(this.coordinate);
+    }
+
+    public undo() {
+        this.game.setBallCoordinate(this.oldCoordinate);
+    }
+}

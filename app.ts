@@ -65,7 +65,6 @@ export default class App extends Phaser.Game {
         let forwardButton = document.getElementById('forward');
         if (forwardButton != null) {
             forwardButton.addEventListener('click', () => {
-                console.log('forward clicked');
                 commandManager.moveForward();
             });
         }
@@ -73,7 +72,6 @@ export default class App extends Phaser.Game {
         let backButton = document.getElementById('back');
         if (backButton != null) {
             backButton.addEventListener('click', () => {
-                console.log('back clicked');
                 commandManager.moveBack();
             });
         }
@@ -82,7 +80,6 @@ export default class App extends Phaser.Game {
         let endButton = document.getElementById('end');
         if (endButton != null) {
             endButton.addEventListener('click', () => {
-                console.log('end clicked');
                 commandManager.moveToEnd();
             });
         }

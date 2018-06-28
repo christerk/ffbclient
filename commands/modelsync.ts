@@ -17,6 +17,7 @@ export default class CommandModelSync extends Command {
             "fieldModelRemoveTrackNumber": this.handleRemoveTrackNumber,
             "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
             "fieldModelSetPlayerState": this.handleSetPlayerState,
+            "fieldModelSetBallCoordinate": this.handleSetBallCoordinate,
         };
     }
 
@@ -36,36 +37,36 @@ export default class CommandModelSync extends Command {
         this.controller.enqueueCommand(compoundCommand);
     }
 
+    private handleSetBallCoordinate(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let coordinate = Coordinate.FromArray(change.modelChangeValue);
+        return new ClientCommands.SetBallCoordinate(coordinate);
+    }
+
     private handleAddMoveSquare(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let [x,y] = change.modelChangeValue.coordinate;
-        let coordinate = new Coordinate(x, y);
+        let coordinate = Coordinate.FromArray(change.modelChangeValue.coordinate);
         return new ClientCommands.AddMoveSquare(coordinate);
     }
 
     private handleRemoveMoveSquare(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let [x,y] = change.modelChangeValue.coordinate;
-        let coordinate = new Coordinate(x, y);
+        let coordinate = Coordinate.FromArray(change.modelChangeValue.coordinate);
         return new ClientCommands.RemoveMoveSquare(coordinate);
     }
 
     private handleAddTrackNumber(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let [x,y] = change.modelChangeValue.coordinate;
         let trackNumber = change.modelChangeValue.number;
-        let coordinate = new Coordinate(x, y);
+        let coordinate = Coordinate.FromArray(change.modelChangeValue.coordinate);
         return new ClientCommands.AddTrackNumber(trackNumber, coordinate);
     }
 
     private handleRemoveTrackNumber(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let [x,y] = change.modelChangeValue.coordinate;
         let trackNumber = change.modelChangeValue.number;
-        let coordinate = new Coordinate(x, y);
+        let coordinate = Coordinate.FromArray(change.modelChangeValue.coordinate);
         return new ClientCommands.RemoveTrackNumber(trackNumber, coordinate);
     }
 
     private handleSetPlayerCoordinate(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let playerId = change.modelChangeKey;
-        let [x, y] = change.modelChangeValue;
-        let coordinate = new Coordinate(x,y);
+        let coordinate = Coordinate.FromArray(change.modelChangeValue);
 
         return new ClientCommands.MovePlayer(playerId, coordinate);
     }

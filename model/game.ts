@@ -10,6 +10,8 @@ export default class Game {
     private moveSquares: Coordinate[];
     private trackNumbers: Coordinate[];
 
+    private ballCoordinate: Coordinate;
+
     /**
      * Root internal model class.
      *
@@ -26,6 +28,10 @@ export default class Game {
             this.isInitialized = true;
             this.teamHome = new Team(data.game.teamHome);
             this.teamAway = new Team(data.game.teamAway);
+
+            if (data.game.fieldModel.ballCoordinate != null) {
+                this.ballCoordinate = Coordinate.FromArray(data.game.fieldModel.ballCoordinate);
+            }
 
             this.applyFieldModel(data.game.fieldModel);
         }
@@ -153,4 +159,11 @@ export default class Game {
         return this.trackNumbers;
     }
 
+    public getBallCoordinate(): Coordinate {
+        return this.ballCoordinate;
+    }
+
+    public setBallCoordinate(coordinate: Coordinate): void {
+        this.ballCoordinate = coordinate;
+    }
 }

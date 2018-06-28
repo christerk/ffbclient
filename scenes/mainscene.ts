@@ -3,6 +3,8 @@ import CommandHandler from "../commandhandler";
 import Game from "../model/game";
 import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
+import Coordinate from "../types/coordinate";
+import { PlayerState, Team } from "../model/player";
 
 export default class MainScene extends Phaser.Scene implements EventListener {
 
@@ -19,6 +21,7 @@ export default class MainScene extends Phaser.Scene implements EventListener {
     private moveSquareIcons: Phaser.GameObjects.Graphics[];
     private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
+    private ballIcon: Phaser.GameObjects.Graphics;
 
     public constructor(controller: Controller) {
         super({
@@ -52,7 +55,6 @@ export default class MainScene extends Phaser.Scene implements EventListener {
 
     public preload() {
         console.log('Main Scene: preload');
-    
     }
 
     public create(config) {
@@ -97,6 +99,7 @@ export default class MainScene extends Phaser.Scene implements EventListener {
         let awayPlayers = game.teamAway.getPlayers();
         for (let i in awayPlayers) {
             let player = awayPlayers[i];
+            player.setTeam(Team.Away);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 2);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
@@ -105,9 +108,18 @@ export default class MainScene extends Phaser.Scene implements EventListener {
         let homePlayers = game.teamHome.getPlayers();
         for (let i in homePlayers) {
             let player = homePlayers[i];
+            player.setTeam(Team.Home);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 0);
             player.icon.setOrigin(0,0);
             player.icon.visible=false;
+        }
+
+        if (!this.ballIcon) {
+            // Ugly. Needs to be a sprite...
+            this.ballIcon = this.add.graphics();
+            this.ballIcon.clear();
+            this.ballIcon.fillStyle(0xffff00, 1);
+            this.ballIcon.fillCircle(0, 0, 5);
         }
 
         this.redraw(this.controller.getGameState());
@@ -151,10 +163,18 @@ export default class MainScene extends Phaser.Scene implements EventListener {
         for (let player of game.getPlayers()) {
             if (player) {
                 let [x, y] = player.coordinate;
+                let state = player.getState();
                 if (x >= 0 && x <= 25) {
                     player.icon.visible = true;
                     let pX = this.pitchScale * (15 + x * 30) - player.icon.width / 2;
                     let pY = this.pitchScale * (15 + y * 30) - player.icon.height / 2;
+
+                    if (state == PlayerState.Moving) {
+                        player.icon.setFrame(player.getBaseIconFrame() + 1);
+                    } else {
+                        player.icon.setFrame(player.getBaseIconFrame());
+                    }
+
                     player.icon.setPosition(pX, pY);
                 } else {
                     player.icon.visible = false;
@@ -207,6 +227,20 @@ export default class MainScene extends Phaser.Scene implements EventListener {
             icon.setPosition(pX, pY);
             icon.visible = true;
             i++;
+        }
+
+        let ballCoordinate = game.getBallCoordinate();
+
+        if (ballCoordinate) {
+            let [x,y] = ballCoordinate;
+            let pX = this.pitchScale * (25 + x * 30);
+            let pY = this.pitchScale * (25 + y * 30);
+
+            console.log('** BALL **', pX, pY);
+            this.ballIcon.setPosition(pX, pY);
+            this.ballIcon.visible = true;
+        } else {
+            this.ballIcon.visible = false;
         }
 
     }

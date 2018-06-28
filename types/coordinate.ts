@@ -11,4 +11,8 @@ export default class Coordinate extends Array<number> {
     public get y(): number {
         return this[1];
     }
+
+    public static FromArray(arr: number[]) {
+        return new Coordinate(arr[0], arr[1]);
+    }
 }
