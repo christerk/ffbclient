@@ -53,6 +53,13 @@ export default class Network {
         this.send(joinMessage);
     }
 
+    public leave() {
+        let requestVersionMessage = {
+            netCommandId: "clientCloseSession"
+        };
+        this.send(requestVersionMessage);
+    }
+
     private send(data: any) {
         let msg = JSON.stringify(data);
         let compressed = LZString.compressToUTF16(msg);
