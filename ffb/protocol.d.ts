@@ -2,19 +2,25 @@
 declare namespace FFB.Protocol.Messages {
     type Coordinate = Array<number>;
 
+    enum PlayerState {}
+
     type BloodSpotType = {
         coordinate: Coordinate;
-        injury: number;
+        injury: PlayerState;
     }
 
     type ModelChangeType = {
         modelChangeId: string;
         modelChangeKey: string;
-        modelChangeValue: any;
+        modelChangeValue: any; // FFB Client type = Object (investigate further)
     }
 
     type ModelChangeListType = {
         modelChangeArray: ModelChangeType[];
+    }
+
+    type Card = {
+        name: string;
     }
 
     type PlayerDataType = {
@@ -22,7 +28,7 @@ declare namespace FFB.Protocol.Messages {
         playerCoordinate: Coordinate;
         playerState: number;
         cardEffects: any[];
-        cards: any[];
+        cards: Card[];
     }
 
     type PlayerMarkerType = {
