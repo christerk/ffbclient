@@ -226,6 +226,11 @@ export class MainScene extends Phaser.Scene implements EventListener {
                 let iconScale = Math.floor(this.pitchScale);
                 player.icon.setScale(iconScale, iconScale);
                 player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
+                if (!player.isActive()) {
+                    player.icon.setAlpha(0.5);
+                } else {
+                    player.icon.setAlpha(1);
+                }
                 let [x, y] = player.coordinate;
                 let state = player.getState();
                 if (x >= 0 && x <= 25) {

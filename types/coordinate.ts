@@ -13,6 +13,10 @@ export default class Coordinate extends Array<number> {
     }
 
     public static FromArray(arr: number[]) {
+        if (arr == null) {
+            return null;
+        }
+        
         return new Coordinate(arr[0], arr[1]);
     }
 }

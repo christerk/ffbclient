@@ -44,6 +44,7 @@ export default class Player {
     public armour: number;
     public icon: Phaser.GameObjects.Sprite;
     public state: PlayerState;
+    private flags: PlayerState;
     public coordinate: Coordinate;
     public positionIcon: number;
     private team: Team;
@@ -80,7 +81,8 @@ export default class Player {
     public setState(state: PlayerState) {
         console.log('Setting Player State', state);
 
-        this.state = state & 0xff; // Filters out the bit flags.. Deal with those later at some point.
+        this.state = state & 0xff;
+        this.flags = state & ~0xff;
     }
 
     public getPosition(): Coordinate {
@@ -89,5 +91,9 @@ export default class Player {
 
     public setPosition(coordinate: Coordinate) {
         this.coordinate = coordinate;
+    }
+
+    public isActive(): boolean {
+        return (this.flags & PlayerState._bit_active) > 0;
     }
 }
