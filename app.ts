@@ -1,7 +1,5 @@
 import Phaser from "phaser";
-import ConnectScene from "./scenes/connectscene";
-import BootScene from "./scenes/bootscene";
-import MainScene from "./scenes/mainscene";
+import * as Scenes from "./scenes";
 import Controller from "./controller";
 import Network from "./network";
 import CommandHandler from "./commandhandler";
@@ -19,9 +17,9 @@ export default class App extends Phaser.Game {
         commandManager.setController(controller);
 
         let scenes = [
-            new ConnectScene(controller),
-            new BootScene(controller),
-            new MainScene(controller),
+            new Scenes.ConnectScene(controller),
+            new Scenes.BootScene(controller),
+            new Scenes.MainScene(controller),
         ];
 
         let config:GameConfig = {
@@ -30,7 +28,9 @@ export default class App extends Phaser.Game {
             width: 960,
             height: 554,
             scene: scenes,
-            "render.pixelArt": true
+            "render.antialias": false,
+            "render.pixelArt": true,
+            "render.roundPixels": true
         };
         super(config);
 

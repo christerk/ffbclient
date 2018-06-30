@@ -1,7 +1,7 @@
 import Phaser from "phaser"
 import Controller from "../controller";
 
-export default class BootScene extends Phaser.Scene {
+export class BootScene extends Phaser.Scene {
 
     private controller: Controller;
     private width: number;
@@ -104,10 +104,6 @@ export default class BootScene extends Phaser.Scene {
             } else {
                 this.controller.setScene('mainScene');
             }
-
-            //loadingText.destroy();
-            //progressBar.destroy();
-            //progressBox.destroy();
         });
     }
 }
