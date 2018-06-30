@@ -1,6 +1,6 @@
 import Phaser from "phaser"
 
-export default class ConnectScene extends Phaser.Scene {
+export class ConnectScene extends Phaser.Scene {
 
     private controller: any;
     private width: number;

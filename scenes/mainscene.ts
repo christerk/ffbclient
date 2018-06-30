@@ -5,8 +5,9 @@ import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
 import Coordinate from "../types/coordinate";
 import { PlayerState, Team } from "../model/player";
+import * as Layers from "./layers";
 
-export default class MainScene extends Phaser.Scene implements EventListener {
+export class MainScene extends Phaser.Scene implements EventListener {
 
     private pitch: Phaser.GameObjects.Image;
     private pitchScale: number;
@@ -22,10 +23,11 @@ export default class MainScene extends Phaser.Scene implements EventListener {
     private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
     private ballIcon: Phaser.GameObjects.Graphics;
+    private uiCamera;
 
     public constructor(controller: Controller) {
         super({
-            key: 'mainScene'
+            key: 'mainScene',
         });
         console.log("Main Scene: constructed");
         this.controller = controller;
@@ -60,26 +62,27 @@ export default class MainScene extends Phaser.Scene implements EventListener {
     public create(config) {
         console.log('Main Scene: create', config);
 
-        this.pitch = this.add.image(0, 0, 'pitch').setOrigin(0,0);
+        this.pitch = this.add.image(0, 0, 'pitch').setOrigin(0, 0);
         this.frameNumber = 0;
 
-        this.pitchScale = this.width / this.pitch.width;
+        console.log('Scaling', this.height, this.pitch.height);
+        this.pitchScale = 1.0; //this.height / this.pitch.height;
         this.pitch.setScale(this.pitchScale);
 
         this.pitch.setInteractive();
         this.input.setDraggable(this.pitch);
         
-        this.input.on('dragstart', (pointer, gameObject) => {
-            this.dragStart = new Phaser.Geom.Point(this.cameras.main.scrollX, this.cameras.main.scrollY);
-        });
+        // this.input.on('dragstart', (pointer, gameObject) => {
+        //     this.dragStart = new Phaser.Geom.Point(this.cameras.main.scrollX, this.cameras.main.scrollY);
+        // });
 
-        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            let scaling = this.cameras.main.zoom;
-            let sX = this.dragStart.x -dragX / scaling;
-            let sY = this.dragStart.y -dragY / scaling;
+        // this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+        //     let scaling = this.cameras.main.zoom;
+        //     let sX = this.dragStart.x -dragX / scaling;
+        //     let sY = this.dragStart.y -dragY / scaling;
 
-            this.cameras.main.setScroll(sX, sY);
-        });
+        //     this.cameras.main.setScroll(sX, sY);
+        // });
 
         let game = this.controller.getGameState();
 
@@ -101,7 +104,7 @@ export default class MainScene extends Phaser.Scene implements EventListener {
             let player = awayPlayers[i];
             player.setTeam(Team.Away);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 2);
-            player.icon.setOrigin(0,0);
+            player.icon.setOrigin(0.5,0.5);
             player.icon.visible=false;
         }
 
@@ -110,7 +113,7 @@ export default class MainScene extends Phaser.Scene implements EventListener {
             let player = homePlayers[i];
             player.setTeam(Team.Home);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 0);
-            player.icon.setOrigin(0,0);
+            player.icon.setOrigin(0.5,0.5);
             player.icon.visible=false;
         }
 
@@ -122,9 +125,67 @@ export default class MainScene extends Phaser.Scene implements EventListener {
             this.ballIcon.fillCircle(0, 0, 5);
         }
 
+        const FAR_AWAY = -10000;
+
+        // Set up UI overlay
+        let uiLayer = new Layers.UILayer(this);
+        uiLayer.group.setPosition(FAR_AWAY, FAR_AWAY);
+        this.add.existing(uiLayer.group);
+
         this.redraw(this.controller.getGameState());
 
-        this.cameras.main.setBounds(0, 0, 0, 0);
+        //this.cameras.main.setBounds(0, 0, 0, 0);
+        this.cameras.main.setRoundPixels(true);
+
+        let uiCamera = this.cameras.add(0, 0, this.width, this.height);
+        uiCamera.setZoom(1);
+        uiCamera.setScroll(FAR_AWAY, FAR_AWAY);
+        this.uiCamera = uiCamera;
+
+        window.onresize = () => {
+            this.resize();
+            uiLayer.redraw();
+            console.log(this.sys.canvas.clientWidth, this.sys.canvas.clientHeight);
+        };
+
+        this.resize();
+    }
+
+    public resize() {
+        this.sys.canvas.style.width = "100%";
+        this.sys.canvas.style.height = "100%";
+
+        let w = this.sys.canvas.clientWidth;
+        let h = this.sys.canvas.clientHeight;
+
+        this.width = w;
+        this.height = h;
+
+        this.sys.game.resize(w, h);
+
+        let marginTop = h * 0.051;
+        let marginLeft = w * 0;
+        let marginRight = w * 0;
+        let marginBottom = h * 0;
+
+        w -= marginLeft + marginRight;
+        h -= marginTop + marginBottom;
+
+        let zoomFactorX = w / this.pitch.width;
+        let zoomFactorY = h / this.pitch.height;
+        let zoomFactor = Math.min(zoomFactorX, zoomFactorY);
+
+        this.pitch.setScale(zoomFactor);
+        this.pitchScale = zoomFactor;
+        this.controller.triggerModelChange();
+
+        // Calculate margins to center field in viewport
+        let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2);
+        let scrollY = -Math.floor((h - this.pitch.displayHeight) / 2);
+        this.cameras.main.setScroll(scrollX, scrollY);
+
+        this.cameras.main.setViewport(marginLeft, marginTop, w, h);
+        this.uiCamera.setViewport(0, 0, this.width, this.height);
     }
 
     public update() {
@@ -137,15 +198,15 @@ export default class MainScene extends Phaser.Scene implements EventListener {
 
         if (this.cursors.shift.isDown) {
             if (this.cursors.up.isDown) {
-                this.scale = this.scale + 0.5;
+                this.cameras.main.setZoom(2.0);
 
             } else if (this.cursors.down.isDown) {
-                this.scale = 1.0;
+                this.cameras.main.setZoom(1.0);
             }
 
             let scale = this.scale;
-            this.cameras.main.setZoom(scale);
-            this.cameras.main.setBounds(-this.width * ((scale-1)/(scale*2)), -this.height * ((scale-1)/(scale*2)), this.width * (2-1/scale), this.height * (2-1/scale));
+            //this.cameras.main.setZoom(scale);
+            //this.cameras.main.setBounds(-this.width * ((scale-1)/(scale*2)), -this.height * ((scale-1)/(scale*2)), this.width * (2-1/scale), this.height * (2-1/scale));
         } else {
             if (this.cursors.up.isDown) {
                 this.cameras.main.scrollY--;
@@ -162,12 +223,20 @@ export default class MainScene extends Phaser.Scene implements EventListener {
     public redraw(game: Game) {
         for (let player of game.getPlayers()) {
             if (player) {
+                let iconScale = Math.floor(this.pitchScale);
+                player.icon.setScale(iconScale, iconScale);
+                player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
+                if (!player.isActive()) {
+                    player.icon.setAlpha(0.5);
+                } else {
+                    player.icon.setAlpha(1);
+                }
                 let [x, y] = player.coordinate;
                 let state = player.getState();
                 if (x >= 0 && x <= 25) {
                     player.icon.visible = true;
-                    let pX = this.pitchScale * (15 + x * 30) - player.icon.width / 2;
-                    let pY = this.pitchScale * (15 + y * 30) - player.icon.height / 2;
+                    let pX = this.pitchScale * (15 + x * 30);
+                    let pY = this.pitchScale * (15 + y * 30);
 
                     if (state == PlayerState.Moving) {
                         player.icon.setFrame(player.getBaseIconFrame() + 1);
@@ -236,7 +305,6 @@ export default class MainScene extends Phaser.Scene implements EventListener {
             let pX = this.pitchScale * (25 + x * 30);
             let pY = this.pitchScale * (25 + y * 30);
 
-            console.log('** BALL **', pX, pY);
             this.ballIcon.setPosition(pX, pY);
             this.ballIcon.visible = true;
         } else {
