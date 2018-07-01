@@ -15,12 +15,12 @@ export class UILayer implements EventListener {
         this.container = scene.make.container({});
 
         this.component = new Comp.Panel({
+            id: "RootPanel",
             width: "100%",
             height: "100%",
             children: [
                 new Comp.Panel({
-                    x: 0,
-                    y: 0,
+                    id: "TopBar",
                     width: "100%",
                     height: 1,
                     anchor: Comp.Anchor.NORTH,
@@ -29,8 +29,9 @@ export class UILayer implements EventListener {
                     children: [
                         new Comp.Label({
                             id: "HomeTeam",
-                            x: 0.5,
-                            y: 0,
+                            margin: {
+                                left: 0.5,
+                            },
                             height: 1,
                             anchor: Comp.Anchor.WEST,
                             parentAnchor: Comp.Anchor.WEST,
@@ -39,8 +40,9 @@ export class UILayer implements EventListener {
                         }),
                         new Comp.Label({
                             id: "AwayTeam",
-                            x: -0.5,
-                            y: 0,
+                            margin: {
+                                right: 0.5,
+                            },
                             height: 1,
                             anchor: Comp.Anchor.EAST,
                             parentAnchor: Comp.Anchor.EAST,
@@ -55,7 +57,9 @@ export class UILayer implements EventListener {
                             children: [
                                 new Comp.Label({
                                     id: "HomeScore",
-                                    x: -0.5,
+                                    margin: {
+                                        right: 0.5,
+                                    },
                                     height: 1,
                                     anchor: Comp.Anchor.EAST,
                                     parentAnchor: Comp.Anchor.CENTER,
@@ -64,7 +68,6 @@ export class UILayer implements EventListener {
                                 }),
                                 new Comp.Label({
                                     id: "ScoreDash",
-                                    x: 0,
                                     height: 1,
                                     anchor: Comp.Anchor.CENTER,
                                     parentAnchor: Comp.Anchor.CENTER,
@@ -73,7 +76,9 @@ export class UILayer implements EventListener {
                                 }),
                                 new Comp.Label({
                                     id: "AwayScore",
-                                    x: 0.5,
+                                    margin: {
+                                        left: 0.5,
+                                    },
                                     height: 1,
                                     anchor: Comp.Anchor.WEST,
                                     parentAnchor: Comp.Anchor.CENTER,

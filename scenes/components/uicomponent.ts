@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import deepmerge from "deepmerge";
 
 export enum Anchor {
     CENTER = 0,
@@ -40,8 +41,12 @@ export type RenderContext = {
 
 export type ComponentConfiguration = {
     id?: string,
-    x?: Size,
-    y?: Size,
+    margin?: {
+        left?: Size,
+        right?: Size,
+        top?: Size,
+        bottom?: Size,
+    },
     width?: Size,
     height?: Size,
     anchor?: Anchor,
@@ -53,7 +58,6 @@ export type ComponentConfiguration = {
 
 export abstract class UIComponent {
     protected config: ComponentConfiguration;
-    protected bounds: Bounds;
     public phaserObject: Phaser.GameObjects.GameObject;
 
     private anchorFactors: [number,number][] = [
@@ -70,8 +74,12 @@ export abstract class UIComponent {
 
     public constructor(config: ComponentConfiguration) {
         let defaults: ComponentConfiguration = {
-            x: 0,
-            y: 0,
+            margin: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+            },
             width: 1,
             height: 1,
             anchor: Anchor.CENTER,
@@ -81,9 +89,7 @@ export abstract class UIComponent {
             children: [],
         };
 
-        this.config = { ...defaults, ...config };
-
-        this.bounds = new Bounds(this.config.x, this.config.y, this.config.width, this.config.height);
+        this.config = deepmerge(defaults, config);
     }
 
     protected numberToRGBString(data: number): string {
@@ -119,39 +125,33 @@ export abstract class UIComponent {
         return result;
     }
 
-    public getBounds(ctx: RenderContext, debug = false): Phaser.Geom.Rectangle {
+    public getBounds(ctx: RenderContext): Phaser.Geom.Rectangle {
         let parentAnchor = this.anchorFactors[this.config.parentAnchor];
         let thisAnchor = this.anchorFactors[this.config.anchor];
 
-        if (debug) console.log("----", this.config.id, "----");
+        let pos = {
+            innerWidth: this.translateScalar(this.config.width, ctx.scale, ctx.w),
+            innerHeight: this.translateScalar(this.config.height, ctx.scale, ctx.h),
+            margin: {
+                left: this.translateScalar(this.config.margin.left, ctx.scale, ctx.h),
+                right: this.translateScalar(this.config.margin.right, ctx.scale, ctx.h),
+                top: this.translateScalar(this.config.margin.top, ctx.scale, ctx.h),
+                bottom: this.translateScalar(this.config.margin.bottom, ctx.scale, ctx.h),
+            },
+            outerWidth: 0,
+            outerHeight: 0,
+        };
 
-        if (debug) console.log("Bounds(", ctx.w, ",", ctx.h, ",", ctx.scale, ")");
+        pos.outerWidth = pos.innerWidth + pos.margin.left + pos.margin.right;
+        pos.outerHeight = pos.innerHeight + pos.margin.top + pos.margin.bottom;
 
-        let w = this.translateScalar(this.bounds.w, ctx.scale, ctx.w);
-        let h = this.translateScalar(this.bounds.h, ctx.scale, ctx.h);
+        let centerX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*pos.outerWidth) + ctx.x;
+        let centerY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*pos.outerHeight) + ctx.y;
 
-        if (debug) console.log("w = trn(", this.bounds.w, ",", ctx.scale, ",", ctx.w, ") =", w);
-        if (debug) console.log("h = trn(", this.bounds.h, ",", ctx.scale, ",", ctx.h, ") =", h);
+        let x = centerX - pos.outerWidth / 2 + pos.margin.left;
+        let y = centerY - pos.outerHeight / 2 + pos.margin.top;
 
-        let cX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*w);
-        let cY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*h);
-
-        if (debug) console.log("cX =", parentAnchor[0],"*", ctx.w, "+ ((0.5 -", thisAnchor[0], ") *", w, " =", cX);
-        if (debug) console.log("cY =", parentAnchor[1],"*", ctx.h, "+ ((0.5 -", thisAnchor[1], ") *", h, " =", cY);
-
-        let offsetX = this.translateScalar(this.bounds.x, ctx.scale, ctx.w);
-        let offsetY = this.translateScalar(this.bounds.y, ctx.scale, ctx.h);
-
-        if (debug) console.log("offsetX = trn(", this.bounds.x, ",", ctx.scale, ",", ctx.w,") =", offsetX);
-        if (debug) console.log("offsetY = trn(", this.bounds.y, ",", ctx.scale, ",", ctx.h,") =", offsetY);
-
-        let left = cX - w / 2 + offsetX + ctx.x;
-        let top = cY - h / 2 + offsetY + ctx.y;
-
-        if (debug) console.log("left =", cX, "-", w, "/ 2 +", offsetX, "+", ctx.x, "=", left);
-        if (debug) console.log("top =", cY, "-", h, "/ 2 +", offsetY, "+", ctx.y, "=", top);
-
-        return new Phaser.Geom.Rectangle(left, top, w, h);
+        return new Phaser.Geom.Rectangle(x, y, pos.innerWidth, pos.innerHeight);
     }
 
     public abstract render(context: RenderContext): Phaser.GameObjects.GameObject;

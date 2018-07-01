@@ -10,7 +10,7 @@ export class Label extends Comp.UIComponent {
     }
 
     public render(ctx: Comp.RenderContext): Phaser.GameObjects.GameObject {
-        this.bounds.w = 0;
+        this.config.width = 0;
         let col = this.numberToRGBString(this.config.color);
         let bg = this.numberToRGBString(this.config.background);
         let bounds = this.getBounds(ctx);
@@ -21,7 +21,7 @@ export class Label extends Comp.UIComponent {
         g.setText(this.text);
         g.setBackgroundColor(bg);
 
-        this.bounds.w = g.displayWidth + "px";
+        this.config.width = g.displayWidth + "px";
         bounds = this.getBounds(ctx);
 
         console.log("Label bounds", bounds, g.displayWidth, ctx.w, ctx.h, ctx.scale);
