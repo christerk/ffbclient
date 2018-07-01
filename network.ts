@@ -13,7 +13,11 @@ export default class Network {
     public connect(commandHandler: any, config: any) {
         this.config = config;
 
-        let ws: WebSocket = new WebSocket("ws://dev.fumbbl.com:22223/command");
+        let host = window.location.host;
+        let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:'
+        let port = proto == 'wss:' ? 22224 : 22223;
+
+        let ws: WebSocket = new WebSocket(proto+"//"+host+":"+port+"/command");
 
         ws.onopen = (evt) => {
             console.log('Open');

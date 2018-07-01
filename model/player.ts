@@ -1,4 +1,4 @@
-import Coordinate from "../types/coordinate";
+import { Coordinate } from "../types";
 
 export enum PlayerState {
    Unknown          = 0x0000,
@@ -29,12 +29,12 @@ export enum PlayerState {
    _bit_used_pro    = 0x2000,
 }
 
-export enum Team {
+export enum Side {
     Home,
     Away
 }
 
-export default class Player {
+export class Player {
     public number: number;
     public name: string;
     public positionId: string;
@@ -47,7 +47,7 @@ export default class Player {
     private flags: PlayerState;
     public coordinate: Coordinate;
     public positionIcon: number;
-    private team: Team;
+    private side: Side;
 
     public constructor(data: FFB.Protocol.Messages.PlayerType) {
         this.number = data.playerNr;
@@ -62,16 +62,16 @@ export default class Player {
         this.state = PlayerState.Unknown;
     }
 
-    public getTeam(): Team {
-        return this.team;
+    public getTeam(): Side {
+        return this.side;
     }
 
-    public setTeam(team: Team) {
-        this.team = team;
+    public setTeam(side: Side) {
+        this.side = side;
     }
 
     public getBaseIconFrame(): number {
-        return 4 * this.positionIcon + (this.team == Team.Away ? 2 : 0);
+        return 4 * this.positionIcon + (this.side == Side.Away ? 2 : 0);
     }
 
     public getState(): PlayerState {

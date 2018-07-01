@@ -1,8 +1,10 @@
 
 export enum EventType {
     ModelChanged,
+    Resizing,
+    Resized
 }
 
 export interface EventListener {
-    handleEvent(event: EventType): void;
+    handleEvent(event: EventType, data?: any): void;
 }

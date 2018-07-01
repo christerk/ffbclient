@@ -1,9 +1,10 @@
-import Game from './game';
-import Controller from '../controller';
-import { AbstractCommand } from './clientcommands'
+import * as Model from ".";
+import Controller from "../controller";
+import { AbstractCommand } from "./clientcommands";
+import { EventType } from "../types/eventlistener";
 
 export default class CommandManager {
-    private game: Game;
+    private game: Model.Game;
     private controller: Controller;
 
     private commandQueue: AbstractCommand[];
@@ -13,7 +14,7 @@ export default class CommandManager {
      * The Command Manager is resposible for keeping track of model changes
      * and for moving back and forth in the history.
      */
-    public constructor(game: Game) {
+    public constructor(game: Model.Game) {
         this.game = game;
         this.queuePosition = 0;
         this.commandQueue = [];
@@ -44,7 +45,7 @@ export default class CommandManager {
             this.queuePosition++;
         }
 
-        this.controller.triggerModelChange();
+        this.controller.triggerEvent(EventType.ModelChanged);
     }
 
     public moveForward() {
@@ -57,7 +58,7 @@ export default class CommandManager {
 
             // Note: This should probably check if there's an actual
             // model change in the command set...
-            this.controller.triggerModelChange();
+            this.controller.triggerEvent(EventType.ModelChanged);
         }
     }
 
@@ -68,7 +69,7 @@ export default class CommandManager {
 
             // Note: This should probably check if there's an actual
             // model change in the command set...
-            this.controller.triggerModelChange();
+            this.controller.triggerEvent(EventType.ModelChanged);
         }
     }
 }

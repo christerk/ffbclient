@@ -1,16 +1,18 @@
-import Roster from "./roster";
-import Player from "./player";
+import * as Model from ".";
 
-export default class Team {
-    public roster: Roster;
-    public players: { [key: string]: Player };
+export class Team {
+    public name: string;
+    public roster: Model.Roster;
+    public players: { [key: string]: Model.Player };
+    public matchStats;
 
     public constructor(data: FFB.Protocol.Messages.TeamType) {
-        this.roster = new Roster(data.roster);
+        this.name = data.teamName;
+        this.roster = new Model.Roster(data.roster);
 
         this.players = {};
         for (let player of data.playerArray) {
-            this.players[player['playerId']] = new Player(player);
+            this.players[player['playerId']] = new Model.Player(player);
         }
     }
 
@@ -29,7 +31,7 @@ export default class Team {
         return assets;
     }
 
-    public getPlayers(): {[key: string]: Player} {
+    public getPlayers(): {[key: string]: Model.Player} {
         return this.players;
     }
 

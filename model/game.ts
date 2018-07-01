@@ -1,11 +1,10 @@
-import Team from "./team";
-import Coordinate from "../types/coordinate";
-import Player from "./player";
+import * as Model from ".";
+import { Coordinate } from "../types";
 
-export default class Game {
+export class Game {
     private isInitialized: boolean;
-    public teamHome: Team;
-    public teamAway: Team;
+    public teamHome: Model.Team;
+    public teamAway: Model.Team;
 
     private moveSquares: Coordinate[];
     private trackNumbers: Coordinate[];
@@ -26,8 +25,8 @@ export default class Game {
     public initialize(data: FFB.Protocol.Messages.ServerGameState) {
         if (!this.isInitialized) {
             this.isInitialized = true;
-            this.teamHome = new Team(data.game.teamHome);
-            this.teamAway = new Team(data.game.teamAway);
+            this.teamHome = new Model.Team(data.game.teamHome);
+            this.teamAway = new Model.Team(data.game.teamAway);
 
             if (data.game.fieldModel.ballCoordinate != null) {
                 this.ballCoordinate = Coordinate.FromArray(data.game.fieldModel.ballCoordinate);
@@ -56,7 +55,7 @@ export default class Game {
         return assets;
     }
 
-    public getPlayers(): Player[] {
+    public getPlayers(): Model.Player[] {
         let result = [];
         let players = this.teamHome.getPlayers();
         for (let i in players) {
@@ -74,7 +73,7 @@ export default class Game {
         player.setPosition(coordinate);
     }
 
-    public getPlayer(id: string): Player {
+    public getPlayer(id: string): Model.Player {
         let player = this.teamHome.getPlayer(id);
 
         if (!player) {

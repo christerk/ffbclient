@@ -9,21 +9,25 @@ export class Label extends Comp.UIComponent {
         this.text = config.text;
     }
 
-    public render(parent: Phaser.Scene, w: number, h: number): Phaser.GameObjects.GameObject {
-        this.bounds.width = 0;
-        let bounds = this.getBounds(w, h);
-        let g = parent.make.text({
-            fontFamily: 'Arial',
-            color: '#ffffff'
+    public render(ctx: Comp.RenderContext): Phaser.GameObjects.GameObject {
+        this.bounds.w = 0;
+        let col = this.numberToRGBString(this.config.color);
+        let bg = this.numberToRGBString(this.config.background);
+        let bounds = this.getBounds(ctx, true);
+        let g = ctx.scene.make.text({
+            fontFamily: 'Arial'
         });
         g.setFontSize(bounds.height);
+        g.setColor(col);
         g.setText(this.text);
+        g.setBackgroundColor(bg);
 
-        this.bounds.width = g.displayWidth / w;
-        bounds = this.getBounds(w, h);
+        this.bounds.w = g.displayWidth + "px";
+        bounds = this.getBounds(ctx, true);
+
+        console.log("Label bounds", bounds, g.displayWidth, ctx.w, ctx.h, ctx.scale);
+
         g.setPosition(bounds.x, bounds.y);
-
-        this.graphic = g;
 
         return g;
     }    
