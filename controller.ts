@@ -1,7 +1,7 @@
 import Network from "./network";
 import CommandHandler from "./commandhandler";
-import Game from "./model/game";
-import Coordinate from "./types/coordinate";
+import * as Model from "./model";
+import { Coordinate } from "./types";
 import { AbstractCommand } from "./model/clientcommands";
 import CommandManager from "./model/commandmanager";
 import { EventListener, EventType } from "./types/eventlistener";
@@ -9,7 +9,7 @@ import { EventListener, EventType } from "./types/eventlistener";
 export default class Controller {
     private currentScene: string;
     public scene;
-    private game: Game;
+    private game: Model.Game;
     private commandManager: CommandManager;
     private eventListeners: EventListener[];
     private network: Network;
@@ -17,7 +17,7 @@ export default class Controller {
      * Core message passing class. Used to interface between the network and
      * the core model.
      */
-    public constructor(game: Game, commandManager: CommandManager) {
+    public constructor(game: Model.Game, commandManager: CommandManager) {
         this.commandManager = commandManager;
         this.game = game;
         this.eventListeners = [];
@@ -43,12 +43,12 @@ export default class Controller {
         console.log('Command enqueued', command);
 
         if (command.triggerModelChanged == true) {
-            this.triggerModelChange();
+            this.triggerEvent(EventType.ModelChanged);
         }
     }
 
-    public triggerModelChange() {
-        this.eventListeners.forEach((listener) => listener.handleEvent(EventType.ModelChanged));
+    public triggerEvent(eventType: EventType, data?: any) {
+        this.eventListeners.forEach((listener) => listener.handleEvent(eventType, data));
     }
 
     public getGameState() {

@@ -1,5 +1,4 @@
-import Game from "../model/game";
-import Coordinate from "../types/coordinate";
+import { Coordinate } from "../types";
 import Controller from "../controller";
 import Command from "./command";
 import * as ClientCommands from "../model/clientcommands";

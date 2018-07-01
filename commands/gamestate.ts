@@ -1,4 +1,3 @@
-import Game from "../model/game";
 import Command from "./command";
 import Controller from "../controller";
 import * as ClientCommands from "../model/clientcommands";

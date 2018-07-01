@@ -1,11 +1,10 @@
 
-import Game from "./game";
-import Player from "./player";
-import Coordinate from "../types/coordinate";
+import * as Model from ".";
+import { Coordinate } from "../types";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
-    protected game: Game;
+    protected game: Model.Game;
     public triggerModelChanged: boolean;
 
     public constructor() {
@@ -13,7 +12,7 @@ export abstract class AbstractCommand {
         this.triggerModelChanged = true;
     }
 
-    public apply(game: Game) {
+    public apply(game: Model.Game) {
         if (!this.applied) {
             this.game = game;
             this.applied = true;
@@ -23,7 +22,7 @@ export abstract class AbstractCommand {
         this.do();
     }
 
-    public setGame(game: Game) {
+    public setGame(game: Model.Game) {
         this.game = game;
     }
 
@@ -84,7 +83,7 @@ export class Initialize extends AbstractCommand {
 }
 
 abstract class PlayerCommand extends AbstractCommand {
-    protected player: Player;
+    protected player: Model.Player;
     protected playerId: string;
 
     public constructor(playerId: string) {

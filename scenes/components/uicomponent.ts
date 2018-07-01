@@ -1,34 +1,64 @@
 import Phaser from "phaser";
+import deepmerge from "deepmerge";
 
 export enum Anchor {
     CENTER = 0,
     EAST = 1,
     NORTHEAST = 2,
     NORTH = 3,
-    NORTWEST = 4,
+    NORTHWEST = 4,
     WEST = 5,
     SOUTHWEST = 6,
     SOUTH = 7,
     SOUTHEAST = 8,
 }
 
-export type ComponentConfiguration = {
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    anchor: Anchor,
-    parentAnchor: Anchor,
-    background?: number;
+type Size = number|string;
+
+class Bounds {
+    public x: Size;
+    public y: Size;
+    public w: Size;
+    public h: Size;
+
+    public constructor(x: Size, y: Size, w: Size, h: Size) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
 }
 
-export class UIComponent {
-    private parentAnchor: Anchor;
-    private anchor: Anchor;
-    protected bounds: Phaser.Geom.Rectangle;
-    private scalingFactors: Phaser.Math.Vector2;
-    public graphic: Phaser.GameObjects.GameObject;
-    private background: number;
+export type RenderContext = {
+    scene: Phaser.Scene,
+    parent: UIComponent,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    scale: number,
+}
+
+export type ComponentConfiguration = {
+    id?: string,
+    margin?: {
+        left?: Size,
+        right?: Size,
+        top?: Size,
+        bottom?: Size,
+    },
+    width?: Size,
+    height?: Size,
+    anchor?: Anchor,
+    parentAnchor?: Anchor,
+    background?: number,
+    color?: number,
+    children?: UIComponent[]
+}
+
+export abstract class UIComponent {
+    protected config: ComponentConfiguration;
+    public phaserObject: Phaser.GameObjects.GameObject;
 
     private anchorFactors: [number,number][] = [
         [0.5, 0.5],
@@ -43,39 +73,87 @@ export class UIComponent {
     ];
 
     public constructor(config: ComponentConfiguration) {
-        this.bounds = new Phaser.Geom.Rectangle(config.x, config.y, config.width, config.height);
-        this.anchor = config.anchor;
-        this.parentAnchor = config.parentAnchor;
-        this.background = config.background;
+        let defaults: ComponentConfiguration = {
+            margin: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+            },
+            width: 1,
+            height: 1,
+            anchor: Anchor.CENTER,
+            parentAnchor: Anchor.CENTER,
+            color: 0xffffff,
+            background: null,
+            children: [],
+        };
+
+        this.config = deepmerge(defaults, config);
     }
 
-    public getBounds(width: number, height: number): Phaser.Geom.Rectangle {
-        let parentAnchor = this.anchorFactors[this.parentAnchor];
-        let thisAnchor = this.anchorFactors[this.anchor];
-
-        let w = width * this.bounds.width;
-        let h = height * this.bounds.height;
-
-        let cX = (parentAnchor[0] * width) + ((0.5-thisAnchor[0])*w);
-        let cY = (parentAnchor[1] * height) + ((0.5-thisAnchor[1])*h);
-
-        let left = cX - w / 2 + this.bounds.x;
-        let top = cY - h / 2 + this.bounds.y;
-
-        return new Phaser.Geom.Rectangle(left, top, w, h);
-    }
-
-    public render(parent: Phaser.Scene, w: number, h: number): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(w, h);
-        let g = parent.make.graphics({});
-
-        if (this.background != null) {
-            g.fillStyle(this.background, 1);
-            g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    protected numberToRGBString(data: number): string {
+        if (data != null) {
+            return "#"+ ('000000' + ((data)>>>0).toString(16)).slice(-6);
         }
-        g.setPosition(0, 0);
-        this.graphic = g;
-
-        return g;
+        return null;
     }
+
+    protected translateScalar(size: Size, scale: number, containerSize: number) {
+        let result = 0;
+
+        if (typeof size === "string") {
+            let parts = size.match(/^(-?[0-9]+\.?[0-9]*)\s*([^0-9.]+)?$/);
+            if (parts == null) {
+                result = 0;
+            } else if (parts[2] === undefined) {
+                result = scale * (new Number(size)).valueOf();
+            } else {
+                let num = new Number(parts[1]).valueOf();
+                let unit = parts[2];
+
+                if (unit == "%") {
+                    result = containerSize * num / 100;
+                } else if (unit == "px") {
+                    result = num;
+                }
+            }
+        } else {
+            result = scale * size;
+        }
+
+        return result;
+    }
+
+    public getBounds(ctx: RenderContext): Phaser.Geom.Rectangle {
+        let parentAnchor = this.anchorFactors[this.config.parentAnchor];
+        let thisAnchor = this.anchorFactors[this.config.anchor];
+
+        let pos = {
+            innerWidth: this.translateScalar(this.config.width, ctx.scale, ctx.w),
+            innerHeight: this.translateScalar(this.config.height, ctx.scale, ctx.h),
+            margin: {
+                left: this.translateScalar(this.config.margin.left, ctx.scale, ctx.h),
+                right: this.translateScalar(this.config.margin.right, ctx.scale, ctx.h),
+                top: this.translateScalar(this.config.margin.top, ctx.scale, ctx.h),
+                bottom: this.translateScalar(this.config.margin.bottom, ctx.scale, ctx.h),
+            },
+            outerWidth: 0,
+            outerHeight: 0,
+        };
+
+        pos.outerWidth = pos.innerWidth + pos.margin.left + pos.margin.right;
+        pos.outerHeight = pos.innerHeight + pos.margin.top + pos.margin.bottom;
+
+        let centerX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*pos.outerWidth) + ctx.x;
+        let centerY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*pos.outerHeight) + ctx.y;
+
+        let x = centerX - pos.outerWidth / 2 + pos.margin.left;
+        let y = centerY - pos.outerHeight / 2 + pos.margin.top;
+
+        return new Phaser.Geom.Rectangle(x, y, pos.innerWidth, pos.innerHeight);
+    }
+
+    public abstract render(context: RenderContext): Phaser.GameObjects.GameObject;
+
 }

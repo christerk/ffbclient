@@ -4,13 +4,13 @@ import Controller from "./controller";
 import Network from "./network";
 import CommandHandler from "./commandhandler";
 import CommandManager from "./model/commandmanager";
-import Game from "./model/game";
+import * as Model from "./model";
 
 export default class App extends Phaser.Game {
     constructor() {
         console.log("Starting Phaser App");
 
-        let game = new Game();
+        let game = new Model.Game();
         let commandManager = new CommandManager(game);
         let controller = new Controller(game, commandManager);
 

@@ -1,5 +1,5 @@
 
-export default class Position {
+export class Position {
     public id: string;
     public name: string;
     public iconURI: string;

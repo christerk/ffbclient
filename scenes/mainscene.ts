@@ -1,11 +1,17 @@
 import Phaser from "phaser";
 import CommandHandler from "../commandhandler";
-import Game from "../model/game";
+import * as Model from "../model";
 import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
-import Coordinate from "../types/coordinate";
-import { PlayerState, Team } from "../model/player";
+import { Coordinate } from "../types";
 import * as Layers from "./layers";
+
+type IconState = {
+    alpha: number,
+    angle: number,
+    frameOffset: number,
+    visible: boolean,
+}
 
 export class MainScene extends Phaser.Scene implements EventListener {
 
@@ -24,6 +30,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
     private dirty: boolean;
     private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera;
+    private gridSize: number; // Size of a grid square
 
     public constructor(controller: Controller) {
         super({
@@ -38,8 +45,13 @@ export class MainScene extends Phaser.Scene implements EventListener {
     }
 
     public handleEvent(event: EventType) {
-        if (event == EventType.ModelChanged) {
-            this.dirty = true;
+        switch(event) {
+            case EventType.ModelChanged:
+                this.dirty = true;
+                break;
+            case EventType.Resizing:
+                this.resize();
+                break;
         }
     }
 
@@ -102,7 +114,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
         let awayPlayers = game.teamAway.getPlayers();
         for (let i in awayPlayers) {
             let player = awayPlayers[i];
-            player.setTeam(Team.Away);
+            player.setTeam(Model.Side.Away);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 2);
             player.icon.setOrigin(0.5,0.5);
             player.icon.visible=false;
@@ -111,7 +123,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
         let homePlayers = game.teamHome.getPlayers();
         for (let i in homePlayers) {
             let player = homePlayers[i];
-            player.setTeam(Team.Home);
+            player.setTeam(Model.Side.Home);
             player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 0);
             player.icon.setOrigin(0.5,0.5);
             player.icon.visible=false;
@@ -128,11 +140,11 @@ export class MainScene extends Phaser.Scene implements EventListener {
         const FAR_AWAY = -10000;
 
         // Set up UI overlay
-        let uiLayer = new Layers.UILayer(this);
-        uiLayer.group.setPosition(FAR_AWAY, FAR_AWAY);
-        this.add.existing(uiLayer.group);
+        let uiLayer = new Layers.UILayer(this, game);
+        this.controller.addEventListener(uiLayer);
 
-        this.redraw(this.controller.getGameState());
+        uiLayer.container.setPosition(FAR_AWAY, FAR_AWAY);
+        this.add.existing(uiLayer.container);
 
         //this.cameras.main.setBounds(0, 0, 0, 0);
         this.cameras.main.setRoundPixels(true);
@@ -143,11 +155,10 @@ export class MainScene extends Phaser.Scene implements EventListener {
         this.uiCamera = uiCamera;
 
         window.onresize = () => {
-            this.resize();
-            uiLayer.redraw();
-            console.log(this.sys.canvas.clientWidth, this.sys.canvas.clientHeight);
+            this.controller.triggerEvent(EventType.Resizing);
         };
 
+        this.redraw(this.controller.getGameState());
         this.resize();
     }
 
@@ -163,7 +174,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
 
         this.sys.game.resize(w, h);
 
-        let marginTop = h * 0.051;
+        let marginTop = h / 16;
         let marginLeft = w * 0;
         let marginRight = w * 0;
         let marginBottom = h * 0;
@@ -175,9 +186,11 @@ export class MainScene extends Phaser.Scene implements EventListener {
         let zoomFactorY = h / this.pitch.height;
         let zoomFactor = Math.min(zoomFactorX, zoomFactorY);
 
+        this.gridSize = Math.floor(zoomFactor * this.pitch.width/26);
+
         this.pitch.setScale(zoomFactor);
         this.pitchScale = zoomFactor;
-        this.controller.triggerModelChange();
+        this.controller.triggerEvent(EventType.ModelChanged);
 
         // Calculate margins to center field in viewport
         let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2);
@@ -186,6 +199,16 @@ export class MainScene extends Phaser.Scene implements EventListener {
 
         this.cameras.main.setViewport(marginLeft, marginTop, w, h);
         this.uiCamera.setViewport(0, 0, this.width, this.height);
+
+        this.controller.triggerEvent(EventType.Resized, {
+            w: this.sys.canvas.clientWidth,
+            h: this.sys.canvas.clientHeight,
+            scale: this.gridSize
+        });
+    }
+
+    public getGridSize(): number {
+        return this.gridSize;
     }
 
     public update() {
@@ -220,34 +243,25 @@ export class MainScene extends Phaser.Scene implements EventListener {
         }
     }
 
-    public redraw(game: Game) {
+    public redraw(game: Model.Game) {
         for (let player of game.getPlayers()) {
             if (player) {
-                let iconScale = Math.floor(this.pitchScale);
+                let iconScale = Math.max(1, Math.floor(this.pitchScale));
                 player.icon.setScale(iconScale, iconScale);
                 player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
-                if (!player.isActive()) {
-                    player.icon.setAlpha(0.5);
-                } else {
-                    player.icon.setAlpha(1);
-                }
                 let [x, y] = player.coordinate;
-                let state = player.getState();
-                if (x >= 0 && x <= 25) {
-                    player.icon.visible = true;
-                    let pX = this.pitchScale * (15 + x * 30);
-                    let pY = this.pitchScale * (15 + y * 30);
 
-                    if (state == PlayerState.Moving) {
-                        player.icon.setFrame(player.getBaseIconFrame() + 1);
-                    } else {
-                        player.icon.setFrame(player.getBaseIconFrame());
-                    }
+                let iconState = this.getIconState(player);
 
-                    player.icon.setPosition(pX, pY);
-                } else {
-                    player.icon.visible = false;
-                }
+                let pX = this.pitchScale * (15 + x * 30);
+                let pY = this.pitchScale * (15 + y * 30);
+
+                player.icon.setFrame(player.getBaseIconFrame() + iconState.frameOffset);
+                player.icon.angle = iconState.angle;
+                player.icon.setAlpha(iconState.alpha);
+                player.icon.visible = iconState.visible;
+
+                player.icon.setPosition(pX, pY);
             }
         }
 
@@ -310,6 +324,54 @@ export class MainScene extends Phaser.Scene implements EventListener {
         } else {
             this.ballIcon.visible = false;
         }
+    }
 
+    private getIconState(player: Model.Player): IconState {
+        let result: IconState = {
+            alpha: 0,
+            angle: 0,
+            frameOffset: 0,
+            visible: false
+        };
+
+        switch(player.getState()) {
+            case Model.PlayerState.Prone:
+                result.angle = -90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Stunned:
+                result.angle = 90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Moving:
+                result.angle = 0;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Falling:
+                result.angle = 90;
+                result.frameOffset = 0;
+                break;
+            default:
+                result.angle = 0;
+                result.frameOffset = 0;
+                break;
+        }
+
+        let flags = player.getFlags();
+
+        if (flags & Model.PlayerState._bit_active) {
+            result.alpha = 1;
+        } else {
+            result.alpha = 0.5;
+        }
+
+        if (player.getTeam() == Model.Side.Away) {
+            result.angle = -result.angle;
+        }
+
+        let [x, y] = player.coordinate;
+        result.visible = x >= 0 && x <= 25;
+
+        return result;
     }
 }

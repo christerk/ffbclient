@@ -1,6 +1,6 @@
-import Position from "./position";
+import * as Model from ".";
 
-export default class Roster {
+export class Roster {
     public id: string;
     public name: string;
     public positions:any;
@@ -11,7 +11,7 @@ export default class Roster {
 
         this.positions = {};
         for (let position of data.positionArray) {
-            this.positions[position.positionId] = new Position(position);
+            this.positions[position.positionId] = new Model.Position(position);
         }
     }
 

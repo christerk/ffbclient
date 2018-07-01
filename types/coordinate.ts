@@ -1,5 +1,5 @@
 
-export default class Coordinate extends Array<number> {
+export class Coordinate extends Array<number> {
     public constructor(x: number, y: number) {
         super(x, y);
     }
