@@ -1,2 +1,2 @@
 export { Coordinate } from "./coordinate"
-export { EventListener } from "./eventlistener"
+export { EventListener, EventType } from "./eventlistener"

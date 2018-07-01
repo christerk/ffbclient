@@ -53,7 +53,7 @@ export type ComponentConfiguration = {
     parentAnchor?: Anchor,
     background?: number,
     color?: number,
-    children?: UIComponent[]
+    children?: UIComponent[],
 }
 
 export abstract class UIComponent {
@@ -89,7 +89,14 @@ export abstract class UIComponent {
             children: [],
         };
 
+        // Hack to avoid children being merged (causes problems)
+        let children = config.children;
+        config.children = null;
+
         this.config = deepmerge(defaults, config);
+
+        // Restore children array
+        config.children = children;
     }
 
     protected numberToRGBString(data: number): string {

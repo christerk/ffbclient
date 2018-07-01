@@ -1,5 +1,6 @@
 
 export enum EventType {
+    Click,
     ModelChanged,
     Resizing,
     Resized

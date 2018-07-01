@@ -81,9 +81,9 @@ export class MainScene extends Phaser.Scene implements EventListener {
         this.pitchScale = 1.0; //this.height / this.pitch.height;
         this.pitch.setScale(this.pitchScale);
 
-        this.pitch.setInteractive();
-        this.input.setDraggable(this.pitch);
-        
+        //this.pitch.setInteractive();
+        //this.input.setDraggable(this.pitch);
+
         // this.input.on('dragstart', (pointer, gameObject) => {
         //     this.dragStart = new Phaser.Geom.Point(this.cameras.main.scrollX, this.cameras.main.scrollY);
         // });
@@ -108,8 +108,6 @@ export class MainScene extends Phaser.Scene implements EventListener {
             let pos = game.teamHome.roster.positions[i];
             icons[pos['id']] = '/'+pos['iconURI'];
         }
-
-        console.log(icons);
 
         let awayPlayers = game.teamAway.getPlayers();
         for (let i in awayPlayers) {
@@ -140,8 +138,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
         const FAR_AWAY = -10000;
 
         // Set up UI overlay
-        let uiLayer = new Layers.UILayer(this, game);
-        this.controller.addEventListener(uiLayer);
+        let uiLayer = new Layers.UILayer(this, game, this.controller);
 
         uiLayer.container.setPosition(FAR_AWAY, FAR_AWAY);
         this.add.existing(uiLayer.container);
