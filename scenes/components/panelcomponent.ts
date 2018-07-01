@@ -20,8 +20,7 @@ export class Panel extends Comp.UIComponent {
     }
 
     public render(ctx: Comp.RenderContext): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(ctx, true);
-        console.log('panel bounds', bounds);
+        let bounds = this.getBounds(ctx);
 
         if (!this.phaserObject) {
             this.phaserObject = ctx.scene.make.container({});

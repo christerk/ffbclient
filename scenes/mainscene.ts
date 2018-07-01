@@ -6,6 +6,13 @@ import { EventListener, EventType } from "../types/eventlistener";
 import { Coordinate } from "../types";
 import * as Layers from "./layers";
 
+type IconState = {
+    alpha: number,
+    angle: number,
+    frameOffset: number,
+    visible: boolean,
+}
+
 export class MainScene extends Phaser.Scene implements EventListener {
 
     private pitch: Phaser.GameObjects.Image;
@@ -242,33 +249,19 @@ export class MainScene extends Phaser.Scene implements EventListener {
                 let iconScale = Math.max(1, Math.floor(this.pitchScale));
                 player.icon.setScale(iconScale, iconScale);
                 player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
-                if (!player.isActive()) {
-                    player.icon.setAlpha(0.5);
-                } else {
-                    player.icon.setAlpha(1);
-                }
                 let [x, y] = player.coordinate;
-                let state = player.getState();
-                if (x >= 0 && x <= 25) {
-                    player.icon.visible = true;
-                    let pX = this.pitchScale * (15 + x * 30);
-                    let pY = this.pitchScale * (15 + y * 30);
 
-                    player.icon.angle = 0;
-                    
-                    if (state == Model.PlayerState.Moving) {
-                        player.icon.setFrame(player.getBaseIconFrame() + 1);
-                    } else if (state == Model.PlayerState.Prone) {
-                        player.icon.angle = player.getTeam() == Model.Side.Home ? -90 : 90;
-                        player.icon.setFrame(player.getBaseIconFrame() + 1);
-                    } else {
-                        player.icon.setFrame(player.getBaseIconFrame());
-                    }
+                let iconState = this.getIconState(player);
 
-                    player.icon.setPosition(pX, pY);
-                } else {
-                    player.icon.visible = false;
-                }
+                let pX = this.pitchScale * (15 + x * 30);
+                let pY = this.pitchScale * (15 + y * 30);
+
+                player.icon.setFrame(player.getBaseIconFrame() + iconState.frameOffset);
+                player.icon.angle = iconState.angle;
+                player.icon.setAlpha(iconState.alpha);
+                player.icon.visible = iconState.visible;
+
+                player.icon.setPosition(pX, pY);
             }
         }
 
@@ -331,6 +324,54 @@ export class MainScene extends Phaser.Scene implements EventListener {
         } else {
             this.ballIcon.visible = false;
         }
+    }
 
+    private getIconState(player: Model.Player): IconState {
+        let result: IconState = {
+            alpha: 0,
+            angle: 0,
+            frameOffset: 0,
+            visible: false
+        };
+
+        switch(player.getState()) {
+            case Model.PlayerState.Prone:
+                result.angle = -90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Stunned:
+                result.angle = 90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Moving:
+                result.angle = 0;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Falling:
+                result.angle = 90;
+                result.frameOffset = 0;
+                break;
+            default:
+                result.angle = 0;
+                result.frameOffset = 0;
+                break;
+        }
+
+        let flags = player.getFlags();
+
+        if (flags & Model.PlayerState._bit_active) {
+            result.alpha = 1;
+        } else {
+            result.alpha = 0.5;
+        }
+
+        if (player.getTeam() == Model.Side.Away) {
+            result.angle = -result.angle;
+        }
+
+        let [x, y] = player.coordinate;
+        result.visible = x >= 0 && x <= 25;
+
+        return result;
     }
 }

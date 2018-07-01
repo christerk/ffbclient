@@ -78,9 +78,11 @@ export class Player {
         return this.state;
     }
 
-    public setState(state: PlayerState) {
-        console.log('Setting Player State', state);
+    public getFlags(): PlayerState {
+        return this.flags;
+    }
 
+    public setState(state: PlayerState) {
         this.state = state & 0xff;
         this.flags = state & ~0xff;
     }

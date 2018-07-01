@@ -13,17 +13,16 @@ export class Label extends Comp.UIComponent {
         this.bounds.w = 0;
         let col = this.numberToRGBString(this.config.color);
         let bg = this.numberToRGBString(this.config.background);
-        let bounds = this.getBounds(ctx, true);
-        let g = ctx.scene.make.text({
-            fontFamily: 'Arial'
-        });
-        g.setFontSize(bounds.height);
+        let bounds = this.getBounds(ctx);
+        let g = ctx.scene.make.text({});
+        g.setFontFamily("arial");
+        g.setFontSize(bounds.height * 0.9);
         g.setColor(col);
         g.setText(this.text);
         g.setBackgroundColor(bg);
 
         this.bounds.w = g.displayWidth + "px";
-        bounds = this.getBounds(ctx, true);
+        bounds = this.getBounds(ctx);
 
         console.log("Label bounds", bounds, g.displayWidth, ctx.w, ctx.h, ctx.scale);
 
