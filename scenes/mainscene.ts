@@ -254,6 +254,8 @@ export class MainScene extends Phaser.Scene implements EventListener {
                     let pX = this.pitchScale * (15 + x * 30);
                     let pY = this.pitchScale * (15 + y * 30);
 
+                    player.icon.angle = 0;
+                    
                     if (state == Model.PlayerState.Moving) {
                         player.icon.setFrame(player.getBaseIconFrame() + 1);
                     } else if (state == Model.PlayerState.Prone) {
