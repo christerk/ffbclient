@@ -8,14 +8,34 @@ declare namespace FFB.Protocol.Messages {
         injury:     PlayerState;
     }
 
+// DIALOG_ID("dialogId"),  DIALOG_PARAMETER("dialogParameter"),     RANGE_RULER("rangeRuler")
+  
+
     type ModelChangeType = {
         modelChangeId:      string;
         modelChangeKey:     string;
-        modelChangeValue:   any; // FFB Client type = Object (investigate further)
+        modelChangeValue:   null | boolean | string | number | PlayerAction | Skill | Date | TurnMode |
+                            Coordinate | PlayerState | SeriousInjury | SendToBoxReason | BloodSpotType |
+                            TrackNumberType | PushbackSquare | MoveSquare | Weather | DiceDecoration |
+                            Inducement | FieldMarker | PlayerMarkerType | GameOption | Card | LeaderState |
+                            CardEffect | DialogId | DialogParameter | RangeRuler;
     }
 
     type ModelChangeListType = {
         modelChangeArray: ModelChangeType[];
+    }
+    
+    type DialogId = {
+        // INFORMATION("information"),  YES_OR_NO_QUESTION("yesOrNoQuestion"),  GAME_COACH_PASSWORD("gameCoachPassword"),  TEAM_CHOICE("teamChoice"),  COIN_CHOICE("coinChoice"),  RE_ROLL("reRoll"),  SKILL_USE("skillUse"),  PROGRESS_BAR("progressBar"),  TEAM_SETUP("teamSetup"),  USE_APOTHECARY("useApothecary"),  RECEIVE_CHOICE("receiveChoice"),  FOLLOWUP_CHOICE("followupChoice"),  START_GAME("startGame"),  APOTHECARY_CHOICE("apothecaryChoice"),  TOUCHBACK("touchback"),  INTERCEPTION("interception"),  SETUP_ERROR("setupError"),  GAME_STATISTICS("gameStatistics"),  WINNINGS_RE_ROLL("winningsReRoll"),  GAME_CHOICE("gameChoice"),  KEY_BINDINGS("keyBindings"),  BLOCK_ROLL("blockRoll"),  PLAYER_CHOICE("playerChoice"),  DEFENDER_ACTION("defenderAction"),  JOIN("join"),  CONCEDE_GAME("concedeGame"),  ABOUT("about"),  END_TURN("endTurn"),  LEAVE_GAME("leaveGame"),  BRIBES("bribes"),  PILING_ON("pilingOn"),  BUY_INDUCEMENTS("buyInducements"),  TRANSFER_PETTY_CASH("transferPettyCash"),  SOUND_VOLUME("soundVolume"),  JOURNEYMEN("journeymen"),  KICKOFF_RESULT("kickoffResult"),  CHAT_COMMANDS("chatCommands"),  KICK_SKILL("kickSkill"),  USE_IGOR("useIgor"),  KICKOFF_RETURN("kickoffReturn"),  PETTY_CASH("pettyCash"),  WIZARD_SPELL("wizardSpell"),  USE_INDUCEMENT("useInducement"),  PASS_BLOCK("passBlock"),  BUY_CARDS("buyCards"),  ARGUE_THE_CALL("argueTheCall");
+        name: string;
+    }
+
+    type RangeRuler = {
+        throwerId:          string;
+        targetCoordinate:   Coordinate;
+        minimumRoll:        number;
+        throwTeamMate:      boolean;
+
     }
 
     type CardEffect = {
@@ -71,6 +91,10 @@ declare namespace FFB.Protocol.Messages {
         homeChoice:      boolean;
     }
 
+    type Weather = {
+        name: string;
+    }
+
     type FieldModelType = {
         ballCoordinate:     Coordinate;
         ballInPlay:         boolean;
@@ -85,7 +109,7 @@ declare namespace FFB.Protocol.Messages {
         playerMarkerArray:  PlayerMarkerType[];
         pushbackSquareArray:PushbackSquare[];
         trackNumberArray:   TrackNumberType[];
-        weather:            string;
+        weather:            Weather;
     }
 
     type SeriousInjury = {
@@ -280,6 +304,14 @@ declare namespace FFB.Protocol.Messages {
         inducementSet:          InducementSet;
     }
 
+    type TurnMode = {
+        name: string;
+    }
+
+    type GameOption = {
+        name: string
+    }
+
     type GameType = {
         actingPlayer:           ActingPlayer;
         connectionPossible:     boolean;
@@ -288,13 +320,13 @@ declare namespace FFB.Protocol.Messages {
         fieldModel:             FieldModelType;
         finished:               boolean;
         gameId:                 number;
-        gameOptions:            string;
+        gameOptions:            GameOption[];
         gameResult:             GameResult;
         gameTime:               number;
         half:                   number;
         homeFirstOffense:       boolean;
         homePlaying:            boolean;
-        lastTurnMode:           string;
+        lastTurnMode:           TurnMode;
         passCoordinate:         Coordinate;
         scheduled:              string;
         setupOffense:           boolean;
@@ -302,15 +334,16 @@ declare namespace FFB.Protocol.Messages {
         teamAway:               TeamType;
         teamHome:               TeamType;
         testing:                boolean;
-        throwerAction:          any;
-        throwerId:              any;
+        throwerAction:          PlayerAction;
+        throwerId:              string;
         timeoutEnforced:        boolean;
         timeoutPossible:        boolean;
         turnDataAway:           TurnData;
         turnDataHome:           TurnData;
-        turnMode:               string;
+        turnMode:               TurnMode;
         turnTime:               number;
         waitingForOpponent:     boolean;
+        dialogParameter:        DialogParameter;
     }
 
     type ReportId = {
@@ -324,17 +357,17 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type Animation = {
-        thrownPlayerId: string;
-        withBall: boolean;
-        startCoordinate: Coordinate;
-        endCoordinate: Coordinate;
-        interceptorCoordinate: Coordinate
-        animationType: AnimationType;
-        card: Card;
+        thrownPlayerId:         string;
+        withBall:               boolean;
+        startCoordinate:        Coordinate;
+        endCoordinate:          Coordinate;
+        interceptorCoordinate:  Coordinate
+        animationType:          AnimationType;
+        card:                   Card;
     }
 
     interface NetCommand {
-        netCommandId: string;
+        netCommandId:   string;
         [key: string]: any;
     }
 
