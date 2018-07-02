@@ -27,7 +27,6 @@ declare namespace FFB.Protocol.Messages {
        name: string
     }
    
-    // REVISIT
     type PlayerDataType = {
         playerId:           string;
         playerCoordinate:   Coordinate;
@@ -201,25 +200,25 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type PlayerResult = {
-        playerId: string;
-        completions: number;
-        touchdowns: number;
-        interceptions: number;
-        casualties: number;
-        playerAwards: number;
-        blocks: number;
-        fouls: number;
-        rushing: number;
-        passing: number;
-        currentSpps: number;
-        turnsPlayed: number;
-        seriousInjury: seriousInjury;
-        sendToBoxReason);
-        sendToBoxTurn: number;
-        sendToBoxHalf: number;
-        sendToBoxByPlayerId: string;
-        hasUsedSecretWeapon: boolean;
-        defecting: boolean;
+        playerId:               string;
+        completions:            number;
+        touchdowns:             number;
+        interceptions:          number;
+        casualties:             number;
+        playerAwards:           number;
+        blocks:                 number;
+        fouls:                  number;
+        rushing:                number;
+        passing:                number;
+        currentSpps:            number;
+        turnsPlayed:            number;
+        seriousInjury:          SeriousInjury;
+        sendToBoxReason:        SendToBoxReason;
+        sendToBoxTurn:          number;
+        sendToBoxHalf:          number;
+        sendToBoxByPlayerId:    string;
+        hasUsedSecretWeapon:    boolean;
+        defecting:              boolean;
     }
 
     type TeamResult = {
@@ -245,6 +244,41 @@ declare namespace FFB.Protocol.Messages {
         teamResultAway: TeamResult; 
     }
 
+    type LeaderState = {
+        //NONE("none"),  AVAILABLE("available"),  USED("used");
+        name: string;
+    }
+
+    type Inducement = {
+        type:   string;
+        value:  number;
+        uses:   number;
+    }
+
+    type InducementSet = {
+        inducements:            Inducement[];
+        cardsAvailable:         Card[];
+        cardsActive:            Card[];
+        cardsDeactivated:       Card[];
+        starPlayerPositionIds:  string[];
+    }
+
+    type TurnData = {
+        homeData:               boolean;
+        turnStarted:            boolean;
+        turnNumber:             number;
+        firstTurnAfterKickoff:  boolean;
+        reRolls:                number;
+        apothecaries:           number;
+        blitzUsed:              boolean;
+        foulUsed:               boolean;
+        reRollUsed:             boolean;
+        handOverUsed:           boolean;
+        passUsed:               boolean;
+        coachBanned:            boolean;
+        leaderState:            LeaderState;
+        inducementSet:          InducementSet;
+    }
 
     type GameType = {
         actingPlayer:           ActingPlayer;
@@ -261,7 +295,7 @@ declare namespace FFB.Protocol.Messages {
         homeFirstOffense:       boolean;
         homePlaying:            boolean;
         lastTurnMode:           string;
-        passCoordinate: any;
+        passCoordinate:         Coordinate;
         scheduled:              string;
         setupOffense:           boolean;
         started:                string;
@@ -272,11 +306,31 @@ declare namespace FFB.Protocol.Messages {
         throwerId:              any;
         timeoutEnforced:        boolean;
         timeoutPossible:        boolean;
-        turnDataAway:       any;
-        turnDataHome:       any;
+        turnDataAway:           TurnData;
+        turnDataHome:           TurnData;
         turnMode:               string;
         turnTime:               number;
         waitingForOpponent:     boolean;
+    }
+
+    type ReportId = {
+        // ALWAYS_HUNGRY_ROLL("alwaysHungryRoll"),  ARGUE_THE_CALL("argueTheCall"),  CATCH_ROLL("catchRoll"),  CONFUSION_ROLL("confusionRoll"),  DAUNTLESS_ROLL("dauntlessRoll"),  DODGE_ROLL("dodgeRoll"),  ESCAPE_ROLL("escapeRoll"),  FOUL_APPEARANCE_ROLL("foulAppearanceRoll"),  GO_FOR_IT_ROLL("goForItRoll"),  INTERCEPTION_ROLL("interceptionRoll"),  LEAP_ROLL("leapRoll"),  PASS_ROLL("passRoll"),  PICK_UP_ROLL("pickUpRoll"),  RIGHT_STUFF_ROLL("rightStuffRoll"),  REGENERATION_ROLL("regenerationRoll"),  SAFE_THROW_ROLL("safeThrowRoll"),  TENTACLES_SHADOWING_ROLL("tentaclesShadowingRoll"),  SKILL_USE("skillUse"),  RE_ROLL("reRoll"),  TURN_END("turnEnd"),  PLAYER_ACTION("playerAction"),  FOUL("foul"),  HAND_OVER("handOver"),  INJURY("injury"),  APOTHECARY_ROLL("apothecaryRoll"),  APOTHECARY_CHOICE("apothecaryChoice"),  THROW_IN("throwIn"),  SCATTER_BALL("scatterBall"),  BLOCK("block"),  BLOCK_CHOICE("blockChoice"),  SPECTATORS("spectators"),  WEATHER("weather"),  COIN_THROW("coinThrow"),  RECEIVE_CHOICE("receiveChoice"),  KICKOFF_RESULT("kickoffResult"),  KICKOFF_SCATTER("kickoffScatter"),  KICKOFF_EXTRA_REROLL("extraReRoll"),  KICKOFF_RIOT("kickoffRiot"),  KICKOFF_THROW_A_ROCK("kickoffThrowARock"),  PUSHBACK("pushback"),  REFEREE("referee"),  KICKOFF_PITCH_INVASION("kickoffPitchInvasion"),  THROW_TEAM_MATE_ROLL("throwTeamMateRoll"),  SCATTER_PLAYER("scatterPlayer"),  TIMEOUT_ENFORCED("timeoutEnforced"),  WINNINGS_ROLL("winningsRoll"),  FUMBBL_RESULT_UPLOAD("fumbblResultUpload"),  FAN_FACTOR_ROLL("fanFactorRoll"),  MOST_VALUABLE_PLAYERS("mostValuablePlayers"),  DEFECTING_PLAYERS("defectingPlayers"),  JUMP_UP_ROLL("jumpUpRoll"),  STAND_UP_ROLL("standUpRoll"),  BRIBES_ROLL("bribesRoll"),  MASTER_CHEF_ROLL("masterChefRoll"),  START_HALF("startHalf"),  INDUCEMENT("inducement"),  PILING_ON("pilingOn"),  CHAINSAW_ROLL("chainsawRoll"),  LEADER("leader"),  SECRET_WEAPON_BAN("secretWeaponBan"),  BLOOD_LUST_ROLL("bloodLustRoll"),  HYPNOTIC_GAZE_ROLL("hypnoticGazeRoll"),  BITE_SPECTATOR("biteSpectator"),  ANIMOSITY_ROLL("animosityRoll"),  RAISE_DEAD("raiseDead"),  BLOCK_ROLL("blockRoll"),  PENALTY_SHOOTOUT("penaltyShootout"),  DOUBLE_HIRED_STAR_PLAYER("doubleHiredStarPlayer"),  SPELL_EFFECT_ROLL("spellEffectRoll"),  WIZARD_USE("wizardUse"),  GAME_OPTIONS("gameOptions"),  PASS_BLOCK("passBlock"),  NO_PLAYERS_TO_FIELD("noPlayersToField"),  PLAY_CARD("playCard"),  CARD_DEACTIVATED("cardDeactivated"),  BOMB_OUT_OF_BOUNDS("bombOutOfBounds"),  PETTY_CASH("pettyCash"),  INDUCEMENTS_BOUGHT("inducementsBought"),  CARDS_BOUGHT("cardsBought"),  CARD_EFFECT_ROLL("cardEffectRoll"),  WEEPING_DAGGER_ROLL("weepingDaggerRoll");
+        name: string;
+    }
+
+    type AnimationType = {
+        //PASS("pass"),  THROW_TEAM_MATE("throwTeamMate"),  KICK("kick"),  SPELL_FIREBALL("spellFireball"),  SPELL_LIGHTNING("spellLightning"),  KICKOFF_BLITZ("kickoffBlitz"),  KICKOFF_BLIZZARD("kickoffBlizzard"),  KICKOFF_BRILLIANT_COACHING("kickoffBrilliantCoaching"),  KICKOFF_CHEERING_FANS("kickoffCheeringFans"),  KICKOFF_GET_THE_REF("kickoffGetTheRef"),  KICKOFF_HIGH_KICK("kickoffHighKick"),  KICKOFF_NICE("kickoffNice"),  KICKOFF_PERFECT_DEFENSE("kickoffPerfectDefense"),  KICKOFF_PITCH_INVASION("kickoffPitchInvasion"),  KICKOFF_POURING_RAIN("kickoffPouringRain"),  KICKOFF_QUICK_SNAP("kickoffQuickSnap"),  KICKOFF_RIOT("kickoffRiot"),  KICKOFF_SWELTERING_HEAT("kickoffSwelteringHeat"),  KICKOFF_THROW_A_ROCK("kickoffThrowARock"),  KICKOFF_VERY_SUNNY("kickoffVerySunny"),  HAIL_MARY_PASS("hailMaryPass"),  THROW_A_ROCK("throwARock"),  THROW_BOMB("throwBomb"),  HAIL_MARY_BOMB("hailMaryBomb"),  BOMB_EXLOSION("bombExplosion"),  CARD("card");
+        name: string;
+    }
+
+    type Animation = {
+        thrownPlayerId: string;
+        withBall: boolean;
+        startCoordinate: Coordinate;
+        endCoordinate: Coordinate;
+        interceptorCoordinate: Coordinate
+        animationType: AnimationType;
+        card: Card;
     }
 
     interface NetCommand {
@@ -295,8 +349,8 @@ declare namespace FFB.Protocol.Messages {
     interface ServerModelSync extends NetCommand {
         commandNr:          number;
         modelChangeList:    ModelChangeListType
-        reportList: any[];
-        animation: any[];
+        reportList:         ReportId[];
+        animation:          Animation[];
         sound:              string;
         gameTime:           number;
         turnTime:           number;
