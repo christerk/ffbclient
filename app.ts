@@ -5,14 +5,18 @@ import Network from "./network";
 import CommandHandler from "./commandhandler";
 import CommandManager from "./model/commandmanager";
 import * as Model from "./model";
+import { EventListener, EventType } from "./types/eventlistener";
 
-export default class App extends Phaser.Game {
-    constructor() {
+export default class App extends Phaser.Game implements EventListener {
+    private static controller: Controller;
+
+    public constructor() {
         console.log("Starting Phaser App");
 
         let game = new Model.Game();
         let commandManager = new CommandManager(game);
         let controller = new Controller(game, commandManager);
+        App.controller = controller;
 
         commandManager.setController(controller);
 
@@ -82,6 +86,37 @@ export default class App extends Phaser.Game {
             endButton.addEventListener('click', () => {
                 commandManager.moveToEnd();
             });
+        }
+
+        setTimeout(() => {
+            this.initialize();
+        }, 1);
+    }
+
+    private initialize() {
+        App.controller.addEventListener(this);
+    }
+
+    public handleEvent(eventType: EventType, data: any) {
+        switch(eventType) {
+            case EventType.Click:
+                if (data.source == "DebugButton") {
+                    let el = document.getElementById("phaserapp");
+                    if (el.style.position == "fixed") {
+                        el.style.width = "960px";
+                        el.style.height = "554px";
+                        el.style.position = "initial";
+                    } else {
+                        el.style.width = "100%";
+                        el.style.height = "100%";
+                        el.style.top = "0";
+                        el.style.left = "0";
+                        el.style.position = "fixed";
+                        el.style.zIndex = "1000";
+                    }
+                    App.controller.triggerEvent(EventType.Resizing);
+                }
+                break;
         }
     }
 }

@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import * as Comp from "../components";
 import { EventListener, EventType } from "../../types/eventlistener";
 import * as Model from "../../model";
+import Controller from "../../controller";
 
 export class UILayer implements EventListener {
     public container: Phaser.GameObjects.Container;
@@ -10,9 +11,10 @@ export class UILayer implements EventListener {
 
     private component: Comp.UIComponent;
 
-    public constructor(scene: Phaser.Scene, game: Model.Game) {
+    public constructor(scene: Phaser.Scene, game: Model.Game, controller: Controller) {
         this.scene = scene;
         this.container = scene.make.container({});
+        controller.addEventListener(this);
 
         this.component = new Comp.Panel({
             id: "RootPanel",
@@ -89,6 +91,14 @@ export class UILayer implements EventListener {
                         }),
                     ]
                 }),
+                new Comp.Button({
+                    id: "DebugButton",
+                    width: 0.9,
+                    height: 0.9,
+                    anchor: Comp.Anchor.SOUTHWEST,
+                    parentAnchor: Comp.Anchor.SOUTHWEST,
+                    background: 0x999999,
+                }, controller),
             ]
         });
     }
