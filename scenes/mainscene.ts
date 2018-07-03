@@ -5,6 +5,7 @@ import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
 import { Coordinate } from "../types";
 import * as Layers from "./layers";
+import { Dice } from "./animations/dice";
 
 type IconState = {
     alpha: number,
@@ -31,6 +32,9 @@ export class MainScene extends Phaser.Scene implements EventListener {
     private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera;
     private gridSize: number; // Size of a grid square
+    private d6_1: Phaser.GameObjects.Sprite;
+    private d6_2: Phaser.GameObjects.Sprite;
+    private dice: Dice;
 
     public constructor(controller: Controller) {
         super({
@@ -51,6 +55,17 @@ export class MainScene extends Phaser.Scene implements EventListener {
                 break;
             case EventType.Resizing:
                 this.resize();
+                break;
+            case EventType.Click:
+                this.d6_1.visible = true;
+                this.d6_2.visible = true;
+                let target1 = Math.floor(Math.random() * 6 + 1);
+                let anim1 = this.dice.getAnimation(this, "d6_1", target1);
+                let target2 = Math.floor(Math.random() * 6 + 1);
+                let anim2 = this.dice.getAnimation(this, "d6_2", target2);
+                console.log(target1, target2);
+                this.d6_1.anims.play(anim1);
+                this.d6_2.anims.play(anim2);
                 break;
         }
     }
@@ -157,6 +172,15 @@ export class MainScene extends Phaser.Scene implements EventListener {
 
         this.redraw(this.controller.getGameState());
         this.resize();
+
+        this.d6_1 = this.add.sprite(100, 100, "d6");
+        this.d6_1.setScale(0.5, 0.5);
+        this.d6_1.visible = false;
+        this.d6_2 = this.add.sprite(150, 100, "d6");
+        this.d6_2.setScale(0.5, 0.5);
+        this.d6_2.visible = false;
+
+        this.dice = new Dice();
     }
 
     public resize() {

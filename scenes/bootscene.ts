@@ -44,6 +44,10 @@ export class BootScene extends Phaser.Scene {
         }
 
         this.load.image('pitch', 'https://fumbbl.com/i/561518');
+        this.load.spritesheet('d6', 'https://fumbbl.com/i/562665', {
+            frameWidth: 100,
+            frameHeight: 100
+        });
 
         this.initialize();
     }
