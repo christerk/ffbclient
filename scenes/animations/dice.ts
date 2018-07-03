@@ -37,8 +37,6 @@ export class Dice {
 
         scene.anims.create(config);
 
-        //scene.anims.add(key, anim);
-
         return key;
     }
 
@@ -52,24 +50,35 @@ export class Dice {
 
         let result:AnimationFrameConfig[] = [];
 
-        let start = Phaser.Math.RandomXY(new Phaser.Math.Vector2());
+        let startX = 0.25 + Math.random() * 0.75;
+        let startY = 0.25 + Math.random() * 0.75;
 
         let ease = Phaser.Math.Easing.Quadratic.Out;
 
         let force = 3;
 
         let delta = 1.0 / numFrames;
+        let currentFrame: number;
         for (let p = 0; p<=1; p += delta) {
             let v = ease(p);
 
-            let cX = start.x + (-start.x * v);
-            let cY = start.y + (-start.y * v);
+            let cX = startX + (-startX * v);
+            let cY = startY + (-startY * v);
             let spriteX = (Math.ceil(force)*this.width + Math.round(cX * this.width * force) + offsetX) % this.width;
             let spriteY = (Math.ceil(force)*this.height + Math.round(cY * this.height * force) + offsetY) % this.height;
 
+            currentFrame = spriteX + spriteY*this.width;
             result.push({
                 key: key,
-                frame: spriteX + spriteY*this.width
+                frame: currentFrame
+            });
+        }
+
+        // Add an amount of non-moving on-screen time to the roll.
+        for (let i = 0; i < 30; i++) {
+            result.push({
+                key: key,
+                frame: currentFrame
             });
         }
 
