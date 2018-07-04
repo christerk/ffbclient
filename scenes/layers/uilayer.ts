@@ -99,6 +99,17 @@ export class UILayer implements EventListener {
                     parentAnchor: Comp.Anchor.SOUTHWEST,
                     background: 0x999999,
                 }, controller),
+                new Comp.Button({
+                    id: "TestButton",
+                    width: 0.9,
+                    height: 0.9,
+                    margin: {
+                        bottom: 1.1,
+                    },
+                    anchor: Comp.Anchor.SOUTHWEST,
+                    parentAnchor: Comp.Anchor.SOUTHWEST,
+                    background: 0x999999,
+                }, controller),
             ]
         });
     }

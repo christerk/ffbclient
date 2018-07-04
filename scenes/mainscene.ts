@@ -5,6 +5,7 @@ import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
 import { Coordinate } from "../types";
 import * as Layers from "./layers";
+import { DiceManager } from "../dicemanager";
 
 type IconState = {
     alpha: number,
@@ -31,6 +32,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
     private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera;
     private gridSize: number; // Size of a grid square
+    private diceManager: DiceManager;
 
     public constructor(controller: Controller) {
         super({
@@ -44,7 +46,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
         controller.addEventListener(this);
     }
 
-    public handleEvent(event: EventType) {
+    public handleEvent(event: EventType, data?: any) {
         switch(event) {
             case EventType.ModelChanged:
                 this.dirty = true;
@@ -52,11 +54,21 @@ export class MainScene extends Phaser.Scene implements EventListener {
             case EventType.Resizing:
                 this.resize();
                 break;
+            case EventType.Click:
+                if (data.source == "TestButton") {
+                    let targets = [Math.floor(Math.random()*6+1), Math.floor(Math.random()*6+1)];
+                    let x = Math.random() * this.width / 2 + this.width/4;
+                    let y = Math.random() * this.height / 2 + this.height/4;
+
+                    this.diceManager.roll2d6(targets[0], targets[1], x, y);
+                }
+                break;
         }
     }
 
     public init(config) {
         console.log('Main Scene: init', config);
+        this.diceManager = new DiceManager(this);
 
         this.controller.scene = this.scene;
 
