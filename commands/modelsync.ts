@@ -24,6 +24,7 @@ export default class CommandModelSync extends Command {
             "blockRoll": this.handleBlockRollReport,
             "goForItRoll": this.handleGoForItReport,
             "injury": this.handleInjuryReport,
+            "dodgeRoll": this.handleDodgeRollReport,
         }
     }
 
@@ -113,4 +114,9 @@ export default class CommandModelSync extends Command {
     private handleInjuryReport(report: FFB.Protocol.Messages.InjuryReport): ClientCommands.AbstractCommand {
         return new ClientCommands.Injury(report.armorRoll, report.injuryRoll, report.casualtyRoll, report.casualtyRollDecay)
     }
+
+    private handleDodgeRollReport(report: FFB.Protocol.Messages.DodgeRollReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.DodgeRoll(report.roll);
+    }
+    
 }

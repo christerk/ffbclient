@@ -59,13 +59,13 @@ export class MainScene extends AbstractScene implements EventListener {
                     this.controller.DiceManager.setScale(this.pitchScale);
 
                     if (Math.random() < 0.25) {
-                        this.controller.DiceManager.roll2d6(targets[0], targets[1], x, y);
+                        this.controller.DiceManager.roll("d6", [targets[0], targets[1]], x, y);
                     } else if (Math.random() < 0.5) {
-                        this.controller.DiceManager.rolldb(targets[0], x, y);
+                        this.controller.DiceManager.roll("db", [targets[0]], x, y);
                     } else if (Math.random() < 0.75) {
-                        this.controller.DiceManager.rolld6(targets[0], x, y);
+                        this.controller.DiceManager.roll("d6", [targets[0]], x, y);
                     } else {
-                        this.controller.DiceManager.roll2db(targets[0], targets[1], x, y);
+                        this.controller.DiceManager.roll("db", [targets[0], targets[1]], x, y);
                     }
                 }
                 break;

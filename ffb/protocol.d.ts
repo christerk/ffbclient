@@ -388,7 +388,16 @@ declare namespace FFB.Protocol.Messages {
         seriousInjuryDecay: string;
     }
 
-    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport;
+    type DodgeRollReport = {
+        reportId: "dodgeRoll";
+        minimumRoll: number;
+        playerId: string;
+        reRolled: boolean;
+        roll: number;
+        successful: boolean;
+    }
+
+    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollRport;
 
     type ReportList = {
         reports: Report[];

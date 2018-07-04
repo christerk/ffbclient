@@ -2,6 +2,7 @@
 import * as Model from ".";
 import { Coordinate } from "../types";
 import Controller from "../controller";
+import { DiceManager, DieType } from "../dicemanager";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
@@ -302,13 +303,8 @@ export class BlockRoll extends AbstractCommand {
         let y = Math.random() * h / 2 + h/4;
 
         let r = this.rolls;
-        if (r.length == 1) {
-            this.controller.DiceManager.rolldb(r[0], x, y);
-        } else if (r.length == 2) {
-            this.controller.DiceManager.roll2db(r[0], r[1], x, y);
-        } else if (r.length == 3) {
-            this.controller.DiceManager.roll3db(r[0], r[1], r[2], x, y);
-        }
+
+        this.controller.DiceManager.roll("db", r, x, y);
     }
 
     public undo() {
@@ -331,7 +327,7 @@ export class GoForItRoll extends AbstractCommand {
         let x = Math.random() * w / 2 + w/4;
         let y = Math.random() * h / 2 + h/4;
 
-        this.controller.DiceManager.rolld6(this.roll, x, y);
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
     }
 
     public undo() {
@@ -353,29 +349,52 @@ export class Injury extends AbstractCommand {
         this.casualtyRollDecay = casualtyRollDecay;
     }
 
-    private rollDice(t1: number, t2: number, delay: number) {
+    private rollDice(type: DieType, targets: number[], delay: number) {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let x = Math.random() * w / 2 + w/4;
         let y = Math.random() * h / 2 + h/4;
 
-        this.controller.DiceManager.roll2d6(t1, t2, x, y, 1000, delay);
+        this.controller.DiceManager.roll(type, targets, x, y, 1000, delay);
     }
 
     public do() {
         if (this.armorRoll != null) {
-            this.rollDice(this.armorRoll[0], this.armorRoll[1], 0);
+            this.rollDice("d6", this.armorRoll, 0);
         }
         if (this.injuryRoll != null) {
-            this.rollDice(this.injuryRoll[0], this.injuryRoll[1], 333);
+            this.rollDice("d6", this.injuryRoll, 333);
         }
         if (this.casualtyRoll != null) {
-            this.rollDice(this.casualtyRoll[0], this.casualtyRoll[1], 666);
+            this.rollDice("d68", this.casualtyRoll, 666);
         }
         if (this.casualtyRollDecay != null) {
-            this.rollDice(this.casualtyRollDecay[0], this.casualtyRollDecay[1], 999);
+            this.rollDice("d68", this.casualtyRollDecay, 999);
         }
+    }
+
+    public undo() {
+
+    }
+}
+
+export class DodgeRoll extends AbstractCommand {
+    private roll: number;
+
+    public constructor(roll: number) {
+        super();
+        this.roll = roll;
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
     }
 
     public undo() {

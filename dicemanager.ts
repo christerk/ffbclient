@@ -1,13 +1,17 @@
 import Phaser from "phaser";
 import { Dice } from "./scenes/animations/dice";
 
-type DieType = "d6" | "db";
+export type DieType = "d6" | "db" | "d8" | "d68";
 
 export class DiceManager {
     private scene: Phaser.Scene;
     private scale: number;
     private dice: Dice;
     private diceSerial: number;
+    private diceConfig: {[type: string] : {
+        spreadScale: number,
+        size: number
+    }};
 
     private dieCache: { [type: string]: Phaser.GameObjects.Sprite[] };
 
@@ -15,10 +19,30 @@ export class DiceManager {
         this.dieCache = {
             "d6": [],
             "db": [],
+            "d8": [],
         };
         this.dice = new Dice();
         this.diceSerial = 0;
         this.scale = 1;
+
+        this.diceConfig = {
+            "d6": {
+                spreadScale: 15,
+                size: 0.25,
+            },
+            "db": {
+                spreadScale: 20,
+                size: 0.33,
+            },
+            "d8": {
+                spreadScale: 15,
+                size: 0.25,
+            },
+            "d68": {
+                spreadScale: 15,
+                size: 0.25,
+            }
+        }
     }
 
     public setScene(scene: Phaser.Scene) {
@@ -29,70 +53,57 @@ export class DiceManager {
         this.scale = scale;
     }
 
-    public rolld6(target: number, x: number, y: number, duration = 1000, delay = 0) {
-        let sprite = this.getDie("d6");
-        let angle = Math.random() * Math.PI * 2;
-        this.generateRoll("d6", sprite, 0.25, target, x, y, duration, angle);
+    private getLocalSpread(numDice: number): number[][] {
+        if (numDice == 1) {
+            return [[0,0]];
+        } else {
+            let result:number[][] = [];
+            let angleStep = 2 * Math.PI / numDice;
+            let currentAngle = Math.random() * 2 * Math.PI;
+            let vec = new Phaser.Math.Vector2();
+            for (let i=0; i<numDice; i++) {
+                vec = vec.setToPolar(currentAngle);
+                currentAngle += angleStep;
+                result.push([vec.x, vec.y]);
+            }
+            return result;
+        }
     }
 
-    public roll2d6(target1: number, target2: number, x: number, y: number, duration = 1000, delay = 0) {
-        let sprite_1 = this.getDie("d6");
-        let sprite_2 = this.getDie("d6");
+    public roll(type: DieType, targets: number[], x: number, y: number, duration = 1000, delay = 0) {
+        let numDice = targets.length;
+        let localSpread = this.getLocalSpread(numDice);
 
-        let vec = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), 15 * this.scale);
+        let spreadScale = this.diceConfig[type].spreadScale;
+        let size = this.diceConfig[type].size;
+        let angle = Math.random() * 2 * Math.PI;
+        let angleStep = Math.PI / 8;
 
-        let angle1 = Math.random() * Math.PI * 2;
-        let angle2 = angle1 + Math.PI / 4;
-
-        this.generateRoll("d6", sprite_1, 0.25, target1, x + vec.x, y + vec.y, duration, angle1, delay);
-        this.generateRoll("d6", sprite_2, 0.25, target2, x - vec.x, y - vec.y, duration, angle2, delay);
-    }
-
-    public rolldb(target: number, x: number, y: number, duration = 1000) {
-        let sprite = this.getDie("db");
-        let angle = Math.random() * Math.PI * 2;
-        this.generateRoll("db", sprite, 0.33, target, x, y, duration, angle);
-    }
-
-    public roll2db(target1: number, target2: number, x: number, y: number, duration = 1000) {
-        let sprite_1 = this.getDie("db");
-        let sprite_2 = this.getDie("db");
-
-        let vec = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), 20 * this.scale);
-
-        let angle1 = Math.random() * Math.PI * 2;
-        let angle2 = angle1 + Math.PI / 4;
-
-        this.generateRoll("db", sprite_1, 0.33, target1, x + vec.x, y + vec.y, duration, angle1);
-        this.generateRoll("db", sprite_2, 0.33, target2, x - vec.x, y - vec.y, duration, angle2);
-    }
-
-    public roll3db(target1: number, target2: number, target3: number, x: number, y: number, duration = 1000) {
-        let sprite_1 = this.getDie("db");
-        let sprite_2 = this.getDie("db");
-        let sprite_3 = this.getDie("db");
-
-        let a = Math.random() * Math.PI * 2;
-
-        let v1 = new Phaser.Math.Vector2().setToPolar(a, 20 * this.scale);
-        let v2 = new Phaser.Math.Vector2().setToPolar(a - Math.PI * 2/3, 20 * this.scale);
-        let v3 = new Phaser.Math.Vector2().setToPolar(a + Math.PI * 2/3, 20 * this.scale);
-
-        let angle1 = Math.random() * Math.PI * 2;
-        let angle2 = angle1 + Math.PI / 4;
-        let angle3 = angle1 - Math.PI / 4;
-
-        this.generateRoll("db", sprite_1, 0.33, target1, x + v1.x, y + v1.y, duration, angle1);
-        this.generateRoll("db", sprite_2, 0.33, target2, x + v2.x, y + v2.y, duration, angle2);
-        this.generateRoll("db", sprite_2, 0.33, target3, x + v3.x, y + v3.y, duration, angle3);
+        if (type == "d68") {
+            // Special case for d68 rolls
+            if (numDice == 2) {
+                let sprite = this.getDie("d6");
+                let pX = x + localSpread[0][0] * spreadScale * this.scale;
+                let pY = y + localSpread[0][1] * spreadScale * this.scale;
+                this.generateRoll("d6", sprite, size, targets[0], pX, pY, duration, angle, delay);
+                sprite = this.getDie("d8");
+                pX = x + localSpread[1][0] * spreadScale * this.scale;
+                pY = y + localSpread[1][1] * spreadScale * this.scale;
+                this.generateRoll("d8", sprite, size, targets[1], pX, pY, duration, angle + angleStep, delay);
+            } else {
+                console.log("Strange d68 roll encountered", targets);
+            }
+        } else {
+            for (let i = 0; i<numDice; i++) {
+                let sprite = this.getDie(type);
+                let pX = x + localSpread[i][0] * spreadScale * this.scale;
+                let pY = y + localSpread[i][1] * spreadScale * this.scale;
+                this.generateRoll(type, sprite, size, targets[i], pX, pY, duration, angle + i*angleStep, delay);
+            }
+        }
     }
 
     private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0)  {
-
-        if (type == "db") {
-            target = this.dice.remapBlockDice(target);
-        }
-
         let anim = this.dice.getAnimation(type, this.scene, "dice_animation:" + sprite.name, target);
         let start = new Phaser.Math.Vector2();
         start.setToPolar(angle, 300 * this.scale)

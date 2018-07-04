@@ -38,15 +38,19 @@ export class BootScene extends AbstractScene {
             this.spritesheets[key] = '/'+sprite;
         }
 
-        this.load.image('pitch', 'https://fumbbl.com/i/561518');
-        this.load.spritesheet('d6', 'https://fumbbl.com/i/562665', {
+        this.load.image("pitch", "https://fumbbl.com/i/561518");
+        this.load.spritesheet("d6", "https://fumbbl.com/i/562665", {
             frameWidth: 100,
-            frameHeight: 100
+            frameHeight: 100,
         });
-        this.load.spritesheet('db', 'https://fumbbl.com/i/562707', {
+        this.load.spritesheet("db", "https://fumbbl.com/i/562707", {
             frameWidth: 100,
-            frameHeight: 100
+            frameHeight: 100,
         });
+        this.load.spritesheet("d8", "https://fumbbl.com/i/562717", {
+            frameWidth: 100,
+            frameHeight: 100,
+        })
 
         this.initialize();
     }
