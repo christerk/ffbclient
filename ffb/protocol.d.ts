@@ -18,7 +18,7 @@ declare namespace FFB.Protocol.Messages {
                             Coordinate | PlayerState | SeriousInjury | SendToBoxReason | BloodSpotType |
                             TrackNumberType | PushbackSquare | MoveSquare | Weather | DiceDecoration |
                             Inducement | FieldMarker | PlayerMarkerType | GameOption | Card | LeaderState |
-                            CardEffect | DialogId | DialogParameter | RangeRuler;
+                            CardEffect | DialogId | RangeRuler;
     }
 
     type ModelChangeListType = {
@@ -78,7 +78,7 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type MoveSquare = {
-        fieldCoordinate:    Coordinate;
+        coordinate:    Coordinate;
         minimumRollDodge:   number;
         minimumRollGfi:     number;
     }
@@ -343,12 +343,39 @@ declare namespace FFB.Protocol.Messages {
         turnMode:               TurnMode;
         turnTime:               number;
         waitingForOpponent:     boolean;
-        dialogParameter:        DialogParameter;
+        dialogParameter:        any;
     }
 
     type ReportId = {
         // ALWAYS_HUNGRY_ROLL("alwaysHungryRoll"),  ARGUE_THE_CALL("argueTheCall"),  CATCH_ROLL("catchRoll"),  CONFUSION_ROLL("confusionRoll"),  DAUNTLESS_ROLL("dauntlessRoll"),  DODGE_ROLL("dodgeRoll"),  ESCAPE_ROLL("escapeRoll"),  FOUL_APPEARANCE_ROLL("foulAppearanceRoll"),  GO_FOR_IT_ROLL("goForItRoll"),  INTERCEPTION_ROLL("interceptionRoll"),  LEAP_ROLL("leapRoll"),  PASS_ROLL("passRoll"),  PICK_UP_ROLL("pickUpRoll"),  RIGHT_STUFF_ROLL("rightStuffRoll"),  REGENERATION_ROLL("regenerationRoll"),  SAFE_THROW_ROLL("safeThrowRoll"),  TENTACLES_SHADOWING_ROLL("tentaclesShadowingRoll"),  SKILL_USE("skillUse"),  RE_ROLL("reRoll"),  TURN_END("turnEnd"),  PLAYER_ACTION("playerAction"),  FOUL("foul"),  HAND_OVER("handOver"),  INJURY("injury"),  APOTHECARY_ROLL("apothecaryRoll"),  APOTHECARY_CHOICE("apothecaryChoice"),  THROW_IN("throwIn"),  SCATTER_BALL("scatterBall"),  BLOCK("block"),  BLOCK_CHOICE("blockChoice"),  SPECTATORS("spectators"),  WEATHER("weather"),  COIN_THROW("coinThrow"),  RECEIVE_CHOICE("receiveChoice"),  KICKOFF_RESULT("kickoffResult"),  KICKOFF_SCATTER("kickoffScatter"),  KICKOFF_EXTRA_REROLL("extraReRoll"),  KICKOFF_RIOT("kickoffRiot"),  KICKOFF_THROW_A_ROCK("kickoffThrowARock"),  PUSHBACK("pushback"),  REFEREE("referee"),  KICKOFF_PITCH_INVASION("kickoffPitchInvasion"),  THROW_TEAM_MATE_ROLL("throwTeamMateRoll"),  SCATTER_PLAYER("scatterPlayer"),  TIMEOUT_ENFORCED("timeoutEnforced"),  WINNINGS_ROLL("winningsRoll"),  FUMBBL_RESULT_UPLOAD("fumbblResultUpload"),  FAN_FACTOR_ROLL("fanFactorRoll"),  MOST_VALUABLE_PLAYERS("mostValuablePlayers"),  DEFECTING_PLAYERS("defectingPlayers"),  JUMP_UP_ROLL("jumpUpRoll"),  STAND_UP_ROLL("standUpRoll"),  BRIBES_ROLL("bribesRoll"),  MASTER_CHEF_ROLL("masterChefRoll"),  START_HALF("startHalf"),  INDUCEMENT("inducement"),  PILING_ON("pilingOn"),  CHAINSAW_ROLL("chainsawRoll"),  LEADER("leader"),  SECRET_WEAPON_BAN("secretWeaponBan"),  BLOOD_LUST_ROLL("bloodLustRoll"),  HYPNOTIC_GAZE_ROLL("hypnoticGazeRoll"),  BITE_SPECTATOR("biteSpectator"),  ANIMOSITY_ROLL("animosityRoll"),  RAISE_DEAD("raiseDead"),  BLOCK_ROLL("blockRoll"),  PENALTY_SHOOTOUT("penaltyShootout"),  DOUBLE_HIRED_STAR_PLAYER("doubleHiredStarPlayer"),  SPELL_EFFECT_ROLL("spellEffectRoll"),  WIZARD_USE("wizardUse"),  GAME_OPTIONS("gameOptions"),  PASS_BLOCK("passBlock"),  NO_PLAYERS_TO_FIELD("noPlayersToField"),  PLAY_CARD("playCard"),  CARD_DEACTIVATED("cardDeactivated"),  BOMB_OUT_OF_BOUNDS("bombOutOfBounds"),  PETTY_CASH("pettyCash"),  INDUCEMENTS_BOUGHT("inducementsBought"),  CARDS_BOUGHT("cardsBought"),  CARD_EFFECT_ROLL("cardEffectRoll"),  WEEPING_DAGGER_ROLL("weepingDaggerRoll");
         name: string;
+    }
+
+    type BlockReport = {
+        reportId: "block";
+        defenderId: string;
+    }
+
+    type BlockRollReport = {
+        reportId: "blockRoll";
+        blockRoll: number[];
+        choosingTeamId: string;
+    }
+
+    type GoForItReport = {
+        reportId: "goForItRoll";
+        minimumRoll: number;
+        rerolled: boolean;
+        roll: number;
+        successful: boolean;
+    }
+
+    type Report = BlockReport | BlockRollReport | GoForItReport;
+
+    type ReportList = {
+        reports: Report[];
+        sound: string;
+        turnTime: number;
     }
 
     type AnimationType = {
@@ -382,7 +409,7 @@ declare namespace FFB.Protocol.Messages {
     interface ServerModelSync extends NetCommand {
         commandNr:          number;
         modelChangeList:    ModelChangeListType
-        reportList:         ReportId[];
+        reportList:         ReportList;
         animation:          Animation[];
         sound:              string;
         gameTime:           number;

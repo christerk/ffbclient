@@ -1,26 +1,21 @@
 import Phaser from "phaser"
+import Controller from "../controller";
+import { AbstractScene } from "./abstractscene";
 
-export class ConnectScene extends Phaser.Scene {
+export class ConnectScene extends AbstractScene {
 
-    private controller: any;
     private width: number;
     private height: number;
     private config: any;
     private auth: string;
 
-    public constructor(controller: any) {
-        super({
-            key: 'connectScene',
-            active: false,
-        });
+    public constructor(controller: Controller) {
+        super('connectScene', controller);
         console.log("Connect Scene: constructed");
-        this.controller = controller;
     }
 
     public init(config) {
         console.log('Connect Scene: init', config);
-
-        this.controller.scene = this.scene;
 
         this.width = this.sys.canvas.width;
         this.height = this.sys.canvas.height;

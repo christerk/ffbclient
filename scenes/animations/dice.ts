@@ -1,14 +1,12 @@
 import Phaser from "phaser";
 
 export class Dice {
-    private spritesheet: string;
     private width: number;
     private height: number;
     private targets: number[][][];
 
     public constructor() {
 
-        this.spritesheet = 'd6';
         this.width = 20;
         this.height = 19;
 
@@ -23,10 +21,10 @@ export class Dice {
         ];
     }
 
-    public getAnimation(scene: Phaser.Scene, key: string, target: number) {
+    public getAnimation(spritesheet: string, scene: Phaser.Scene, key: string, target: number) {
         let config: AnimationConfig = {
             key: key,
-            frames: this.generateRollFrames(this.spritesheet, target, 60),
+            frames: this.generateRollFrames(spritesheet, target, 60),
             repeat: 0,
             frameRate: 60
         };
@@ -41,6 +39,7 @@ export class Dice {
     }
 
     private generateRollFrames(key: string, target: number, numFrames: number): AnimationFrameConfig[] {
+        console.log("Generating Roll Frames for",key,target);
         let t = this.targets[target];
         let coords = t[Math.floor(Math.random()*t.length)];
         let offsetX = coords[0];
@@ -68,14 +67,6 @@ export class Dice {
             let spriteY = (Math.ceil(force)*this.height + Math.round(cY * this.height * force) + offsetY) % this.height;
 
             currentFrame = spriteX + spriteY*this.width;
-            result.push({
-                key: key,
-                frame: currentFrame
-            });
-        }
-
-        // Add an amount of non-moving on-screen time to the roll.
-        for (let i = 0; i < 30; i++) {
             result.push({
                 key: key,
                 frame: currentFrame

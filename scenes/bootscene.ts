@@ -1,9 +1,9 @@
 import Phaser from "phaser"
 import Controller from "../controller";
+import { AbstractScene } from "./abstractscene";
 
-export class BootScene extends Phaser.Scene {
+export class BootScene extends AbstractScene {
 
-    private controller: Controller;
     private width: number;
     private height: number;
     private assets;
@@ -12,11 +12,8 @@ export class BootScene extends Phaser.Scene {
     private loadingText;
 
     public constructor(controller: Controller) {
-        super({
-            key: 'bootScene'
-        });
-        console.log("Boot Scene: constructed", controller);
-        this.controller = controller;
+        super('bootScene', controller);
+        console.log("Boot Scene: constructed");
     }
 
     public init(config) {
@@ -27,8 +24,6 @@ export class BootScene extends Phaser.Scene {
         this.phase = 1;
         this.assets = this.controller.getGameState().getAssets();
         this.spritesheets = {};
-
-        this.controller.scene = this.scene;
 
         this.width = this.sys.canvas.width;
         this.height = this.sys.canvas.height;
@@ -45,6 +40,10 @@ export class BootScene extends Phaser.Scene {
 
         this.load.image('pitch', 'https://fumbbl.com/i/561518');
         this.load.spritesheet('d6', 'https://fumbbl.com/i/562665', {
+            frameWidth: 100,
+            frameHeight: 100
+        });
+        this.load.spritesheet('db', 'https://fumbbl.com/i/562707', {
             frameWidth: 100,
             frameHeight: 100
         });

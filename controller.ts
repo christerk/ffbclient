@@ -5,14 +5,20 @@ import { Coordinate } from "./types";
 import { AbstractCommand } from "./model/clientcommands";
 import CommandManager from "./model/commandmanager";
 import { EventListener, EventType } from "./types/eventlistener";
+import { DiceManager } from "./dicemanager";
+import { AbstractScene } from "./scenes/abstractscene";
 
 export default class Controller {
     private currentScene: string;
-    public scene;
+    private sceneManager: Phaser.Scenes.SceneManager;
+    public scene: Phaser.Scene;
     private game: Model.Game;
     private commandManager: CommandManager;
     private eventListeners: EventListener[];
     private network: Network;
+    private diceManager: DiceManager;
+    private scenes: { [key: string]: Phaser.Scene }
+
     /**
      * Core message passing class. Used to interface between the network and
      * the core model.
@@ -21,7 +27,26 @@ export default class Controller {
         this.commandManager = commandManager;
         this.game = game;
         this.eventListeners = [];
+        this.scenes = {};
         this.network = new Network();
+        this.diceManager = new DiceManager();
+    }
+
+    public get Game(): Model.Game {
+        return this.game;
+    }
+
+    public setSceneManager(sceneManager: Phaser.Scenes.SceneManager) {
+        this.sceneManager = sceneManager;
+    }
+
+    public registerScene(scene: AbstractScene) {
+        console.log("Registering scene", scene.sys.settings.key);
+        this.scenes[scene.sys.settings.key] = scene;
+    }
+
+    public get DiceManager(): DiceManager {
+        return this.diceManager;
     }
 
     public addEventListener(listener: EventListener) {
@@ -29,12 +54,16 @@ export default class Controller {
     }
 
     public setScene(scene: string, data: any = undefined) {
-        console.log("Setting Scene: " + scene);
+        console.log("Setting Scene: " + scene, data);
+
         if (this.currentScene) {
-            this.scene.stop(this.currentScene);
+            this.sceneManager.stop(this.currentScene);
         }
-        this.scene.start(scene, data);
+        this.sceneManager.start(scene, data);
+        this.scene = this.scenes[scene];
         this.currentScene = scene;
+
+        this.diceManager.setScene(this.scenes[scene]);
     }
 
     public enqueueCommand(command: AbstractCommand) {

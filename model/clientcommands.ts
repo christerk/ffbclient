@@ -1,32 +1,40 @@
 
 import * as Model from ".";
 import { Coordinate } from "../types";
+import Controller from "../controller";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
     protected game: Model.Game;
+    protected controller: Controller;
     public triggerModelChanged: boolean;
 
     public constructor() {
         this.applied = false;
         this.triggerModelChanged = true;
+        this.controller = null;
     }
 
-    public apply(game: Model.Game) {
+    public apply(game: Model.Game, controller: Controller) {
         if (!this.applied) {
             this.game = game;
+            this.controller = controller;
             this.applied = true;
-            this.init();
+            this.init(game, controller);
         }
 
         this.do();
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        this.game = game;
+        this.controller = controller;
     }
 
     public setGame(game: Model.Game) {
         this.game = game;
     }
 
-    public abstract init(): void;
     public abstract do(): void;
     public abstract undo(): void;
 }
@@ -43,10 +51,11 @@ export class CompoundCommand extends AbstractCommand {
         this.commandList.push(command);
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         for (let command of this.commandList) {
             command.setGame(this.game);
-            command.init();
+            command.init(game, controller);
         }
     }
 
@@ -71,7 +80,8 @@ export class Initialize extends AbstractCommand {
         this.data = data;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
     }
 
     public do() {
@@ -91,7 +101,8 @@ abstract class PlayerCommand extends AbstractCommand {
         this.playerId = playerId;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.player = this.game.getPlayer(this.playerId);
     }
 
@@ -109,8 +120,8 @@ export class MovePlayer extends PlayerCommand {
         this.newCoordinate = coordinate;
     }
 
-    public init() {
-        super.init();
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldCoordinate = this.player.getPosition();
     }
 
@@ -132,8 +143,8 @@ export class SetPlayerState extends PlayerCommand {
         this.newState = newState;
     }
 
-    public init() {
-        super.init();
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldState = this.player.state;
     }
 
@@ -155,7 +166,8 @@ export class AddMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
@@ -181,7 +193,8 @@ export class RemoveMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
@@ -207,7 +220,8 @@ export class AddTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
@@ -233,7 +247,8 @@ export class RemoveTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
@@ -259,7 +274,8 @@ export class SetBallCoordinate extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldCoordinate = this.game.getBallCoordinate();
     }
 
@@ -269,5 +285,68 @@ export class SetBallCoordinate extends AbstractCommand {
 
     public undo() {
         this.game.setBallCoordinate(this.oldCoordinate);
+    }
+}
+
+export class BlockRoll extends AbstractCommand {
+    private rolls: number[];
+
+    public constructor(rolls: number[]) {
+        super();
+        this.rolls = rolls;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+    }
+
+    public do() {
+        console.log("In call", this.controller);
+        console.log("BlockRoll do()", this);
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        let r = this.rolls;
+        if (r.length == 1) {
+            this.controller.DiceManager.rolldb(r[0], x, y);
+        } else if (r.length == 2) {
+            this.controller.DiceManager.roll2db(r[0], r[1], x, y);
+        } else if (r.length == 3) {
+            this.controller.DiceManager.roll3db(r[0], r[1], r[2], x, y);
+        }
+    }
+
+    public undo() {
+
+    }
+}
+
+export class GoForItRoll extends AbstractCommand {
+    private roll: number;
+
+    public constructor(roll: number) {
+        super();
+        this.roll = roll;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.rolld6(this.roll, x, y);
+    }
+
+    public undo() {
+
     }
 }
