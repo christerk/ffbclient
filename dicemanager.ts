@@ -29,13 +29,13 @@ export class DiceManager {
         this.scale = scale;
     }
 
-    public rolld6(target: number, x: number, y: number, duration = 1000) {
+    public rolld6(target: number, x: number, y: number, duration = 1000, delay = 0) {
         let sprite = this.getDie("d6");
         let angle = Math.random() * Math.PI * 2;
         this.generateRoll("d6", sprite, 0.25, target, x, y, duration, angle);
     }
 
-    public roll2d6(target1: number, target2: number, x: number, y: number, duration = 1000) {
+    public roll2d6(target1: number, target2: number, x: number, y: number, duration = 1000, delay = 0) {
         let sprite_1 = this.getDie("d6");
         let sprite_2 = this.getDie("d6");
 
@@ -44,8 +44,8 @@ export class DiceManager {
         let angle1 = Math.random() * Math.PI * 2;
         let angle2 = angle1 + Math.PI / 4;
 
-        this.generateRoll("d6", sprite_1, 0.25, target1, x + vec.x, y + vec.y, duration, angle1);
-        this.generateRoll("d6", sprite_2, 0.25, target2, x - vec.x, y - vec.y, duration, angle2);
+        this.generateRoll("d6", sprite_1, 0.25, target1, x + vec.x, y + vec.y, duration, angle1, delay);
+        this.generateRoll("d6", sprite_2, 0.25, target2, x - vec.x, y - vec.y, duration, angle2, delay);
     }
 
     public rolldb(target: number, x: number, y: number, duration = 1000) {
@@ -87,7 +87,7 @@ export class DiceManager {
         this.generateRoll("db", sprite_2, 0.33, target3, x + v3.x, y + v3.y, duration, angle3);
     }
 
-    private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration = 1000, angle: number)  {
+    private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0)  {
 
         if (type == "db") {
             target = this.dice.remapBlockDice(target);
@@ -105,6 +105,7 @@ export class DiceManager {
             targets: sprite,
             ease: 'Circ.easeOut',
             duration: duration * 3 / 4,
+            delay: delay,
             scaleX: 4 * scale * this.scale,
             scaleY: 4 * scale * this.scale,
         });
@@ -122,6 +123,7 @@ export class DiceManager {
         this.scene.tweens.add({
             targets: sprite,
             duration: duration,
+            delay: delay,
             ease: 'Quad.easeOut',
             x: x,
             y: y,

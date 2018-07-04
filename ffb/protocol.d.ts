@@ -370,7 +370,25 @@ declare namespace FFB.Protocol.Messages {
         successful: boolean;
     }
 
-    type Report = BlockReport | BlockRollReport | GoForItReport;
+    type InjuryReport = {
+        reportId: "injury";
+        armorBroken: boolean;
+        armorModifiers: string[];
+        armorRoll: [number, number];
+        attackerId: string;
+        casualtyRoll: [number, number];
+        casualtyRollDecay: [number, number];
+        defenderId: string;
+        injury: number;
+        injuryDecay: number;
+        injuryModifiers: string[];
+        injuryRoll: [number, number];
+        injuryType: string;
+        seriousInjury: string;
+        seriousInjuryDecay: string;
+    }
+
+    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport;
 
     type ReportList = {
         reports: Report[];

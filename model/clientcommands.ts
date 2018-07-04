@@ -80,10 +80,6 @@ export class Initialize extends AbstractCommand {
         this.data = data;
     }
 
-    public init(game: Model.Game, controller: Controller) {
-        super.init(game, controller);
-    }
-
     public do() {
         this.game.initialize(this.data);
     }
@@ -296,10 +292,6 @@ export class BlockRoll extends AbstractCommand {
         this.rolls = rolls;
     }
 
-    public init(game: Model.Game, controller: Controller) {
-        super.init(game, controller);
-    }
-
     public do() {
         console.log("In call", this.controller);
         console.log("BlockRoll do()", this);
@@ -332,10 +324,6 @@ export class GoForItRoll extends AbstractCommand {
         this.roll = roll;
     }
 
-    public init(game: Model.Game, controller: Controller) {
-        super.init(game, controller);
-    }
-
     public do() {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
@@ -344,6 +332,50 @@ export class GoForItRoll extends AbstractCommand {
         let y = Math.random() * h / 2 + h/4;
 
         this.controller.DiceManager.rolld6(this.roll, x, y);
+    }
+
+    public undo() {
+
+    }
+}
+
+export class Injury extends AbstractCommand {
+    private armorRoll: [number, number];
+    private injuryRoll: [number, number];
+    private casualtyRoll: [number, number];
+    private casualtyRollDecay: [number, number];
+
+    public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
+        super();
+        this.armorRoll = armorRoll;
+        this.injuryRoll = injuryRoll;
+        this.casualtyRoll = casualtyRoll;
+        this.casualtyRollDecay = casualtyRollDecay;
+    }
+
+    private rollDice(t1: number, t2: number, delay: number) {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.roll2d6(t1, t2, x, y, 1000, delay);
+    }
+
+    public do() {
+        if (this.armorRoll != null) {
+            this.rollDice(this.armorRoll[0], this.armorRoll[1], 0);
+        }
+        if (this.injuryRoll != null) {
+            this.rollDice(this.injuryRoll[0], this.injuryRoll[1], 333);
+        }
+        if (this.casualtyRoll != null) {
+            this.rollDice(this.casualtyRoll[0], this.casualtyRoll[1], 666);
+        }
+        if (this.casualtyRollDecay != null) {
+            this.rollDice(this.casualtyRollDecay[0], this.casualtyRollDecay[1], 999);
+        }
     }
 
     public undo() {
