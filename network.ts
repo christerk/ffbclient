@@ -14,6 +14,7 @@ export default class Network {
         this.config = config;
 
         let host = window.location.host;
+        host = host.startsWith("localhost") ? "dev.fumbbl.com" : host;
         let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:'
         let port = proto == 'wss:' ? 22224 : 22223;
 
