@@ -89,6 +89,10 @@ export class DiceManager {
 
     private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration = 1000, angle: number)  {
 
+        if (type == "db") {
+            target = this.dice.remapBlockDice(target);
+        }
+
         let anim = this.dice.getAnimation(type, this.scene, "dice_animation:" + sprite.name, target);
         let start = new Phaser.Math.Vector2();
         start.setToPolar(angle, 300 * this.scale)

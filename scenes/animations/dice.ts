@@ -3,6 +3,7 @@ import Phaser from "phaser";
 export class Dice {
     private width: number;
     private height: number;
+    private dbRemap: number[];
     private targets: number[][][];
 
     public constructor() {
@@ -19,6 +20,20 @@ export class Dice {
             [[0,0], [10,10]],
             [[15,0], [15,1], [15,2], [15,3], [15,4], [15,5], [15,6], [15,7], [15,8], [15,9], [15,10], [15,11], [15,12], [15,13], [15,14], [15,15], [15,16], [15,17], [15,18]],
         ];
+
+        // FFB             Sprite Sheet
+        // 1 = Skull       1 = Pow
+        // 2 = Both Down   2 = Pushback
+        // 3 = Pushback    3 = Pow/Push
+        // 4 = Pushback    4 = Both Down
+        // 5 = Pow/Push    5 = Pushback
+        // 6 = Pow         6 = Skull
+
+        this.dbRemap = [0, 6, 4, 2, 5, 3, 1];
+    }
+
+    public remapBlockDice(target: number) {
+        return this.dbRemap[target];
     }
 
     public getAnimation(spritesheet: string, scene: Phaser.Scene, key: string, target: number) {
