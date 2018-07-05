@@ -1,67 +1,179 @@
 import Phaser from "phaser";
 import { Dice } from "./scenes/animations/dice";
 
+export type DieType = "d6" | "db" | "d8" | "d68";
+
 export class DiceManager {
     private scene: Phaser.Scene;
+    private scale: number;
     private dice: Dice;
     private diceSerial: number;
+    private diceConfig: {[type: string] : {
+        spreadScale: number,
+        size: number
+    }};
 
-    private d6cache: Phaser.GameObjects.Sprite[];
+    private dieCache: { [type: string]: Phaser.GameObjects.Sprite[] };
 
-    public constructor(scene: Phaser.Scene) {
-        this.scene = scene;
-
-        this.d6cache = [];
+    public constructor() {
+        this.dieCache = {
+            "d6": [],
+            "db": [],
+            "d8": [],
+        };
         this.dice = new Dice();
         this.diceSerial = 0;
+        this.scale = 1;
+
+        this.diceConfig = {
+            "d6": {
+                spreadScale: 15,
+                size: 0.25,
+            },
+            "db": {
+                spreadScale: 20,
+                size: 0.33,
+            },
+            "d8": {
+                spreadScale: 15,
+                size: 0.25,
+            },
+            "d68": {
+                spreadScale: 15,
+                size: 0.25,
+            }
+        }
     }
 
-    public roll2d6(target1: number, target2: number, x: number, y: number) {
-        let d6_1 = this.getd6();
-        let d6_2 = this.getd6();
-
-        let anim1 = this.dice.getAnimation(this.scene, "dice:animation:" + d6_1.name, target1);
-        let anim2 = this.dice.getAnimation(this.scene, "dice:animation:" + d6_2.name, target2);
-
-        let vec = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), 25);
-
-        d6_1.setPosition(x + vec.x, y + vec.y);
-        d6_2.setPosition(x - vec.x, y - vec.y);
-
-        d6_1.visible = true;
-        d6_2.visible = true;
-        d6_1.anims.play(anim1);
-        d6_2.anims.play(anim2);
+    public setScene(scene: Phaser.Scene) {
+        this.scene = scene;
     }
 
-    private getd6(): Phaser.GameObjects.Sprite {
-        let d6: Phaser.GameObjects.Sprite;
+    public setScale(scale: number) {
+        this.scale = scale;
+    }
 
-        if (this.d6cache.length > 0) {
-            d6 = this.d6cache.pop();
+    private getLocalSpread(numDice: number): number[][] {
+        if (numDice == 1) {
+            return [[0,0]];
+        } else {
+            let result:number[][] = [];
+            let angleStep = 2 * Math.PI / numDice;
+            let currentAngle = Math.random() * 2 * Math.PI;
+            let vec = new Phaser.Math.Vector2();
+            for (let i=0; i<numDice; i++) {
+                vec = vec.setToPolar(currentAngle);
+                currentAngle += angleStep;
+                result.push([vec.x, vec.y]);
+            }
+            return result;
+        }
+    }
+
+    public roll(type: DieType, targets: number[], x: number, y: number, duration = 1000, delay = 0) {
+        let numDice = targets.length;
+        let localSpread = this.getLocalSpread(numDice);
+
+        let spreadScale = this.diceConfig[type].spreadScale;
+        let size = this.diceConfig[type].size;
+        let angle = Math.random() * 2 * Math.PI;
+        let angleStep = Math.PI / 8;
+
+        if (type == "d68") {
+            // Special case for d68 rolls
+            if (numDice == 2) {
+                let sprite = this.getDie("d6");
+                let pX = x + localSpread[0][0] * spreadScale * this.scale;
+                let pY = y + localSpread[0][1] * spreadScale * this.scale;
+                this.generateRoll("d6", sprite, size, targets[0], pX, pY, duration, angle, delay);
+                sprite = this.getDie("d8");
+                pX = x + localSpread[1][0] * spreadScale * this.scale;
+                pY = y + localSpread[1][1] * spreadScale * this.scale;
+                this.generateRoll("d8", sprite, size, targets[1], pX, pY, duration, angle + angleStep, delay);
+            } else {
+                console.log("Strange d68 roll encountered", targets);
+            }
+        } else {
+            for (let i = 0; i<numDice; i++) {
+                let sprite = this.getDie(type);
+                let pX = x + localSpread[i][0] * spreadScale * this.scale;
+                let pY = y + localSpread[i][1] * spreadScale * this.scale;
+                this.generateRoll(type, sprite, size, targets[i], pX, pY, duration, angle + i*angleStep, delay);
+            }
+        }
+    }
+
+    private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0)  {
+        let anim = this.dice.getAnimation(type, this.scene, "dice_animation:" + sprite.name, target);
+        let start = new Phaser.Math.Vector2();
+        start.setToPolar(angle, 300 * this.scale)
+        sprite.setPosition(x + start.x, y + start.y);
+        sprite.setScale(scale * this.scale, scale * this.scale);
+
+        let timeline = this.scene.tweens.createTimeline({});
+
+        timeline.add({
+            targets: sprite,
+            ease: 'Circ.easeOut',
+            duration: duration * 3 / 4,
+            delay: delay,
+            scaleX: 4 * scale * this.scale,
+            scaleY: 4 * scale * this.scale,
+        });
+
+        timeline.add({
+            targets: sprite,
+            ease: 'Bounce.easeOut',
+            duration: duration * 1 / 4,
+            scaleX: scale * this.scale,
+            scaleY: scale * this.scale,
+        });
+
+        timeline.play();
+
+        this.scene.tweens.add({
+            targets: sprite,
+            duration: duration,
+            delay: delay,
+            ease: 'Quad.easeOut',
+            x: x,
+            y: y,
+        });
+
+        sprite.visible = true;
+        sprite.anims.play(anim);
+    }
+
+    private getDie(type: DieType): Phaser.GameObjects.Sprite {
+        let die: Phaser.GameObjects.Sprite;
+
+        if (this.dieCache[type].length > 0) {
+            die = this.dieCache[type].pop();
         } else {
             this.diceSerial++;
 
-            d6 = this.scene.add.sprite(100, 100, "d6");
-            d6.setName("d6:" + this.diceSerial.toString());
-            d6.setScale(0.5, 0.5);
+            die = this.scene.add.sprite(100, 100, "d6");
+            die.setName("d6:" + this.diceSerial.toString());
 
-            d6.addListener('animationcomplete', () => {
+            die.addListener('animationcomplete', () => {
                 this.scene.tweens.add({
-                    targets: d6,
+                    targets: die,
+                    delay: 500,
                     duration: 500,
                     alpha: 0,
                     onComplete: () => {
-                        d6.visible = false;
-                        d6.alpha = 1;
-                        this.d6cache.push(d6);
+                        die.visible = false;
+                        die.alpha = 1;
+                        this.dieCache[type].push(die);
                     }
                 });
             });
         }
 
-        d6.angle = Math.random() * 360;
+        die.angle = Math.random() * 360;
 
-        return d6;
+        return die;
     }
+
+
 }

@@ -22,6 +22,7 @@ export default class CommandManager {
 
     public setController(controller: Controller) {
         this.controller = controller;
+        console.log("Command Manager setting controller", this.controller);
     }
 
     public enqueueCommand(command: AbstractCommand) {
@@ -31,7 +32,7 @@ export default class CommandManager {
         // If we are standing at the end of the queue, we apply
         // the command immediately.
         if (this.queuePosition == this.commandQueue.length - 1) {
-            command.apply(this.game);
+            command.apply(this.game, this.controller);
             this.queuePosition++;
         }
     }
@@ -41,7 +42,7 @@ export default class CommandManager {
             let command = this.commandQueue[this.queuePosition]
             // We need to apply() here as the game may have progressed
             // while we were looking at the history.
-            command.apply(this.game);
+            command.apply(this.game, this.controller);
             this.queuePosition++;
         }
 
@@ -53,7 +54,7 @@ export default class CommandManager {
             let command = this.commandQueue[this.queuePosition]
             // We need to apply() here as the game may have progressed
             // while we were looking at the history.
-            command.apply(this.game);
+            command.apply(this.game, this.controller);
             this.queuePosition++;
 
             // Note: This should probably check if there's an actual

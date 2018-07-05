@@ -6,6 +6,8 @@ import CommandHandler from "./commandhandler";
 import CommandManager from "./model/commandmanager";
 import * as Model from "./model";
 import { EventListener, EventType } from "./types/eventlistener";
+import { AbstractScene } from "./scenes/abstractscene";
+import { DiceManager } from "./dicemanager";
 
 export default class App extends Phaser.Game implements EventListener {
     private static controller: Controller;
@@ -17,10 +19,9 @@ export default class App extends Phaser.Game implements EventListener {
         let commandManager = new CommandManager(game);
         let controller = new Controller(game, commandManager);
         App.controller = controller;
-
         commandManager.setController(controller);
 
-        let scenes = [
+        let scenes: AbstractScene[] = [
             new Scenes.ConnectScene(controller),
             new Scenes.BootScene(controller),
             new Scenes.MainScene(controller),
@@ -31,21 +32,25 @@ export default class App extends Phaser.Game implements EventListener {
             type: Phaser.AUTO,
             width: 960,
             height: 554,
-            scene: scenes,
+            scene: <Phaser.Scene[]>scenes,
             "render.antialias": false,
             "render.pixelArt": true,
             "render.roundPixels": true
         };
         super(config);
 
-        controller.scene = this.scene;
+        controller.setSceneManager(this.scene);
+
+        for (let scene of scenes) {
+            controller.registerScene(scene);
+        }
 
         let el = document.getElementById('wrapper');
         let user = el.getAttribute('user');
         let auth = el.getAttribute('auth');
         let gameAttr = el.getAttribute('game');
 
-        controller.setScene('connectScene', {
+        controller.setScene("connectScene", {
             user: user,
             auth: auth,
             gameId: gameAttr

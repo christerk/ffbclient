@@ -6,6 +6,7 @@ import { EventListener, EventType } from "../types/eventlistener";
 import { Coordinate } from "../types";
 import * as Layers from "./layers";
 import { DiceManager } from "../dicemanager";
+import { AbstractScene } from "./abstractscene";
 
 type IconState = {
     alpha: number,
@@ -14,7 +15,7 @@ type IconState = {
     visible: boolean,
 }
 
-export class MainScene extends Phaser.Scene implements EventListener {
+export class MainScene extends AbstractScene implements EventListener {
 
     private pitch: Phaser.GameObjects.Image;
     private pitchScale: number;
@@ -25,21 +26,16 @@ export class MainScene extends Phaser.Scene implements EventListener {
     private scale: number;
     private width: number;
     private height: number;
-    private controller: Controller;
     private moveSquareIcons: Phaser.GameObjects.Graphics[];
     private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
     private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera;
     private gridSize: number; // Size of a grid square
-    private diceManager: DiceManager;
 
     public constructor(controller: Controller) {
-        super({
-            key: 'mainScene',
-        });
+        super('mainScene', controller);
         console.log("Main Scene: constructed");
-        this.controller = controller;
         this.moveSquareIcons = [];
         this.trackNumberIcons = [];
 
@@ -60,7 +56,17 @@ export class MainScene extends Phaser.Scene implements EventListener {
                     let x = Math.random() * this.width / 2 + this.width/4;
                     let y = Math.random() * this.height / 2 + this.height/4;
 
-                    this.diceManager.roll2d6(targets[0], targets[1], x, y);
+                    this.controller.DiceManager.setScale(this.pitchScale);
+
+                    if (Math.random() < 0.25) {
+                        this.controller.DiceManager.roll("d6", [targets[0], targets[1]], x, y);
+                    } else if (Math.random() < 0.5) {
+                        this.controller.DiceManager.roll("db", [targets[0]], x, y);
+                    } else if (Math.random() < 0.75) {
+                        this.controller.DiceManager.roll("d6", [targets[0]], x, y);
+                    } else {
+                        this.controller.DiceManager.roll("db", [targets[0], targets[1]], x, y);
+                    }
                 }
                 break;
         }
@@ -68,9 +74,6 @@ export class MainScene extends Phaser.Scene implements EventListener {
 
     public init(config) {
         console.log('Main Scene: init', config);
-        this.diceManager = new DiceManager(this);
-
-        this.controller.scene = this.scene;
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.scale = 1.0;
@@ -90,8 +93,7 @@ export class MainScene extends Phaser.Scene implements EventListener {
         this.frameNumber = 0;
 
         console.log('Scaling', this.height, this.pitch.height);
-        this.pitchScale = 1.0; //this.height / this.pitch.height;
-        this.pitch.setScale(this.pitchScale);
+        this.pitchScale = 1.0;
 
         //this.pitch.setInteractive();
         //this.input.setDraggable(this.pitch);

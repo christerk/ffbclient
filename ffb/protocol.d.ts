@@ -17,7 +17,7 @@ declare namespace FFB.Protocol.Messages {
                             Coordinate | PlayerState | SeriousInjury | SendToBoxReason | BloodSpotType |
                             TrackNumberType | PushbackSquare | MoveSquare | Weather | DiceDecoration |
                             Inducement | FieldMarker | PlayerMarkerType | GameOption | Card | LeaderState |
-                            CardEffect | DialogId | DialogParameter | RangeRuler;
+                            CardEffect | DialogId | RangeRuler;
     }
 
     type ModelChangeListType = {
@@ -75,7 +75,7 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type MoveSquare = {
-        fieldCoordinate:    Coordinate;
+        coordinate:    Coordinate;
         minimumRollDodge:   number;
         minimumRollGfi:     number;
     }
@@ -339,11 +339,65 @@ declare namespace FFB.Protocol.Messages {
         turnMode:               TurnMode;
         turnTime:               number;
         waitingForOpponent:     boolean;
-        dialogParameter:        DialogParameter;
+        dialogParameter:        any;
     }
 
     type ReportId = {
         name: string;
+    }
+
+    type BlockReport = {
+        reportId: "block";
+        defenderId: string;
+    }
+
+    type BlockRollReport = {
+        reportId: "blockRoll";
+        blockRoll: number[];
+        choosingTeamId: string;
+    }
+
+    type GoForItReport = {
+        reportId: "goForItRoll";
+        minimumRoll: number;
+        rerolled: boolean;
+        roll: number;
+        successful: boolean;
+    }
+
+    type InjuryReport = {
+        reportId: "injury";
+        armorBroken: boolean;
+        armorModifiers: string[];
+        armorRoll: [number, number];
+        attackerId: string;
+        casualtyRoll: [number, number];
+        casualtyRollDecay: [number, number];
+        defenderId: string;
+        injury: number;
+        injuryDecay: number;
+        injuryModifiers: string[];
+        injuryRoll: [number, number];
+        injuryType: string;
+        seriousInjury: string;
+        seriousInjuryDecay: string;
+    }
+
+    type DodgeRollReport = {
+        reportId: "dodgeRoll";
+        minimumRoll: number;
+        playerId: string;
+        reRolled: boolean;
+        roll: number;
+        successful: boolean;
+    }
+
+    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollRport;
+
+    type ReportList = {
+        reports: Report[];
+        sound: string;
+        turnTime: number;
     }
 
     type AnimationType = {
@@ -608,7 +662,7 @@ declare namespace FFB.Protocol.Messages {
     interface ServerModelSync extends NetCommand {
         commandNr:          number;
         modelChangeList:    ModelChangeListType
-        reportList:         ReportId[];
+        reportList:         ReportList;
         animation:          Animation[];
         sound:              string;
         gameTime:           number;

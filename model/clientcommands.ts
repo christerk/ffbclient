@@ -1,32 +1,41 @@
 
 import * as Model from ".";
 import { Coordinate } from "../types";
+import Controller from "../controller";
+import { DiceManager, DieType } from "../dicemanager";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
     protected game: Model.Game;
+    protected controller: Controller;
     public triggerModelChanged: boolean;
 
     public constructor() {
         this.applied = false;
         this.triggerModelChanged = true;
+        this.controller = null;
     }
 
-    public apply(game: Model.Game) {
+    public apply(game: Model.Game, controller: Controller) {
         if (!this.applied) {
             this.game = game;
+            this.controller = controller;
             this.applied = true;
-            this.init();
+            this.init(game, controller);
         }
 
         this.do();
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        this.game = game;
+        this.controller = controller;
     }
 
     public setGame(game: Model.Game) {
         this.game = game;
     }
 
-    public abstract init(): void;
     public abstract do(): void;
     public abstract undo(): void;
 }
@@ -43,10 +52,11 @@ export class CompoundCommand extends AbstractCommand {
         this.commandList.push(command);
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         for (let command of this.commandList) {
             command.setGame(this.game);
-            command.init();
+            command.init(game, controller);
         }
     }
 
@@ -71,9 +81,6 @@ export class Initialize extends AbstractCommand {
         this.data = data;
     }
 
-    public init() {
-    }
-
     public do() {
         this.game.initialize(this.data);
     }
@@ -91,7 +98,8 @@ abstract class PlayerCommand extends AbstractCommand {
         this.playerId = playerId;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.player = this.game.getPlayer(this.playerId);
     }
 
@@ -109,8 +117,8 @@ export class MovePlayer extends PlayerCommand {
         this.newCoordinate = coordinate;
     }
 
-    public init() {
-        super.init();
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldCoordinate = this.player.getPosition();
     }
 
@@ -132,8 +140,8 @@ export class SetPlayerState extends PlayerCommand {
         this.newState = newState;
     }
 
-    public init() {
-        super.init();
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldState = this.player.state;
     }
 
@@ -155,7 +163,8 @@ export class AddMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
@@ -181,7 +190,8 @@ export class RemoveMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
 
@@ -207,7 +217,8 @@ export class AddTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
@@ -233,7 +244,8 @@ export class RemoveTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
 
@@ -259,7 +271,8 @@ export class SetBallCoordinate extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init() {
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
         this.oldCoordinate = this.game.getBallCoordinate();
     }
 
@@ -269,5 +282,122 @@ export class SetBallCoordinate extends AbstractCommand {
 
     public undo() {
         this.game.setBallCoordinate(this.oldCoordinate);
+    }
+}
+
+export class BlockRoll extends AbstractCommand {
+    private rolls: number[];
+
+    public constructor(rolls: number[]) {
+        super();
+        this.rolls = rolls;
+    }
+
+    public do() {
+        console.log("In call", this.controller);
+        console.log("BlockRoll do()", this);
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        let r = this.rolls;
+
+        this.controller.DiceManager.roll("db", r, x, y);
+    }
+
+    public undo() {
+
+    }
+}
+
+export class GoForItRoll extends AbstractCommand {
+    private roll: number;
+
+    public constructor(roll: number) {
+        super();
+        this.roll = roll;
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+    }
+
+    public undo() {
+
+    }
+}
+
+export class Injury extends AbstractCommand {
+    private armorRoll: [number, number];
+    private injuryRoll: [number, number];
+    private casualtyRoll: [number, number];
+    private casualtyRollDecay: [number, number];
+
+    public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
+        super();
+        this.armorRoll = armorRoll;
+        this.injuryRoll = injuryRoll;
+        this.casualtyRoll = casualtyRoll;
+        this.casualtyRollDecay = casualtyRollDecay;
+    }
+
+    private rollDice(type: DieType, targets: number[], delay: number) {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.roll(type, targets, x, y, 1000, delay);
+    }
+
+    public do() {
+        if (this.armorRoll != null) {
+            this.rollDice("d6", this.armorRoll, 0);
+        }
+        if (this.injuryRoll != null) {
+            this.rollDice("d6", this.injuryRoll, 333);
+        }
+        if (this.casualtyRoll != null) {
+            this.rollDice("d68", this.casualtyRoll, 666);
+        }
+        if (this.casualtyRollDecay != null) {
+            this.rollDice("d68", this.casualtyRollDecay, 999);
+        }
+    }
+
+    public undo() {
+
+    }
+}
+
+export class DodgeRoll extends AbstractCommand {
+    private roll: number;
+
+    public constructor(roll: number) {
+        super();
+        this.roll = roll;
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let x = Math.random() * w / 2 + w/4;
+        let y = Math.random() * h / 2 + h/4;
+
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+    }
+
+    public undo() {
+
     }
 }
