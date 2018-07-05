@@ -1,7 +1,7 @@
 declare namespace FFB.Protocol.Messages {
     type Coordinate = Array<number>;
 
-    type PlayerState = {
+    type PlayerState = { 
         id: number;
     }
 
@@ -17,7 +17,7 @@ declare namespace FFB.Protocol.Messages {
                             Coordinate | PlayerState | SeriousInjury | SendToBoxReason | BloodSpotType |
                             TrackNumberType | PushbackSquare | MoveSquare | Weather | DiceDecoration |
                             Inducement | FieldMarker | PlayerMarkerType | GameOption | Card | LeaderState |
-                            CardEffect | DialogId | RangeRuler;
+                            CardEffect | DialogId | DialogParameter | RangeRuler;
     }
 
     type ModelChangeListType = {
@@ -392,7 +392,7 @@ declare namespace FFB.Protocol.Messages {
         successful: boolean;
     }
 
-    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollRport;
+    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollReport;
 
     type ReportList = {
         reports: Report[];

@@ -86,7 +86,7 @@ export class Game {
     private applyFieldModel(data: FFB.Protocol.Messages.FieldModelType) {
         for (let pData of data.playerDataArray) {
             let player = this.getPlayer(pData.playerId);
-            player.setState(pData.playerState);
+            player.setState(pData.playerState.id);
             let [x,y] = pData.playerCoordinate;
             player.setPosition(new Coordinate(x, y));
         }
