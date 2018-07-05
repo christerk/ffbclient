@@ -5,7 +5,7 @@ import Controller from "../controller";
 import { EventListener, EventType } from "../types/eventlistener";
 import { Coordinate } from "../types";
 import * as Layers from "./layers";
-import { DiceManager } from "../dicemanager";
+import { DiceManager, DieType } from "../dicemanager";
 import { AbstractScene } from "./abstractscene";
 
 type IconState = {
@@ -52,21 +52,54 @@ export class MainScene extends AbstractScene implements EventListener {
                 break;
             case EventType.Click:
                 if (data.source == "TestButton") {
-                    let targets = [Math.floor(Math.random()*6+1), Math.floor(Math.random()*6+1)];
+                    let numDice = Math.floor(Math.random() * 3) + 1;
+                    let targets = [];
+                    for (let i=0; i<numDice; i++) {
+                        targets.push(Math.floor(Math.random()*6+1));
+                    }
                     let x = Math.random() * this.width / 2 + this.width/4;
                     let y = Math.random() * this.height / 2 + this.height/4;
 
                     this.controller.DiceManager.setScale(this.pitchScale);
 
-                    if (Math.random() < 0.25) {
-                        this.controller.DiceManager.roll("d6", [targets[0], targets[1]], x, y);
-                    } else if (Math.random() < 0.5) {
-                        this.controller.DiceManager.roll("db", [targets[0]], x, y);
-                    } else if (Math.random() < 0.75) {
-                        this.controller.DiceManager.roll("d6", [targets[0]], x, y);
+                    let types:DieType[] = ["d6", "db", "d8"];
+                    let type = types[Math.floor(Math.random() * types.length)];
+
+                    if (Math.random() < 0.05 && targets.length == 2) {
+                        console.log("d68", targets);
+                        this.controller.DiceManager.roll("d68", targets, x, y);
                     } else {
-                        this.controller.DiceManager.roll("db", [targets[0], targets[1]], x, y);
+                        console.log(type, targets);
+                        this.controller.DiceManager.roll(type, targets, x, y);
                     }
+                }
+                break;
+            case EventType.ActivePlayerAction:
+                let activePlayer = this.controller.Game.getActivePlayer();
+                if (activePlayer) {
+                    let pos = activePlayer.getPosition();
+                    let x = pos[0] * 30 * this.pitchScale;
+                    let y = pos[1] * 30 * this.pitchScale;
+                    let action = <string>data;
+                    console.log("Player Action", action, x, y);
+                    let t = this.add.text(x, y, action, {
+                        fontSize: (24 * this.pitchScale) + 'px',
+                        fill: 'white',
+                        stroke: 'black',
+                        strokeThickness: 2,
+                    });
+                    t.x = t.x - t.width / 2 + 15 * this.pitchScale;
+                    this.tweens.add({
+                        targets: t,
+                        duration: 1000,
+                        ease: 'Quad.easeIn',
+                        alpha: 0,
+                        y: y - 60 * this.pitchScale,
+                        onComplete: () => {
+                            t.visible = false;
+                            t.destroy();
+                        }
+                    });
                 }
                 break;
         }

@@ -140,8 +140,16 @@ export class DiceManager {
             y: y,
         });
 
-        sprite.visible = true;
-        sprite.anims.play(anim);
+        // Delay the spin animation until it's time to animate..
+        if (delay == 0) {
+            sprite.visible = true;
+            sprite.anims.play(anim);
+        } else {
+            setTimeout(() => {
+                sprite.visible = true;
+                sprite.anims.play(anim);
+            }, delay);
+        }
     }
 
     private getDie(type: DieType): Phaser.GameObjects.Sprite {
@@ -171,6 +179,7 @@ export class DiceManager {
         }
 
         die.angle = Math.random() * 360;
+        die.visible = false;
 
         return die;
     }

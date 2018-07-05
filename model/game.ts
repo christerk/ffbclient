@@ -5,6 +5,7 @@ export class Game {
     private isInitialized: boolean;
     public teamHome: Model.Team;
     public teamAway: Model.Team;
+    private activePlayer: Model.Player;
 
     private moveSquares: Coordinate[];
     private trackNumbers: Coordinate[];
@@ -34,6 +35,19 @@ export class Game {
 
             this.applyFieldModel(data.game.fieldModel);
         }
+    }
+
+    public setActivePlayer(id: string) {
+        if (id == null) {
+            this.activePlayer = null;
+        } else {
+            let player = this.getPlayer(id);
+            this.activePlayer = player;
+        }
+    }
+
+    public getActivePlayer(): Model.Player {
+        return this.activePlayer;
     }
 
     public getAssets() {

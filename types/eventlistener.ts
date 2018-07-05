@@ -1,5 +1,6 @@
 
 export enum EventType {
+    ActivePlayerAction,
     Click,
     ModelChanged,
     Resizing,

@@ -1,6 +1,6 @@
 
 import * as Model from ".";
-import { Coordinate } from "../types";
+import { Coordinate, EventType } from "../types";
 import Controller from "../controller";
 import { DiceManager, DieType } from "../dicemanager";
 
@@ -285,6 +285,51 @@ export class SetBallCoordinate extends AbstractCommand {
     }
 }
 
+export class SetActivePlayerId extends AbstractCommand {
+    private activePlayerId: string;
+    private oldActivePlayerId: string;
+
+    public constructor(playerId: string) {
+        super();
+        this.activePlayerId = playerId;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+        let player = game.getActivePlayer();
+        if (player != null) {
+            this.oldActivePlayerId = game.getActivePlayer().getId();
+        } else {
+            this.oldActivePlayerId = null;
+        }
+    }
+
+    public do() {
+        this.game.setActivePlayer(this.activePlayerId);
+    }
+
+    public undo() {
+        this.game.setActivePlayer(this.oldActivePlayerId);
+    }
+}
+
+export class SetActivePlayerAction extends AbstractCommand {
+    private action: string;
+
+    public constructor(action: string) {
+        super();
+        this.action = action;
+    }
+
+    public do() {
+        this.controller.triggerEvent(EventType.ActivePlayerAction, this.action);
+    }
+
+    public undo() {
+
+    }
+}
+
 export class BlockRoll extends AbstractCommand {
     private rolls: number[];
 
@@ -294,8 +339,6 @@ export class BlockRoll extends AbstractCommand {
     }
 
     public do() {
-        console.log("In call", this.controller);
-        console.log("BlockRoll do()", this);
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 

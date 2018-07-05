@@ -18,6 +18,8 @@ export default class CommandModelSync extends Command {
             "fieldModelSetPlayerCoordinate": this.handleSetPlayerCoordinate,
             "fieldModelSetPlayerState": this.handleSetPlayerState,
             "fieldModelSetBallCoordinate": this.handleSetBallCoordinate,
+            "actingPlayerSetPlayerAction": this.handleSetActivePlayerAction,
+            "actingPlayerSetPlayerId": this.handleSetActivePlayerId,
         };
 
         this.reportHandlers = {
@@ -103,6 +105,16 @@ export default class CommandModelSync extends Command {
         return new ClientCommands.SetPlayerState(playerId, state);
     }
 
+    private handleSetActivePlayerAction(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let value = <string>change.modelChangeValue;
+        return new ClientCommands.SetActivePlayerAction(value);
+    }
+
+    private handleSetActivePlayerId(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let playerId = <string>change.modelChangeValue;
+        return new ClientCommands.SetActivePlayerId(playerId);
+    }
+
     private handleBlockRollReport(report: FFB.Protocol.Messages.BlockRollReport): ClientCommands.AbstractCommand {
         return new ClientCommands.BlockRoll(report.blockRoll);
     }
@@ -118,5 +130,4 @@ export default class CommandModelSync extends Command {
     private handleDodgeRollReport(report: FFB.Protocol.Messages.DodgeRollReport): ClientCommands.AbstractCommand {
         return new ClientCommands.DodgeRoll(report.roll);
     }
-    
 }

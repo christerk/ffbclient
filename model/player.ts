@@ -35,6 +35,7 @@ export enum Side {
 }
 
 export class Player {
+    private id: string;
     public number: number;
     public name: string;
     public positionId: string;
@@ -50,6 +51,7 @@ export class Player {
     private side: Side;
 
     public constructor(data: FFB.Protocol.Messages.PlayerType) {
+        this.id = data.playerId;
         this.number = data.playerNr;
         this.name = data.playerName;
         this.positionId = data.positionId;
@@ -60,6 +62,10 @@ export class Player {
         this.positionIcon = data.positionIconIndex;
 
         this.state = PlayerState.Unknown;
+    }
+
+    public getId(): string {
+        return this.id;
     }
 
     public getTeam(): Side {
