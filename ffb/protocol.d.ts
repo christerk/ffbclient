@@ -1,15 +1,14 @@
 declare namespace FFB.Protocol.Messages {
     type Coordinate = Array<number>;
 
-    enum PlayerState {}
+    type PlayerState = {
+        id: number;
+    }
 
     type BloodSpotType = {
         coordinate: Coordinate;
         injury:     PlayerState;
     }
-
-// DIALOG_ID("dialogId"),  DIALOG_PARAMETER("dialogParameter"),     RANGE_RULER("rangeRuler")
-  
 
     type ModelChangeType = {
         modelChangeId:      string;
@@ -26,7 +25,6 @@ declare namespace FFB.Protocol.Messages {
     }
     
     type DialogId = {
-        // INFORMATION("information"),  YES_OR_NO_QUESTION("yesOrNoQuestion"),  GAME_COACH_PASSWORD("gameCoachPassword"),  TEAM_CHOICE("teamChoice"),  COIN_CHOICE("coinChoice"),  RE_ROLL("reRoll"),  SKILL_USE("skillUse"),  PROGRESS_BAR("progressBar"),  TEAM_SETUP("teamSetup"),  USE_APOTHECARY("useApothecary"),  RECEIVE_CHOICE("receiveChoice"),  FOLLOWUP_CHOICE("followupChoice"),  START_GAME("startGame"),  APOTHECARY_CHOICE("apothecaryChoice"),  TOUCHBACK("touchback"),  INTERCEPTION("interception"),  SETUP_ERROR("setupError"),  GAME_STATISTICS("gameStatistics"),  WINNINGS_RE_ROLL("winningsReRoll"),  GAME_CHOICE("gameChoice"),  KEY_BINDINGS("keyBindings"),  BLOCK_ROLL("blockRoll"),  PLAYER_CHOICE("playerChoice"),  DEFENDER_ACTION("defenderAction"),  JOIN("join"),  CONCEDE_GAME("concedeGame"),  ABOUT("about"),  END_TURN("endTurn"),  LEAVE_GAME("leaveGame"),  BRIBES("bribes"),  PILING_ON("pilingOn"),  BUY_INDUCEMENTS("buyInducements"),  TRANSFER_PETTY_CASH("transferPettyCash"),  SOUND_VOLUME("soundVolume"),  JOURNEYMEN("journeymen"),  KICKOFF_RESULT("kickoffResult"),  CHAT_COMMANDS("chatCommands"),  KICK_SKILL("kickSkill"),  USE_IGOR("useIgor"),  KICKOFF_RETURN("kickoffReturn"),  PETTY_CASH("pettyCash"),  WIZARD_SPELL("wizardSpell"),  USE_INDUCEMENT("useInducement"),  PASS_BLOCK("passBlock"),  BUY_CARDS("buyCards"),  ARGUE_THE_CALL("argueTheCall");
         name: string;
     }
 
@@ -39,7 +37,6 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type CardEffect = {
-        // DISTRACTED("Distracted"),  ILLEGALLY_SUBSTITUTED("IllegallySubstituted"),  MAD_CAP_MUSHROOM_POTION("MadCapMushroomPotion"),  SEDATIVE("Sedative"),  POISONED("Poisoned");
         name: string;
     }
 
@@ -50,7 +47,7 @@ declare namespace FFB.Protocol.Messages {
     type PlayerDataType = {
         playerId:           string;
         playerCoordinate:   Coordinate;
-        playerState:        number;
+        playerState:        PlayerState;
         cardEffects:        CardEffect[];
         cards:              Card[];
     }
@@ -85,7 +82,7 @@ declare namespace FFB.Protocol.Messages {
 
     type PushbackSquare = {
         fieldCoordinate: Coordinate;
-        direction:       string; //NORTH("North"),  NORTHEAST("Northeast"),  EAST("East"),  SOUTHEAST("Southeast"),  SOUTH("South"),  SOUTHWEST("Southwest"),  WEST("West"),  NORTHWEST("Northwest");
+        direction:       string;
         selected:        boolean;
         locked:          boolean;
         homeChoice:      boolean;
@@ -269,7 +266,6 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type LeaderState = {
-        //NONE("none"),  AVAILABLE("available"),  USED("used");
         name: string;
     }
 
@@ -347,12 +343,10 @@ declare namespace FFB.Protocol.Messages {
     }
 
     type ReportId = {
-        // ALWAYS_HUNGRY_ROLL("alwaysHungryRoll"),  ARGUE_THE_CALL("argueTheCall"),  CATCH_ROLL("catchRoll"),  CONFUSION_ROLL("confusionRoll"),  DAUNTLESS_ROLL("dauntlessRoll"),  DODGE_ROLL("dodgeRoll"),  ESCAPE_ROLL("escapeRoll"),  FOUL_APPEARANCE_ROLL("foulAppearanceRoll"),  GO_FOR_IT_ROLL("goForItRoll"),  INTERCEPTION_ROLL("interceptionRoll"),  LEAP_ROLL("leapRoll"),  PASS_ROLL("passRoll"),  PICK_UP_ROLL("pickUpRoll"),  RIGHT_STUFF_ROLL("rightStuffRoll"),  REGENERATION_ROLL("regenerationRoll"),  SAFE_THROW_ROLL("safeThrowRoll"),  TENTACLES_SHADOWING_ROLL("tentaclesShadowingRoll"),  SKILL_USE("skillUse"),  RE_ROLL("reRoll"),  TURN_END("turnEnd"),  PLAYER_ACTION("playerAction"),  FOUL("foul"),  HAND_OVER("handOver"),  INJURY("injury"),  APOTHECARY_ROLL("apothecaryRoll"),  APOTHECARY_CHOICE("apothecaryChoice"),  THROW_IN("throwIn"),  SCATTER_BALL("scatterBall"),  BLOCK("block"),  BLOCK_CHOICE("blockChoice"),  SPECTATORS("spectators"),  WEATHER("weather"),  COIN_THROW("coinThrow"),  RECEIVE_CHOICE("receiveChoice"),  KICKOFF_RESULT("kickoffResult"),  KICKOFF_SCATTER("kickoffScatter"),  KICKOFF_EXTRA_REROLL("extraReRoll"),  KICKOFF_RIOT("kickoffRiot"),  KICKOFF_THROW_A_ROCK("kickoffThrowARock"),  PUSHBACK("pushback"),  REFEREE("referee"),  KICKOFF_PITCH_INVASION("kickoffPitchInvasion"),  THROW_TEAM_MATE_ROLL("throwTeamMateRoll"),  SCATTER_PLAYER("scatterPlayer"),  TIMEOUT_ENFORCED("timeoutEnforced"),  WINNINGS_ROLL("winningsRoll"),  FUMBBL_RESULT_UPLOAD("fumbblResultUpload"),  FAN_FACTOR_ROLL("fanFactorRoll"),  MOST_VALUABLE_PLAYERS("mostValuablePlayers"),  DEFECTING_PLAYERS("defectingPlayers"),  JUMP_UP_ROLL("jumpUpRoll"),  STAND_UP_ROLL("standUpRoll"),  BRIBES_ROLL("bribesRoll"),  MASTER_CHEF_ROLL("masterChefRoll"),  START_HALF("startHalf"),  INDUCEMENT("inducement"),  PILING_ON("pilingOn"),  CHAINSAW_ROLL("chainsawRoll"),  LEADER("leader"),  SECRET_WEAPON_BAN("secretWeaponBan"),  BLOOD_LUST_ROLL("bloodLustRoll"),  HYPNOTIC_GAZE_ROLL("hypnoticGazeRoll"),  BITE_SPECTATOR("biteSpectator"),  ANIMOSITY_ROLL("animosityRoll"),  RAISE_DEAD("raiseDead"),  BLOCK_ROLL("blockRoll"),  PENALTY_SHOOTOUT("penaltyShootout"),  DOUBLE_HIRED_STAR_PLAYER("doubleHiredStarPlayer"),  SPELL_EFFECT_ROLL("spellEffectRoll"),  WIZARD_USE("wizardUse"),  GAME_OPTIONS("gameOptions"),  PASS_BLOCK("passBlock"),  NO_PLAYERS_TO_FIELD("noPlayersToField"),  PLAY_CARD("playCard"),  CARD_DEACTIVATED("cardDeactivated"),  BOMB_OUT_OF_BOUNDS("bombOutOfBounds"),  PETTY_CASH("pettyCash"),  INDUCEMENTS_BOUGHT("inducementsBought"),  CARDS_BOUGHT("cardsBought"),  CARD_EFFECT_ROLL("cardEffectRoll"),  WEEPING_DAGGER_ROLL("weepingDaggerRoll");
         name: string;
     }
 
     type AnimationType = {
-        //PASS("pass"),  THROW_TEAM_MATE("throwTeamMate"),  KICK("kick"),  SPELL_FIREBALL("spellFireball"),  SPELL_LIGHTNING("spellLightning"),  KICKOFF_BLITZ("kickoffBlitz"),  KICKOFF_BLIZZARD("kickoffBlizzard"),  KICKOFF_BRILLIANT_COACHING("kickoffBrilliantCoaching"),  KICKOFF_CHEERING_FANS("kickoffCheeringFans"),  KICKOFF_GET_THE_REF("kickoffGetTheRef"),  KICKOFF_HIGH_KICK("kickoffHighKick"),  KICKOFF_NICE("kickoffNice"),  KICKOFF_PERFECT_DEFENSE("kickoffPerfectDefense"),  KICKOFF_PITCH_INVASION("kickoffPitchInvasion"),  KICKOFF_POURING_RAIN("kickoffPouringRain"),  KICKOFF_QUICK_SNAP("kickoffQuickSnap"),  KICKOFF_RIOT("kickoffRiot"),  KICKOFF_SWELTERING_HEAT("kickoffSwelteringHeat"),  KICKOFF_THROW_A_ROCK("kickoffThrowARock"),  KICKOFF_VERY_SUNNY("kickoffVerySunny"),  HAIL_MARY_PASS("hailMaryPass"),  THROW_A_ROCK("throwARock"),  THROW_BOMB("throwBomb"),  HAIL_MARY_BOMB("hailMaryBomb"),  BOMB_EXLOSION("bombExplosion"),  CARD("card");
         name: string;
     }
 
@@ -365,6 +359,238 @@ declare namespace FFB.Protocol.Messages {
         animationType:          AnimationType;
         card:                   Card;
     }
+
+    type KickOffResult = {
+        name: string;
+    }
+
+    type RerolledAction = {
+        name: string;
+    }
+
+    type SkillUse = {
+        name: string;
+    }
+
+    type PlayerChoiceMode = {
+        name: string;
+    }
+
+    type DialogApothecaryChoiceParameter = {
+        dialogId:           DialogId;
+        playerId:           string;
+        playerStateOld:     PlayerState;
+        playerStateNew:     PlayerState;
+        seriousInjuryOld:   SeriousInjury;
+        seriousInjuryNew:   SeriousInjury;
+       }
+
+    type DialogReceiveChoiceParameter = {
+        dialogId:   DialogId;
+        teamId:     string;
+    }
+
+    type DialogReRollParameter = {
+        dialogId:           DialogId;
+        playerId:           string;
+        minimumRoll:        number;
+        fumble:             boolean;
+        rerolledAction:     RerolledAction;
+        teamRerollOption:   boolean;
+        proRerollOption:    boolean;
+    }
+
+    type DialogSkillUseParameter = {
+        dialogId:           DialogId;
+        playerId:           string;
+        minimumRoll:        number;
+        skill:              SkillUse;
+    }
+
+    type DialogUseApothecaryParameter = {
+        dialogId:       DialogId;
+        playerId:       string;
+        playerState:    PlayerState;
+        seriousInjury:  SeriousInjury;
+    }
+
+    type DialogBlockRollParameter = {
+        dialogId:           DialogId;
+        teamId:             string;
+        teamRerollOption:   boolean;
+        proRerollOption:    boolean;
+        nrOfDice:           number;
+        blockRoll:          number[];
+    }
+
+    type DialogPlayerChoiceParameter = {
+        dialogId:           DialogId;
+        teamId:             string;
+        playerIds:          string[];
+        playerChoiceMode:   PlayerChoiceMode;
+        maxSelects:         number;
+        descriptions:       string[];
+    }
+
+    type DialogInterceptionParameter = {
+        dialogId:   DialogId;
+        throwerId:  string;
+    }
+
+    type DialogWinningsReRollParameter = {
+        dialogId:   DialogId;
+        teamId:     string;
+        oldRoll:    number
+    }
+
+    type DialogBribesParameter = {
+        dialogId:       DialogId;
+        teamId:         string;
+        maxNrOfBribes:  number;
+        playerIds:      string[];
+      }
+
+    type DialogGameStatisticsParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogJoinParameter = {
+        dialogId: DialogId;
+    }
+
+    type DialogStartGameParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogTeamSetupParameter = {
+        dialogId:       DialogId;
+        loadDialog:     boolean;
+        setupErrors:    string[];
+    }
+
+    type DialogSetupErrorParameter = {
+        dialogId:       DialogId;
+        teamId:         string;
+        setupErrors:    string[];
+    }
+
+    type DialogTouchbackParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogDefenderActionParameter = {
+        dialogId: DialogId;
+      }
+
+    type DialogCoinChoiceParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogFollowupChoiceParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogConcedeGameParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogPilingOnParameter = {
+        dialogId:           DialogId;
+        playerId:           string;
+        usesATeamReroll:    boolean;
+        rerollInjury:       boolean;
+    }
+
+    type DialogBuyInducementsParameter = {
+        dialogId:           DialogId;
+        teamId:             string;
+        wizardAvailable:    boolean;
+        availableGold:      number;
+    }
+
+    type DialogTransferPettyCashParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogJourneymenParameter = {
+        dialogId:       DialogId;
+        teamId:         string;
+        nrOfSlots:      number;
+        positionIds:    string[];
+    }
+
+    type DialogKickoffResultParameter = {
+        dialogId:       DialogId;
+        kickOffResult:  KickOffResult;
+    }
+
+    type DialogKickSkillParameter = {
+        dialogId: DialogId;
+        playerId: string;
+     }
+
+    type DialogUseIgorParameter = {
+        dialogId: DialogId;
+        playerId: string;
+     }
+
+    type DialogKickoffReturnParameter = {
+        dialogId:       DialogId;
+        kickOffResult:  KickOffResult;
+    }
+
+    type DialogPettyCashParameter = {
+        dialogId:           DialogId;
+        teamId:             string;
+        teamValue:          number;
+        treasury:           number;
+        opponentTeamValue:  number;
+    }
+
+    type DialogWizardSpellParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogUseInducementParameter = {
+        dialogId:   DialogId;
+        teamId:     string;
+        cards:      Card[];
+    }
+
+    type DialogPassBlockParameter = {
+        dialogId: DialogId;
+     }
+
+    type DialogBuyCardsParameter = {
+        dialogId:           DialogId;
+        teamId:             string;
+        availableCards:     number;
+        availableGold:      number;
+        nrOfCardsPerType:   [Card, number];
+    }
+
+
+          
+
+    type DialogArgueTheCallParameter = {
+        dialogId:   DialogId;
+        teamId:     string;
+        playerIds: string[];
+     }
+
+
+    type DialogParameter = {
+        id:     DialogId;
+        value:  DialogApothecaryChoiceParameter| DialogReceiveChoiceParameter| DialogReRollParameter| DialogSkillUseParameter| DialogUseApothecaryParameter|
+                DialogBlockRollParameter| DialogPlayerChoiceParameter| DialogInterceptionParameter| DialogWinningsReRollParameter|
+                DialogBribesParameter| DialogGameStatisticsParameter| DialogJoinParameter| DialogStartGameParameter|
+                DialogTeamSetupParameter| DialogSetupErrorParameter| DialogTouchbackParameter| DialogDefenderActionParameter|
+                DialogCoinChoiceParameter| DialogFollowupChoiceParameter| DialogConcedeGameParameter| DialogPilingOnParameter|
+                DialogBuyInducementsParameter| DialogTransferPettyCashParameter| DialogJourneymenParameter| DialogKickoffResultParameter|
+                DialogKickSkillParameter| DialogUseIgorParameter| DialogKickoffReturnParameter| DialogPettyCashParameter|
+                DialogWizardSpellParameter|  DialogUseInducementParameter| DialogPassBlockParameter| DialogBuyCardsParameter| DialogArgueTheCallParameter
+    }
+
 
     interface NetCommand {
         netCommandId:   string;
