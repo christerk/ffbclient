@@ -24,8 +24,6 @@ export class Label extends Comp.UIComponent {
         this.config.width = g.displayWidth + "px";
         bounds = this.getBounds(ctx);
 
-        console.log("Label bounds", bounds, g.displayWidth, ctx.w, ctx.h, ctx.scale);
-
         g.setPosition(bounds.x, bounds.y);
 
         return g;

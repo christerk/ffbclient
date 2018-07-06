@@ -348,11 +348,38 @@ export class BlockRoll extends AbstractCommand {
 
         let r = this.rolls;
 
-        this.controller.DiceManager.roll("db", r, x, y);
+        let sprites = this.controller.DiceManager.roll("db", r, x, y);
+        this.controller.triggerEvent(EventType.BlockDice, {
+            sprites: sprites
+        });
     }
 
     public undo() {
 
+    }
+}
+
+export class BlockChoice extends AbstractCommand {
+    private choice: number;
+    private result: string;
+
+    public constructor(choice: number, result: string) {
+        super();
+        this.choice = choice;
+        this.result = result;
+    }
+
+    public do() {
+        this.controller.triggerEvent(EventType.BlockChoice, {
+            choice: this.choice
+        });
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getActivePlayer(),
+            text: this.result,
+        });
+    }
+
+    public undo() {
     }
 }
 

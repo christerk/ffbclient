@@ -420,7 +420,18 @@ declare namespace FFB.Protocol.Messages {
         successful: boolean;
     }
 
-    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollReport | PassRollReport | PickupRollReport;
+    type BlockChoiceReport = {
+        reportId: "blockChoice";
+        blockResult: string;
+        blockRoll: number[];
+        defenderId: string;
+        diceIndex: number;
+        nrOfDice: number;
+    }
+
+    type Report =
+        BlockReport | BlockRollReport | GoForItReport | InjuryReport |
+        DodgeRollReport | PassRollReport | PickupRollReport | BlockChoiceReport;
 
     type ReportList = {
         reports: Report[];

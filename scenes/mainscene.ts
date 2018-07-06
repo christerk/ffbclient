@@ -32,6 +32,7 @@ export class MainScene extends AbstractScene implements EventListener {
     private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera;
     private gridSize: number; // Size of a grid square
+    private blockDice: Phaser.GameObjects.Sprite[];
 
     public constructor(controller: Controller) {
         super('mainScene', controller);
@@ -69,10 +70,8 @@ export class MainScene extends AbstractScene implements EventListener {
                     let type = types[Math.floor(Math.random() * types.length)];
 
                     if (Math.random() < 0.05 && targets.length == 2) {
-                        console.log("d68", targets);
                         this.controller.DiceManager.roll("d68", targets, x, y);
                     } else {
-                        console.log(type, targets);
                         this.controller.DiceManager.roll(type, targets, x, y);
                     }
                 } else if (data.source == "TestButton2") {
@@ -84,6 +83,27 @@ export class MainScene extends AbstractScene implements EventListener {
                 break;
             case EventType.FloatText:
                 this.floatText(data.player, data.text);
+                break;
+            case EventType.BlockDice:
+                if (this.blockDice != null) {
+                    this.blockDice.map((d) => {
+                        this.controller.DiceManager.fadeDie("db", d, 0);
+                    });
+                }
+                this.blockDice = data.sprites;
+                break;
+            case EventType.BlockChoice:
+                let choice: number = data.choice;
+                if (this.blockDice != null) {
+                    for (let i = 0; i<this.blockDice.length; i++) {
+                        let d = this.blockDice[i];
+                        if (i != choice) {
+                            d.setAlpha(0.35);
+                        }
+                        this.controller.DiceManager.fadeDie("db", d, 1000);
+                    }
+                }
+                this.blockDice = null;
                 break;
         }
     }
@@ -136,7 +156,6 @@ export class MainScene extends AbstractScene implements EventListener {
         this.pitch = this.add.image(0, 0, 'pitch').setOrigin(0, 0);
         this.frameNumber = 0;
 
-        console.log('Scaling', this.height, this.pitch.height);
         this.pitchScale = 1.0;
 
         let game = this.controller.getGameState();

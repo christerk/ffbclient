@@ -28,6 +28,7 @@ export default class CommandModelSync extends Command {
             "injury": this.handleInjuryReport,
             "dodgeRoll": this.handleDodgeRollReport,
             "passRoll": this.handlePassRollReport,
+            "blockChoice": this.handleBlockChoiceReport,
         }
     }
 
@@ -138,5 +139,9 @@ export default class CommandModelSync extends Command {
 
     private handlePickupRollReport(report: FFB.Protocol.Messages.PickupRollReport): ClientCommands.AbstractCommand {
         return new ClientCommands.PickupRoll(report.roll, report.minimumRoll);
+    }
+
+    private handleBlockChoiceReport(report: FFB.Protocol.Messages.BlockChoiceReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.BlockChoice(report.diceIndex, report.blockResult);
     }
 }

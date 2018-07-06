@@ -70,7 +70,8 @@ export class DiceManager {
         }
     }
 
-    public roll(type: DieType, targets: number[], x: number, y: number, duration = 1000, delay = 0) {
+    public roll(type: DieType, targets: number[], x: number, y: number, duration = 1000, delay = 0): Phaser.GameObjects.Sprite[] {
+        let sprites: Phaser.GameObjects.Sprite[] = [];
         let numDice = targets.length;
         let localSpread = this.getLocalSpread(numDice);
 
@@ -83,10 +84,12 @@ export class DiceManager {
             // Special case for d68 rolls
             if (numDice == 2) {
                 let sprite = this.getDie("d6");
+                sprites.push(sprite);
                 let pX = x + localSpread[0][0] * spreadScale * this.scale;
                 let pY = y + localSpread[0][1] * spreadScale * this.scale;
                 this.generateRoll("d6", sprite, size, targets[0], pX, pY, duration, angle, delay);
                 sprite = this.getDie("d8");
+                sprites.push(sprite);
                 pX = x + localSpread[1][0] * spreadScale * this.scale;
                 pY = y + localSpread[1][1] * spreadScale * this.scale;
                 this.generateRoll("d8", sprite, size, targets[1], pX, pY, duration, angle + angleStep, delay);
@@ -96,11 +99,14 @@ export class DiceManager {
         } else {
             for (let i = 0; i<numDice; i++) {
                 let sprite = this.getDie(type);
+                sprites.push(sprite);
                 let pX = x + localSpread[i][0] * spreadScale * this.scale;
                 let pY = y + localSpread[i][1] * spreadScale * this.scale;
                 this.generateRoll(type, sprite, size, targets[i], pX, pY, duration, angle + i*angleStep, delay);
             }
         }
+
+        return sprites;
     }
 
     private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0)  {
@@ -163,24 +169,30 @@ export class DiceManager {
             die = this.scene.add.sprite(100, 100, "d6");
             die.setName("d6:" + this.diceSerial.toString());
 
-            die.addListener('animationcomplete', () => {
-                this.scene.tweens.add({
-                    targets: die,
-                    delay: 500,
-                    duration: 500,
-                    alpha: 0,
-                    onComplete: () => {
-                        die.visible = false;
-                        die.alpha = 1;
-                        this.dieCache[type].push(die);
-                    }
+            if (type != "db") {
+                die.addListener('animationcomplete', () => {
+                    this.fadeDie(type, die, 500);
                 });
-            });
+            }
         }
 
         die.angle = Math.random() * 360;
         die.visible = false;
 
         return die;
+    }
+
+    public fadeDie(type: string, die: Phaser.GameObjects.Sprite, delay: number) {
+        this.scene.tweens.add({
+            targets: die,
+            delay: delay,
+            duration: 500,
+            alpha: 0,
+            onComplete: () => {
+                die.visible = false;
+                die.alpha = 1;
+                this.dieCache[type].push(die);
+            }
+        });
     }
 }

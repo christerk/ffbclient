@@ -133,7 +133,6 @@ export class UILayer implements EventListener {
     }
 
     public redraw(w: number, h: number) {
-        console.log("uilayer redraw()", w, h);
         let g = this.component.render({
             scene: this.scene,
             parent: null,

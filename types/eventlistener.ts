@@ -1,6 +1,8 @@
 
 export enum EventType {
     ActivePlayerAction,
+    BlockChoice,
+    BlockDice,
     Click,
     FloatText,
     ModelChanged,

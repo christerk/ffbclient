@@ -40,7 +40,6 @@ export class Panel extends Comp.UIComponent {
         }
         container.setPosition(0, 0);
 
-        console.log('panel children', this.children);
         for (let c of this.children) {
             let childGameObject = c.render({
                 scene: ctx.scene,
