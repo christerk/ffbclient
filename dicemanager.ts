@@ -183,6 +183,4 @@ export class DiceManager {
 
         return die;
     }
-
-
 }

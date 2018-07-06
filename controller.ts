@@ -18,6 +18,7 @@ export default class Controller {
     private network: Network;
     private diceManager: DiceManager;
     private scenes: { [key: string]: Phaser.Scene }
+    private scale: number;
 
     /**
      * Core message passing class. Used to interface between the network and
@@ -30,6 +31,16 @@ export default class Controller {
         this.scenes = {};
         this.network = new Network();
         this.diceManager = new DiceManager();
+        this.scale = 30;
+    }
+
+    public handleEvent(event: EventType, data?: any) {
+        switch(event) {
+            case EventType.Resized:
+                console.log(data);
+                this.scale = data.scale;
+                break;
+        }
     }
 
     public get Game(): Model.Game {
@@ -77,6 +88,7 @@ export default class Controller {
     }
 
     public triggerEvent(eventType: EventType, data?: any) {
+        this.handleEvent(eventType, data);
         this.eventListeners.forEach((listener) => listener.handleEvent(eventType, data));
     }
 
@@ -91,5 +103,12 @@ export default class Controller {
 
     public disconnect() {
         this.network.leave();
+    }
+
+    public convertToPixels(coordinate: Coordinate) {
+        return [
+            Math.round(coordinate.x * this.scale),
+            Math.round(coordinate.y * this.scale)
+        ];
     }
 }

@@ -2,9 +2,10 @@
 export enum EventType {
     ActivePlayerAction,
     Click,
+    FloatText,
     ModelChanged,
-    Resizing,
-    Resized
+    Resized,
+    Resizing
 }
 
 export interface EventListener {

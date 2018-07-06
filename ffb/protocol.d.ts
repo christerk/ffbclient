@@ -397,7 +397,30 @@ declare namespace FFB.Protocol.Messages {
         successful: boolean;
     }
 
-    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollRport;
+    type PassRollReport = {
+        reportId: "passRoll";
+        bomb: boolean;
+        fumble: boolean;
+        hailMaryPass: boolean;
+        minimumRoll: number;
+        passingDistance: string;
+        playerId: string;
+        reRolled: boolean;
+        roll: number;
+        safeThrowHold: boolean;
+        successful: boolean;
+    }
+
+    type PickupRollReport = {
+        reportId: "pickupRoll";
+        minimumRoll: number;
+        playerId: string;
+        reRolled: boolean;
+        roll: number;
+        successful: boolean;
+    }
+
+    type Report = BlockReport | BlockRollReport | GoForItReport | InjuryReport | DodgeRollReport | PassRollReport | PickupRollReport;
 
     type ReportList = {
         reports: Report[];

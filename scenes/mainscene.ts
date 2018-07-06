@@ -50,6 +50,9 @@ export class MainScene extends AbstractScene implements EventListener {
             case EventType.Resizing:
                 this.resize();
                 break;
+            case EventType.Resized:
+                this.controller.DiceManager.setScale(this.pitchScale);
+                break;
             case EventType.Click:
                 if (data.source == "TestButton") {
                     let numDice = Math.floor(Math.random() * 3) + 1;
@@ -72,37 +75,45 @@ export class MainScene extends AbstractScene implements EventListener {
                         console.log(type, targets);
                         this.controller.DiceManager.roll(type, targets, x, y);
                     }
+                } else if (data.source == "TestButton2") {
                 }
                 break;
             case EventType.ActivePlayerAction:
                 let activePlayer = this.controller.Game.getActivePlayer();
-                if (activePlayer) {
-                    let pos = activePlayer.getPosition();
-                    let x = pos[0] * 30 * this.pitchScale;
-                    let y = pos[1] * 30 * this.pitchScale;
-                    let action = <string>data;
-                    console.log("Player Action", action, x, y);
-                    let t = this.add.text(x, y, action, {
-                        fontSize: (24 * this.pitchScale) + 'px',
-                        fill: 'white',
-                        stroke: 'black',
-                        strokeThickness: 2,
-                    });
-                    t.x = t.x - t.width / 2 + 15 * this.pitchScale;
-                    this.tweens.add({
-                        targets: t,
-                        duration: 1000,
-                        ease: 'Quad.easeIn',
-                        alpha: 0,
-                        y: y - 60 * this.pitchScale,
-                        onComplete: () => {
-                            t.visible = false;
-                            t.destroy();
-                        }
-                    });
-                }
+                this.floatText(activePlayer, <string>data);
+                break;
+            case EventType.FloatText:
+                this.floatText(data.player, data.text);
                 break;
         }
+    }
+
+    private floatText(player: Model.Player, text: string) {
+        if (player == null) {
+            return;
+        }
+
+        let pos = player.getPosition();
+        let [x, y] = this.controller.convertToPixels(pos);
+        let t = this.add.text(x, y, text.toUpperCase(), {
+            fontSize: (10 * this.pitchScale) + 'px',
+            fill: 'white',
+            stroke: 'black',
+            strokeThickness: 2,
+
+        });
+        t.x = t.x - t.width / 2 + 15 * this.pitchScale;
+        this.tweens.add({
+            targets: t,
+            duration: 1000,
+            ease: 'Quad.easeIn',
+            alpha: 0,
+            y: y - 60 * this.pitchScale,
+            onComplete: () => {
+                t.visible = false;
+                t.destroy();
+            }
+        });
     }
 
     public init(config) {
@@ -127,21 +138,6 @@ export class MainScene extends AbstractScene implements EventListener {
 
         console.log('Scaling', this.height, this.pitch.height);
         this.pitchScale = 1.0;
-
-        //this.pitch.setInteractive();
-        //this.input.setDraggable(this.pitch);
-
-        // this.input.on('dragstart', (pointer, gameObject) => {
-        //     this.dragStart = new Phaser.Geom.Point(this.cameras.main.scrollX, this.cameras.main.scrollY);
-        // });
-
-        // this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-        //     let scaling = this.cameras.main.zoom;
-        //     let sX = this.dragStart.x -dragX / scaling;
-        //     let sY = this.dragStart.y -dragY / scaling;
-
-        //     this.cameras.main.setScroll(sX, sY);
-        // });
 
         let game = this.controller.getGameState();
 
@@ -293,12 +289,10 @@ export class MainScene extends AbstractScene implements EventListener {
                 let iconScale = Math.max(1, Math.floor(this.pitchScale));
                 player.icon.setScale(iconScale, iconScale);
                 player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
-                let [x, y] = player.coordinate;
 
                 let iconState = this.getIconState(player);
 
-                let pX = this.pitchScale * (15 + x * 30);
-                let pY = this.pitchScale * (15 + y * 30);
+                let [pX, pY] = this.controller.convertToPixels(player.coordinate.add(0.5, 0.5));
 
                 player.icon.setFrame(player.getBaseIconFrame() + iconState.frameOffset);
                 player.icon.angle = iconState.angle;
@@ -315,18 +309,17 @@ export class MainScene extends AbstractScene implements EventListener {
         let squares = game.getMoveSquares();
         for (let index in squares) {
             let coordinate = squares[i]
+            let [w, h] = this.controller.convertToPixels(new Coordinate(0.8, 0.8));
             if (i == this.moveSquareIcons.length) {
                 let icon = this.add.graphics();
                 icon.clear();
                 icon.fillStyle(0xffffff, 0.25);
-                icon.fillRect(0, 0, 30, 30);
+                icon.fillRect(0, 0, w, h);
                 this.moveSquareIcons.push(icon);
             }
             let icon = this.moveSquareIcons[i];
 
-            let [x,y] = coordinate;
-            let pX = this.pitchScale * (15 + x * 30) - 15;
-            let pY = this.pitchScale * (15 + y * 30) - 15;
+            let [pX, pY] = this.controller.convertToPixels(coordinate.add(0.1, 0.1))
 
             icon.setPosition(pX, pY);
             icon.visible = true;
@@ -347,9 +340,7 @@ export class MainScene extends AbstractScene implements EventListener {
             }
             let icon = this.trackNumberIcons[i];
 
-            let [x,y] = coordinate;
-            let pX = this.pitchScale * (15 + x * 30);
-            let pY = this.pitchScale * (15 + y * 30);
+            let [pX,pY] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
 
             icon.setPosition(pX, pY);
             icon.visible = true;
@@ -359,9 +350,7 @@ export class MainScene extends AbstractScene implements EventListener {
         let ballCoordinate = game.getBallCoordinate();
 
         if (ballCoordinate) {
-            let [x,y] = ballCoordinate;
-            let pX = this.pitchScale * (25 + x * 30);
-            let pY = this.pitchScale * (25 + y * 30);
+            let [pX,pY] = this.controller.convertToPixels(ballCoordinate.add(0.8, 0.8));
 
             this.ballIcon.setPosition(pX, pY);
             this.ballIcon.visible = true;
@@ -413,8 +402,7 @@ export class MainScene extends AbstractScene implements EventListener {
             result.angle = -result.angle;
         }
 
-        let [x, y] = player.coordinate;
-        result.visible = x >= 0 && x <= 25;
+        result.visible = player.isOnField();
 
         return result;
     }

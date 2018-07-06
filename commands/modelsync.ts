@@ -27,6 +27,7 @@ export default class CommandModelSync extends Command {
             "goForItRoll": this.handleGoForItReport,
             "injury": this.handleInjuryReport,
             "dodgeRoll": this.handleDodgeRollReport,
+            "passRoll": this.handlePassRollReport,
         }
     }
 
@@ -120,7 +121,7 @@ export default class CommandModelSync extends Command {
     }
 
     private handleGoForItReport(report: FFB.Protocol.Messages.GoForItReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.GoForItRoll(report.roll);
+        return new ClientCommands.GoForItRoll(report.roll, report.minimumRoll);
     }
 
     private handleInjuryReport(report: FFB.Protocol.Messages.InjuryReport): ClientCommands.AbstractCommand {
@@ -128,6 +129,14 @@ export default class CommandModelSync extends Command {
     }
 
     private handleDodgeRollReport(report: FFB.Protocol.Messages.DodgeRollReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.DodgeRoll(report.roll);
+        return new ClientCommands.DodgeRoll(report.roll, report.minimumRoll);
+    }
+
+    private handlePassRollReport(report: FFB.Protocol.Messages.PassRollReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.PassRoll(report.roll, report.minimumRoll);
+    }
+
+    private handlePickupRollReport(report: FFB.Protocol.Messages.PickupRollReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.PickupRoll(report.roll, report.minimumRoll);
     }
 }

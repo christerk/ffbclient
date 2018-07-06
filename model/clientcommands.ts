@@ -342,8 +342,9 @@ export class BlockRoll extends AbstractCommand {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let x = Math.random() * w / 2 + w/4;
-        let y = Math.random() * h / 2 + h/4;
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
+        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
         let r = this.rolls;
 
@@ -357,20 +358,27 @@ export class BlockRoll extends AbstractCommand {
 
 export class GoForItRoll extends AbstractCommand {
     private roll: number;
+    private minimumRoll: number;
 
-    public constructor(roll: number) {
+    public constructor(roll: number, minimumRoll: number) {
         super();
         this.roll = roll;
+        this.minimumRoll = minimumRoll;
     }
 
     public do() {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let x = Math.random() * w / 2 + w/4;
-        let y = Math.random() * h / 2 + h/4;
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
+        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
         this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getActivePlayer(),
+            text: "GFI " + this.minimumRoll + "+",
+        });
     }
 
     public undo() {
@@ -384,6 +392,8 @@ export class Injury extends AbstractCommand {
     private casualtyRoll: [number, number];
     private casualtyRollDecay: [number, number];
 
+    private blockedSquares: Coordinate[];
+
     public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
         super();
         this.armorRoll = armorRoll;
@@ -396,13 +406,24 @@ export class Injury extends AbstractCommand {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let x = Math.random() * w / 2 + w/4;
-        let y = Math.random() * h / 2 + h/4;
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2, this.blockedSquares);
+
+        let x = coordinate.x;
+        let y = coordinate.y;
+
+        this.blockedSquares.push(coordinate);
+        this.blockedSquares.push(coordinate.add(1,0));
+        this.blockedSquares.push(coordinate.add(0,1));
+        this.blockedSquares.push(coordinate.add(1,1));
+
+        [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
         this.controller.DiceManager.roll(type, targets, x, y, 1000, delay);
     }
 
     public do() {
+        this.blockedSquares= [];
         if (this.armorRoll != null) {
             this.rollDice("d6", this.armorRoll, 0);
         }
@@ -424,20 +445,87 @@ export class Injury extends AbstractCommand {
 
 export class DodgeRoll extends AbstractCommand {
     private roll: number;
+    private minimumRoll: number;
 
-    public constructor(roll: number) {
+    public constructor(roll: number, minimumRoll: number) {
         super();
         this.roll = roll;
+        this.minimumRoll = minimumRoll;
     }
 
     public do() {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let x = Math.random() * w / 2 + w/4;
-        let y = Math.random() * h / 2 + h/4;
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
+        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
         this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getActivePlayer(),
+            text: "Dodge " + this.minimumRoll + "+",
+        })
+    }
+
+    public undo() {
+
+    }
+}
+
+export class PassRoll extends AbstractCommand {
+    private roll: number;
+    private minimumRoll: number;
+
+    public constructor(roll: number, minimumRoll: number) {
+        super();
+        this.roll = roll;
+        this.minimumRoll = minimumRoll;
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
+        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
+
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getActivePlayer(),
+            text: "Pass " + this.minimumRoll + "+",
+        })
+    }
+
+    public undo() {
+
+    }
+}
+
+export class PickupRoll extends AbstractCommand {
+    private roll: number;
+    private minimumRoll: number;
+
+    public constructor(roll: number, minimumRoll: number) {
+        super();
+        this.roll = roll;
+        this.minimumRoll = minimumRoll;
+    }
+
+    public do() {
+        let w = this.controller.scene.sys.canvas.clientWidth;
+        let h = this.controller.scene.sys.canvas.clientHeight;
+
+        let player = this.controller.Game.getActivePlayer();
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
+        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
+
+        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getActivePlayer(),
+            text: "Pickup " + this.minimumRoll + "+",
+        })
     }
 
     public undo() {

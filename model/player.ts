@@ -104,4 +104,8 @@ export class Player {
     public isActive(): boolean {
         return (this.flags & PlayerState._bit_active) > 0;
     }
+
+    public isOnField(): boolean {
+        return this.coordinate.isOnField();
+    }
 }
