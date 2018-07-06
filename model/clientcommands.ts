@@ -420,6 +420,7 @@ export class Injury extends AbstractCommand {
     private casualtyRollDecay: [number, number];
 
     private blockedSquares: Coordinate[];
+    private player: Model.Player;
 
     public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
         super();
@@ -433,8 +434,7 @@ export class Injury extends AbstractCommand {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2, this.blockedSquares);
+        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(this.player, 2, 2, this.blockedSquares);
 
         let x = coordinate.x;
         let y = coordinate.y;
@@ -450,6 +450,7 @@ export class Injury extends AbstractCommand {
     }
 
     public do() {
+        this.player = this.controller.Game.getActivePlayer();
         this.blockedSquares= [];
         if (this.armorRoll != null) {
             this.rollDice("d6", this.armorRoll, 0);
