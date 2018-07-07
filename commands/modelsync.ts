@@ -127,7 +127,7 @@ export default class CommandModelSync extends Command {
     }
 
     private handleInjuryReport(report: FFB.Protocol.Messages.InjuryReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.Injury(report.armorRoll, report.injuryRoll, report.casualtyRoll, report.casualtyRollDecay)
+        return new ClientCommands.Injury(report.attackerId, report.defenderId, report.armorRoll, report.injuryRoll, report.casualtyRoll, report.casualtyRollDecay)
     }
 
     private handleDodgeRollReport(report: FFB.Protocol.Messages.DodgeRollReport): ClientCommands.AbstractCommand {
@@ -139,7 +139,7 @@ export default class CommandModelSync extends Command {
     }
 
     private handlePickupRollReport(report: FFB.Protocol.Messages.PickupRollReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.PickupRoll(report.roll, report.minimumRoll);
+        return new ClientCommands.PickupRoll(report.playerId, report.roll, report.minimumRoll);
     }
 
     private handleBlockChoiceReport(report: FFB.Protocol.Messages.BlockChoiceReport): ClientCommands.AbstractCommand {

@@ -33,6 +33,10 @@ export class Game {
                 this.ballCoordinate = Coordinate.FromArray(data.game.fieldModel.ballCoordinate);
             }
 
+            if (data.game.actingPlayer) {
+                this.setActivePlayer(data.game.actingPlayer.playerId);
+            }
+
             this.applyFieldModel(data.game.fieldModel);
         }
     }
@@ -309,13 +313,13 @@ export class Game {
             return new Coordinate(x, y);
         }
         if ((bits & BIT_SW) == 0) {
-            return new Coordinate(x-width+1, y);
+            return new Coordinate(x-(width-1), y);
         }
         if ((bits & BIT_NE) == 0) {
-            return new Coordinate(x, y-height+1);
+            return new Coordinate(x, y-(height-1));
         }
         if ((bits & BIT_NW) == 0) {
-            return new Coordinate(x-width-1, y-height-1);
+            return new Coordinate(x-(width-1), y-(height-1));
         }
 
         console.log("Oops, this shouldn't happpen.");

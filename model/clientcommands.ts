@@ -36,6 +36,21 @@ export abstract class AbstractCommand {
         this.game = game;
     }
 
+    protected getLocation(playerIds: string[]) {
+        for (let id of playerIds) {
+            let p = this.game.getPlayer(id);
+            if (p && p.isOnField()) {
+                return p.getPosition();
+            }
+        }
+
+        let p = this.game.getActivePlayer();
+        if (p && p.isOnField())
+            return p.getPosition();
+
+        return new Coordinate(13, 7);
+    }
+
     public abstract do(): void;
     public abstract undo(): void;
 }
@@ -339,14 +354,9 @@ export class BlockRoll extends AbstractCommand {
     }
 
     public do() {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
+        let location = this.getLocation([]);
 
-        let player = this.controller.Game.getActivePlayer();
-
-        let coordinate = player.getPosition();
-
-        let rollKey = this.controller.DiceManager.roll("db", this.rolls, coordinate);
+        let rollKey = this.controller.DiceManager.roll("db", this.rolls, location);
         this.controller.triggerEvent(EventType.BlockDice, rollKey);
     }
 
@@ -390,13 +400,9 @@ export class GoForItRoll extends AbstractCommand {
     }
 
     public do() {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
+        let location = this.getLocation([]);
 
-        let player = this.controller.Game.getActivePlayer();
-        let coordinate = player.getPosition();
-
-        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
+        this.controller.DiceManager.roll("d6", [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "GFI " + this.minimumRoll + "+",
@@ -409,6 +415,8 @@ export class GoForItRoll extends AbstractCommand {
 }
 
 export class Injury extends AbstractCommand {
+    private attackerId: string;
+    private defenderId: string;
     private armorRoll: [number, number];
     private injuryRoll: [number, number];
     private casualtyRoll: [number, number];
@@ -416,36 +424,34 @@ export class Injury extends AbstractCommand {
 
     private location: Coordinate;
 
-    public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
+    public constructor(attackerId: string, defenderId: string, armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
         super();
+        this.attackerId = attackerId;
+        this.defenderId = defenderId;
         this.armorRoll = armorRoll;
         this.injuryRoll = injuryRoll;
         this.casualtyRoll = casualtyRoll;
         this.casualtyRollDecay = casualtyRollDecay;
     }
 
-    private rollDice(type: DieType, targets: number[], delay: number) {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
-
-        let coordinate = this.location;
-
-        this.controller.DiceManager.roll(type, targets, coordinate, 1000, delay);
+    private rollDice(type: DieType, targets: number[]) {
+        this.controller.DiceManager.roll(type, targets, this.location, 1000);
     }
 
     public do() {
-        this.location = this.controller.Game.getActivePlayer().getPosition();
+        this.location = this.getLocation([ this.defenderId, this.attackerId]);
+
         if (this.armorRoll != null) {
-            this.rollDice("d6", this.armorRoll, 0);
+            this.rollDice("d6", this.armorRoll);
         }
         if (this.injuryRoll != null) {
-            this.rollDice("d6", this.injuryRoll, 333);
+            this.rollDice("d6", this.injuryRoll);
         }
         if (this.casualtyRoll != null) {
-            this.rollDice("d68", this.casualtyRoll, 666);
+            this.rollDice("d68", this.casualtyRoll);
         }
         if (this.casualtyRollDecay != null) {
-            this.rollDice("d68", this.casualtyRollDecay, 999);
+            this.rollDice("d68", this.casualtyRollDecay);
         }
     }
 
@@ -465,12 +471,9 @@ export class DodgeRoll extends AbstractCommand {
     }
 
     public do() {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
+        let location = this.getLocation([]);
 
-        let player = this.controller.Game.getActivePlayer();
-
-        this.controller.DiceManager.roll("d6", [this.roll], player.getPosition());
+        this.controller.DiceManager.roll("d6", [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Dodge " + this.minimumRoll + "+",
@@ -493,13 +496,8 @@ export class PassRoll extends AbstractCommand {
     }
 
     public do() {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
-
-        let player = this.controller.Game.getActivePlayer();
-        let coordinate = player.getPosition();
-
-        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
+        let location = this.getLocation([]);
+        this.controller.DiceManager.roll("d6", [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Pass " + this.minimumRoll + "+",
@@ -514,23 +512,20 @@ export class PassRoll extends AbstractCommand {
 export class PickupRoll extends AbstractCommand {
     private roll: number;
     private minimumRoll: number;
+    private playerId: string;
 
-    public constructor(roll: number, minimumRoll: number) {
+    public constructor(playerId: string, roll: number, minimumRoll: number) {
         super();
         this.roll = roll;
         this.minimumRoll = minimumRoll;
+        this.playerId = playerId;
     }
 
     public do() {
-        let w = this.controller.scene.sys.canvas.clientWidth;
-        let h = this.controller.scene.sys.canvas.clientHeight;
-
-        let player = this.controller.Game.getActivePlayer();
-        let coordinate = player.getPosition();
-
-        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
+        let location = this.getLocation([this.playerId]);
+        this.controller.DiceManager.roll("d6", [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
-            player: this.controller.Game.getActivePlayer(),
+            player: this.controller.Game.getPlayer(this.playerId),
             text: "Pickup " + this.minimumRoll + "+",
         })
     }
