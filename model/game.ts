@@ -12,6 +12,9 @@ export class Game {
 
     private ballCoordinate: Coordinate;
 
+    private half: number;
+    private sidePlaying: Model.Side;
+
     /**
      * Root internal model class.
      *
@@ -21,6 +24,8 @@ export class Game {
         this.moveSquares = [];
         this.trackNumbers = [];
         this.isInitialized = false;
+        this.sidePlaying = Model.Side.Home;
+        this.half = 0;
     }
 
     public initialize(data: FFB.Protocol.Messages.ServerGameState) {
@@ -39,6 +44,7 @@ export class Game {
 
             this.applyFieldModel(data.game.fieldModel);
             this.applyGameResult(data.game.gameResult);
+            this.applyTurnData(data.game);
         }
     }
 
@@ -102,6 +108,22 @@ export class Game {
         return player;
     }
 
+    public getPlayingSide(): Model.Side {
+        return this.sidePlaying;
+    }
+
+    public setPlayingSide(side: Model.Side) {
+        this.sidePlaying = side;
+    }
+
+    public getHalf(): number {
+        return this.half;
+    }
+
+    public setHalf(half: number) {
+        this.half = half;
+    }
+
     private applyFieldModel(data: FFB.Protocol.Messages.FieldModelType) {
         for (let pData of data.playerDataArray) {
             let player = this.getPlayer(pData.playerId);
@@ -113,6 +135,18 @@ export class Game {
 
     private applyTeamResult(team: Model.Team, data: FFB.Protocol.Messages.TeamResult) {
         team.setScore(data.score);
+    }
+
+    private applyTurnData(data: FFB.Protocol.Messages.GameType) {
+        this.setHalf(data.half);
+        this.setPlayingSide(data.homePlaying ? Model.Side.Home : Model.Side.Away);
+        this.applyTeamTurnData(this.teamHome, data.turnDataHome);
+        this.applyTeamTurnData(this.teamAway, data.turnDataAway);
+    }
+
+    private applyTeamTurnData(team: Model.Team, data: FFB.Protocol.Messages.TurnData) {
+        console.log("Applying Team Turn Data", data);
+        team.setTurn(data.turnNr);
     }
 
     private applyGameResult(data: FFB.Protocol.Messages.GameResult) {

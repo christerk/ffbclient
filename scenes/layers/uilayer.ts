@@ -10,6 +10,8 @@ export class UILayer implements EventListener {
     private scale: number;
     private labelHomeScore: Comp.Label;
     private labelAwayScore: Comp.Label;
+    private labelHalf: Comp.Label;
+    private labelTurn: Comp.Label;
     private controller: Controller;
 
     private component: Comp.UIComponent;
@@ -42,6 +44,30 @@ export class UILayer implements EventListener {
             parentAnchor: Comp.Anchor.CENTER,
             color: 0xffffff,
             text: "0"
+        });
+
+        this.labelHalf = new Comp.Label({
+            id: "Half",
+            margin:  {
+                right: 1.5,
+            },
+            height: 1,
+            anchor: Comp.Anchor.EAST,
+            parentAnchor: Comp.Anchor.CENTER,
+            color: 0xffffff,
+            text: "H0",
+        });
+
+        this.labelTurn = new Comp.Label({
+            id: "Turn",
+            margin:  {
+                left: 1.5,
+            },
+            height: 1,
+            anchor: Comp.Anchor.WEST,
+            parentAnchor: Comp.Anchor.CENTER,
+            color: 0xffffff,
+            text: "T0/0",
         });
 
         this.component = new Comp.Panel({
@@ -81,10 +107,11 @@ export class UILayer implements EventListener {
                         }),
                         new Comp.Panel({
                             id: "ScorePanel",
-                            width: 4,
+                            width: 6,
                             height: 1,
                             background: 0x003300,
                             children: [
+                                this.labelHalf,
                                 this.labelHomeScore,
                                 new Comp.Label({
                                     id: "ScoreDash",
@@ -95,6 +122,7 @@ export class UILayer implements EventListener {
                                     text: "-"
                                 }),
                                 this.labelAwayScore,
+                                this.labelTurn
                             ]
                         }),
                     ]
@@ -139,8 +167,14 @@ export class UILayer implements EventListener {
             this.redraw(data.w, data.h);
         }
         if (eventType == EventType.ModelChanged) {
-            this.labelHomeScore.setText(this.controller.Game.teamHome.getScore().toString());
-            this.labelAwayScore.setText(this.controller.Game.teamAway.getScore().toString());
+            let g = this.controller.Game;
+            this.labelHomeScore.setText(g.teamHome.getScore().toString());
+            this.labelAwayScore.setText(g.teamAway.getScore().toString());
+
+            let half = "H"+g.getHalf();
+            let turn = "T"+g.teamHome.getTurn()+"/"+g.teamAway.getTurn();
+            this.labelHalf.setText(half);
+            this.labelTurn.setText(turn);
         }
     }
 

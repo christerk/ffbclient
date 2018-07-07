@@ -378,6 +378,63 @@ export class SetScore extends AbstractCommand {
     }
 }
 
+export class SetPlayingSide extends AbstractCommand {
+    private side: Model.Side;
+    private oldSide: number;
+
+    public constructor(side: Model.Side) {
+        super();
+        this.side = side;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+
+        this.oldSide = this.game.getPlayingSide();
+    }
+
+    public do() {
+        this.game.setPlayingSide(this.side);
+    }
+
+    public undo() {
+        this.game.setPlayingSide(this.oldSide);
+    }
+}
+
+export class SetTurnNr extends AbstractCommand {
+    private team: Model.Team;
+    private side: string;
+    private turn: number;
+    private oldTurn: number;
+
+    public constructor(side: string, turn: number) {
+        super();
+        this.side = side;
+        this.turn = turn;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+
+        if (this.side == "home") {
+            this.team = this.game.teamHome;
+        } else {
+            this.team = this.game.teamAway;
+        }
+
+        this.oldTurn = this.team.getTurn();
+    }
+
+    public do() {
+        this.team.setTurn(this.turn);
+    }
+
+    public undo() {
+        this.team.setTurn(this.oldTurn);
+    }
+}
+
 export class BlockRoll extends AbstractCommand {
     private rolls: number[];
 

@@ -290,7 +290,7 @@ declare namespace FFB.Protocol.Messages {
     type TurnData = {
         homeData:               boolean;
         turnStarted:            boolean;
-        turnNumber:             number;
+        turnNr:             number;
         firstTurnAfterKickoff:  boolean;
         reRolls:                number;
         apothecaries:           number;

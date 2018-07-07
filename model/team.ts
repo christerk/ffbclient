@@ -7,6 +7,7 @@ export class Team {
     public matchStats;
 
     private score: number;
+    private turn: number;
 
     public constructor(data: FFB.Protocol.Messages.TeamType) {
         this.name = data.teamName;
@@ -16,6 +17,8 @@ export class Team {
         for (let player of data.playerArray) {
             this.players[player['playerId']] = new Model.Player(player);
         }
+        this.score = 0;
+        this.turn = 0;
     }
 
     public setScore(score: number) {
@@ -24,6 +27,14 @@ export class Team {
 
     public getScore(): number {
         return this.score;
+    }
+
+    public setTurn(turn: number) {
+        this.turn = turn;        
+    }
+
+    public getTurn(): number {
+        return this.turn;
     }
 
     public getAssets() {

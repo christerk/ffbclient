@@ -2,6 +2,7 @@ import { Coordinate } from "../types";
 import Controller from "../controller";
 import Command from "./command";
 import * as ClientCommands from "../model/clientcommands";
+import * as Model from "../model";
 
 export default class CommandModelSync extends Command {
     private handlers: { [id: string] : (ModelChange) => ClientCommands.AbstractCommand };
@@ -21,6 +22,8 @@ export default class CommandModelSync extends Command {
             "actingPlayerSetPlayerAction": this.handleSetActivePlayerAction,
             "actingPlayerSetPlayerId": this.handleSetActivePlayerId,
             "teamResultSetScore": this.handleSetScore,
+            "gameSetHomePlaying": this.handleSetHomePlaying,
+            "turnDataSetTurnNr": this.handleSetTurnNr,
         };
 
         this.reportHandlers = {
@@ -152,5 +155,17 @@ export default class CommandModelSync extends Command {
 
     private handleBlockChoiceReport(report: FFB.Protocol.Messages.BlockChoiceReport): ClientCommands.AbstractCommand {
         return new ClientCommands.BlockChoice(report.diceIndex, report.blockResult);
+    }
+
+    private handleSetHomePlaying(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let homePlaying = <boolean>change.modelChangeValue;
+        let side = homePlaying ? Model.Side.Home : Model.Side.Away;
+        return new ClientCommands.SetPlayingSide(side);
+    }
+
+    private handleSetTurnNr(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let side = change.modelChangeKey;
+        let turn = <number>change.modelChangeValue;
+        return new ClientCommands.SetTurnNr(side, turn);
     }
 }
