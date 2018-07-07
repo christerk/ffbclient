@@ -29,7 +29,7 @@ export default class CommandModelSync extends Command {
             "dodgeRoll": this.handleDodgeRollReport,
             "passRoll": this.handlePassRollReport,
             "blockChoice": this.handleBlockChoiceReport,
-            "pickupRoll": this.handlePickupRollReport,
+            "pickUpRoll": this.handlePickupRollReport,
         }
     }
 

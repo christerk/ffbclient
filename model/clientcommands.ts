@@ -343,15 +343,11 @@ export class BlockRoll extends AbstractCommand {
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
-        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
-        let r = this.rolls;
+        let coordinate = player.getPosition();
 
-        let sprites = this.controller.DiceManager.roll("db", r, x, y);
-        this.controller.triggerEvent(EventType.BlockDice, {
-            sprites: sprites
-        });
+        let rollKey = this.controller.DiceManager.roll("db", this.rolls, coordinate);
+        this.controller.triggerEvent(EventType.BlockDice, rollKey);
     }
 
     public undo() {
@@ -398,10 +394,9 @@ export class GoForItRoll extends AbstractCommand {
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
-        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
+        let coordinate = player.getPosition();
 
-        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "GFI " + this.minimumRoll + "+",
@@ -419,8 +414,7 @@ export class Injury extends AbstractCommand {
     private casualtyRoll: [number, number];
     private casualtyRollDecay: [number, number];
 
-    private blockedSquares: Coordinate[];
-    private player: Model.Player;
+    private location: Coordinate;
 
     public constructor(armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
         super();
@@ -434,24 +428,13 @@ export class Injury extends AbstractCommand {
         let w = this.controller.scene.sys.canvas.clientWidth;
         let h = this.controller.scene.sys.canvas.clientHeight;
 
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(this.player, 2, 2, this.blockedSquares);
+        let coordinate = this.location;
 
-        let x = coordinate.x;
-        let y = coordinate.y;
-
-        this.blockedSquares.push(coordinate);
-        this.blockedSquares.push(coordinate.add(1,0));
-        this.blockedSquares.push(coordinate.add(0,1));
-        this.blockedSquares.push(coordinate.add(1,1));
-
-        [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
-
-        this.controller.DiceManager.roll(type, targets, x, y, 1000, delay);
+        this.controller.DiceManager.roll(type, targets, coordinate, 1000, delay);
     }
 
     public do() {
-        this.player = this.controller.Game.getActivePlayer();
-        this.blockedSquares= [];
+        this.location = this.controller.Game.getActivePlayer().getPosition();
         if (this.armorRoll != null) {
             this.rollDice("d6", this.armorRoll, 0);
         }
@@ -486,10 +469,8 @@ export class DodgeRoll extends AbstractCommand {
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
-        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
 
-        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.DiceManager.roll("d6", [this.roll], player.getPosition());
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Dodge " + this.minimumRoll + "+",
@@ -516,10 +497,9 @@ export class PassRoll extends AbstractCommand {
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
-        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
+        let coordinate = player.getPosition();
 
-        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Pass " + this.minimumRoll + "+",
@@ -546,10 +526,9 @@ export class PickupRoll extends AbstractCommand {
         let h = this.controller.scene.sys.canvas.clientHeight;
 
         let player = this.controller.Game.getActivePlayer();
-        let coordinate = this.controller.Game.findEmptyPatchNearPlayer(player, 2, 2);
-        let [x, y] = this.controller.convertToPixels(coordinate.add(1,1));
+        let coordinate = player.getPosition();
 
-        this.controller.DiceManager.roll("d6", [this.roll], x, y);
+        this.controller.DiceManager.roll("d6", [this.roll], coordinate);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Pickup " + this.minimumRoll + "+",

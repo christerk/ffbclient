@@ -1,9 +1,20 @@
 import Phaser from "phaser";
 import { Dice } from "./scenes/animations/dice";
+import { Coordinate } from "./types";
+import Controller from "./controller";
 
 export type DieType = "d6" | "db" | "d8" | "d68";
 
+type RollType = {
+    dice: {
+        type: DieType,
+        sprite: Phaser.GameObjects.Sprite
+    }[];
+    location: string;
+}
+
 export class DiceManager {
+    private controller: Controller;
     private scene: Phaser.Scene;
     private scale: number;
     private dice: Dice;
@@ -12,10 +23,13 @@ export class DiceManager {
         spreadScale: number,
         size: number
     }};
+    private rollCounter: number;
+    private activeRolls: { [key: string]: RollType };
 
     private dieCache: { [type: string]: Phaser.GameObjects.Sprite[] };
 
-    public constructor() {
+    public constructor(controller: Controller) {
+        this.controller = controller;
         this.dieCache = {
             "d6": [],
             "db": [],
@@ -43,6 +57,8 @@ export class DiceManager {
                 size: 0.25,
             }
         }
+        this.activeRolls = {};
+        this.rollCounter = 0;
     }
 
     public setScene(scene: Phaser.Scene) {
@@ -70,8 +86,14 @@ export class DiceManager {
         }
     }
 
-    public roll(type: DieType, targets: number[], x: number, y: number, duration = 1000, delay = 0): Phaser.GameObjects.Sprite[] {
-        let sprites: Phaser.GameObjects.Sprite[] = [];
+    public roll(type: DieType, targets: number[], coordinate: Coordinate, duration = 1000, delay = 0): string {
+        let emptySpace = this.controller.findEmptyPatchNearLocation(coordinate, 2, 2);
+
+        let locationKey = this.controller.allocateBoardSpace(emptySpace, 2, 2);
+
+        let [x, y] = this.controller.convertToPixels(emptySpace.add(1,1));
+
+        let dice: { type: DieType, sprite: Phaser.GameObjects.Sprite}[] = [];
         let numDice = targets.length;
         let localSpread = this.getLocalSpread(numDice);
 
@@ -84,32 +106,62 @@ export class DiceManager {
             // Special case for d68 rolls
             if (numDice == 2) {
                 let sprite = this.getDie("d6");
-                sprites.push(sprite);
+                dice.push({ type: "d6", sprite: sprite });
                 let pX = x + localSpread[0][0] * spreadScale * this.scale;
                 let pY = y + localSpread[0][1] * spreadScale * this.scale;
-                this.generateRoll("d6", sprite, size, targets[0], pX, pY, duration, angle, delay);
+                this.generateRoll("d6", sprite, size, targets[0], pX, pY, duration, angle, delay, locationKey);
                 sprite = this.getDie("d8");
-                sprites.push(sprite);
+                dice.push({ type: "d8", sprite: sprite });
                 pX = x + localSpread[1][0] * spreadScale * this.scale;
                 pY = y + localSpread[1][1] * spreadScale * this.scale;
-                this.generateRoll("d8", sprite, size, targets[1], pX, pY, duration, angle + angleStep, delay);
+                this.generateRoll("d8", sprite, size, targets[1], pX, pY, duration, angle + angleStep, delay, locationKey);
             } else {
                 console.log("Strange d68 roll encountered", targets);
             }
         } else {
             for (let i = 0; i<numDice; i++) {
                 let sprite = this.getDie(type);
-                sprites.push(sprite);
+                dice.push({ type: type, sprite: sprite });
                 let pX = x + localSpread[i][0] * spreadScale * this.scale;
                 let pY = y + localSpread[i][1] * spreadScale * this.scale;
-                this.generateRoll(type, sprite, size, targets[i], pX, pY, duration, angle + i*angleStep, delay);
+                this.generateRoll(type, sprite, size, targets[i], pX, pY, duration, angle + i*angleStep, delay, locationKey);
             }
         }
 
-        return sprites;
+        let rollKey = "Roll:" + (++this.rollCounter);
+
+        let rollData: RollType = {
+            dice: dice,
+            location: locationKey,
+        }
+
+        this.activeRolls[rollKey] = rollData;
+
+        console.log("Adding roll", rollKey, locationKey);
+
+        if (type != "db" && dice.length > 0) {
+            dice[0].sprite.addListener('animationcomplete', () => {
+                this.fadeRoll(rollKey, 500);
+            });
+        }
+
+        return rollKey;
     }
 
-    private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0)  {
+    public displayBlockChoice(rollKey: string, choice: number) {
+        let roll = this.activeRolls[rollKey];
+        if (roll) {
+            for (let i = 0; i<roll.dice.length; i++) {
+                let d = roll.dice[i].sprite;
+                if (i != choice) {
+                    d.setAlpha(0.35);
+                }
+            }
+            this.fadeRoll(rollKey, 1000);
+        }
+    }
+
+    private generateRoll(type: DieType, sprite: Phaser.GameObjects.Sprite, scale: number, target: number, x: number, y: number, duration: number, angle: number, delay = 0, locationKey: string)  {
         let anim = this.dice.getAnimation(type, this.scene, "dice_animation:" + sprite.name, target);
         let start = new Phaser.Math.Vector2();
         start.setToPolar(angle, 300 * this.scale)
@@ -168,12 +220,6 @@ export class DiceManager {
 
             die = this.scene.add.sprite(100, 100, "d6");
             die.setName("d6:" + this.diceSerial.toString());
-
-            if (type != "db") {
-                die.addListener('animationcomplete', () => {
-                    this.fadeDie(type, die, 500);
-                });
-            }
         }
 
         die.angle = Math.random() * 360;
@@ -182,17 +228,26 @@ export class DiceManager {
         return die;
     }
 
-    public fadeDie(type: string, die: Phaser.GameObjects.Sprite, delay: number) {
-        this.scene.tweens.add({
-            targets: die,
-            delay: delay,
-            duration: 500,
-            alpha: 0,
-            onComplete: () => {
-                die.visible = false;
-                die.alpha = 1;
-                this.dieCache[type].push(die);
-            }
-        });
+    public fadeRoll(rollKey: string, delay: number = 0) {
+        console.log("Removing roll", rollKey);
+        if (this.activeRolls[rollKey] != undefined) {
+            this.scene.tweens.add({
+                targets: this.activeRolls[rollKey].dice.map( (d) => d.sprite),
+                delay: delay,
+                duration: 500,
+                alpha: 0,
+                onComplete: () => {
+                    let roll = this.activeRolls[rollKey];
+
+                    roll.dice.map((die) => {
+                        die.sprite.visible = false;
+                        die.sprite.alpha = 1;
+                        this.dieCache[die.type].push(die.sprite);
+                    });
+                    this.controller.freeBoardSpace(roll.location);
+                    delete this.activeRolls[rollKey];
+                }
+            });
+        }
     }
 }

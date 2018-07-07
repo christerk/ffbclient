@@ -183,9 +183,7 @@ export class Game {
     /**
      * Find a space of width*height empty squares around a given player
      */
-    public findEmptyPatchNearPlayer(player: Model.Player, width: number, height: number, additionalBlockedSquares?: Coordinate[]): Coordinate {
-        let coordinate: Coordinate;
-
+    public findEmptyPatchNearLocation(coordinate: Coordinate, width: number, height: number, additionalBlockedSquares?: Coordinate[]): Coordinate {
         let BIT_NE = 0x1;
         let BIT_NW = 0x2;
         let BIT_SE = 0x4;
@@ -223,10 +221,10 @@ export class Game {
             blockedSquares = blockedSquares.concat(additionalBlockedSquares)
         }
 
-        for (let coordinate of blockedSquares) {
-            if (coordinate.isOnField()) {
-                let pX = coordinate.x;
-                let pY = coordinate.y;
+        for (let coord of blockedSquares) {
+            if (coord.isOnField()) {
+                let pX = coord.x;
+                let pY = coord.y;
 
                 let startX = Math.max(pX - width + 1, 0);
                 let startY = Math.max(pY - height + 1, 0);
@@ -258,11 +256,7 @@ export class Game {
             }
         }
 
-        if (player == null) {
-            return null;
-        }
-
-        let start = player.getPosition();
+        let start = coordinate;
         let startX = start.x;
         let startY = start.y;
 

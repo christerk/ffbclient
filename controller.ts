@@ -19,6 +19,7 @@ export default class Controller {
     private diceManager: DiceManager;
     private scenes: { [key: string]: Phaser.Scene }
     private scale: number;
+    private blockedSquares: { [key: string] : Coordinate[] };
 
     /**
      * Core message passing class. Used to interface between the network and
@@ -30,8 +31,9 @@ export default class Controller {
         this.eventListeners = [];
         this.scenes = {};
         this.network = new Network();
-        this.diceManager = new DiceManager();
+        this.diceManager = new DiceManager(this);
         this.scale = 30;
+        this.blockedSquares = {};
     }
 
     public handleEvent(event: EventType, data?: any) {
@@ -110,5 +112,38 @@ export default class Controller {
             Math.round(coordinate.x * this.scale),
             Math.round(coordinate.y * this.scale)
         ];
+    }
+
+    public findEmptyPatchNearLocation(coordinate: Coordinate, width: number, height: number): Coordinate {
+        let blocked: Coordinate[] = [];
+        for (let key in this.blockedSquares) {
+            if (this.blockedSquares[key]) {
+                blocked = blocked.concat(this.blockedSquares[key]);
+            }
+        }
+        console.log("Finding location", blocked, this.blockedSquares);
+        return this.game.findEmptyPatchNearLocation(coordinate, width, height, blocked);
+    }
+
+    public allocateBoardSpace(coordinate: Coordinate, width: number, height: number): string {
+        let key = "roll:" + coordinate.x + ":" + coordinate.y + ":" + width + ":" + height;
+        let squares: Coordinate[] = [];
+        
+        for (let y=0; y<height; y++) {
+            for (let x=0; x<width; x++) {
+                squares.push(coordinate.add(x, y));
+            }
+        }
+
+        console.log("Allocated location", key);
+
+        this.blockedSquares[key] = squares;
+
+        return key;
+    }
+
+    public freeBoardSpace(key: string) {
+        console.log("Freeing location", key);
+        delete this.blockedSquares[key];
     }
 }
