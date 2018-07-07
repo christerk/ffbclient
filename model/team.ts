@@ -6,6 +6,8 @@ export class Team {
     public players: { [key: string]: Model.Player };
     public matchStats;
 
+    private score: number;
+
     public constructor(data: FFB.Protocol.Messages.TeamType) {
         this.name = data.teamName;
         this.roster = new Model.Roster(data.roster);
@@ -14,6 +16,14 @@ export class Team {
         for (let player of data.playerArray) {
             this.players[player['playerId']] = new Model.Player(player);
         }
+    }
+
+    public setScore(score: number) {
+        this.score = score;
+    }
+
+    public getScore(): number {
+        return this.score;
     }
 
     public getAssets() {

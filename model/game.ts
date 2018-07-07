@@ -38,6 +38,7 @@ export class Game {
             }
 
             this.applyFieldModel(data.game.fieldModel);
+            this.applyGameResult(data.game.gameResult);
         }
     }
 
@@ -108,6 +109,15 @@ export class Game {
             let [x,y] = pData.playerCoordinate;
             player.setPosition(new Coordinate(x, y));
         }
+    }
+
+    private applyTeamResult(team: Model.Team, data: FFB.Protocol.Messages.TeamResult) {
+        team.setScore(data.score);
+    }
+
+    private applyGameResult(data: FFB.Protocol.Messages.GameResult) {
+        this.applyTeamResult(this.teamHome, data.teamResultHome);
+        this.applyTeamResult(this.teamAway, data.teamResultAway);
     }
 
     public hasMoveSquare(coordinate: Coordinate): boolean {

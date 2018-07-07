@@ -20,6 +20,7 @@ export default class CommandModelSync extends Command {
             "fieldModelSetBallCoordinate": this.handleSetBallCoordinate,
             "actingPlayerSetPlayerAction": this.handleSetActivePlayerAction,
             "actingPlayerSetPlayerId": this.handleSetActivePlayerId,
+            "teamResultSetScore": this.handleSetScore,
         };
 
         this.reportHandlers = {
@@ -116,6 +117,13 @@ export default class CommandModelSync extends Command {
     private handleSetActivePlayerId(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let playerId = <string>change.modelChangeValue;
         return new ClientCommands.SetActivePlayerId(playerId);
+    }
+
+    private handleSetScore(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let side:string = change.modelChangeKey;
+        let score = <number>change.modelChangeValue;
+
+        return new ClientCommands.SetScore(side, score);
     }
 
     private handleBlockRollReport(report: FFB.Protocol.Messages.BlockRollReport): ClientCommands.AbstractCommand {

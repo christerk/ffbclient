@@ -34,11 +34,15 @@ export class MainScene extends AbstractScene implements EventListener {
     private gridSize: number; // Size of a grid square
     private blockDiceKey: string;
 
+    private floatTextQueue: Promise<any>;
+
     public constructor(controller: Controller) {
         super('mainScene', controller);
         console.log("Main Scene: constructed");
         this.moveSquareIcons = [];
         this.trackNumberIcons = [];
+
+        this.floatTextQueue = Promise.resolve();
 
         controller.addEventListener(this);
     }
@@ -101,6 +105,16 @@ export class MainScene extends AbstractScene implements EventListener {
     }
 
     private floatText(player: Model.Player, text: string) {
+        this.floatTextQueue = this.floatTextQueue
+        .then(() => {
+            return new Promise<any>((resolve, reject) => {
+                setTimeout(() => { resolve(); }, 333);
+                this.executeFloatText(player, text);
+            });
+        });
+    }
+
+    private executeFloatText(player: Model.Player, text: string) {
         if (player == null) {
             return;
         }

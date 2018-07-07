@@ -2,6 +2,8 @@ import * as Comp from ".";
 
 export class Label extends Comp.UIComponent {
     private text: string;
+    private textObject: Phaser.GameObjects.Text;
+    private ctx: Comp.RenderContext;
 
     public constructor(config) {
         super(config);
@@ -10,6 +12,7 @@ export class Label extends Comp.UIComponent {
     }
 
     public render(ctx: Comp.RenderContext): Phaser.GameObjects.GameObject {
+        this.ctx = ctx;
         this.config.width = 0;
         let col = this.numberToRGBString(this.config.color);
         let bg = this.numberToRGBString(this.config.background);
@@ -26,6 +29,20 @@ export class Label extends Comp.UIComponent {
 
         g.setPosition(bounds.x, bounds.y);
 
+        this.textObject = g;
+
         return g;
-    }    
+    }
+
+    public setText(text: string) {
+        this.text = text;
+
+        let g = this.textObject;
+        if (g) {
+            g.setText(text);
+            this.config.width = g.displayWidth + "px";
+            let bounds = this.getBounds(this.ctx);
+            g.setPosition(bounds.x, bounds.y);
+        }
+    }
 }

@@ -345,6 +345,39 @@ export class SetActivePlayerAction extends AbstractCommand {
     }
 }
 
+export class SetScore extends AbstractCommand {
+    private team: Model.Team;
+    private side: string;
+    private score: number;
+    private oldScore: number;
+
+    public constructor(side: string, score: number) {
+        super();
+        this.side = side;
+        this.score = score;
+    }
+
+    public init(game: Model.Game, controller: Controller) {
+        super.init(game, controller);
+
+        if (this.side == "home") {
+            this.team = this.game.teamHome;
+        } else {
+            this.team = this.game.teamAway;
+        }
+
+        this.oldScore = this.team.getScore();
+    }
+
+    public do() {
+        this.team.setScore(this.score);
+    }
+
+    public undo() {
+        this.team.setScore(this.oldScore);
+    }
+}
+
 export class BlockRoll extends AbstractCommand {
     private rolls: number[];
 

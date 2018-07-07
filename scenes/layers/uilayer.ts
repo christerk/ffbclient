@@ -8,13 +8,41 @@ export class UILayer implements EventListener {
     public container: Phaser.GameObjects.Container;
     private scene: Phaser.Scene;
     private scale: number;
+    private labelHomeScore: Comp.Label;
+    private labelAwayScore: Comp.Label;
+    private controller: Controller;
 
     private component: Comp.UIComponent;
 
     public constructor(scene: Phaser.Scene, game: Model.Game, controller: Controller) {
+        this.controller = controller;
         this.scene = scene;
         this.container = scene.make.container({});
         controller.addEventListener(this);
+
+        this.labelHomeScore = new Comp.Label({
+            id: "HomeScore",
+            margin: {
+                right: 0.5,
+            },
+            height: 1,
+            anchor: Comp.Anchor.EAST,
+            parentAnchor: Comp.Anchor.CENTER,
+            color: 0xffffff,
+            text: "0"
+        });
+
+        this.labelAwayScore = new Comp.Label({
+            id: "AwayScore",
+            margin: {
+                left: 0.5,
+            },
+            height: 1,
+            anchor: Comp.Anchor.WEST,
+            parentAnchor: Comp.Anchor.CENTER,
+            color: 0xffffff,
+            text: "0"
+        });
 
         this.component = new Comp.Panel({
             id: "RootPanel",
@@ -57,17 +85,7 @@ export class UILayer implements EventListener {
                             height: 1,
                             background: 0x003300,
                             children: [
-                                new Comp.Label({
-                                    id: "HomeScore",
-                                    margin: {
-                                        right: 0.5,
-                                    },
-                                    height: 1,
-                                    anchor: Comp.Anchor.EAST,
-                                    parentAnchor: Comp.Anchor.CENTER,
-                                    color: 0xffffff,
-                                    text: "0"
-                                }),
+                                this.labelHomeScore,
                                 new Comp.Label({
                                     id: "ScoreDash",
                                     height: 1,
@@ -76,17 +94,7 @@ export class UILayer implements EventListener {
                                     color: 0xffffff,
                                     text: "-"
                                 }),
-                                new Comp.Label({
-                                    id: "AwayScore",
-                                    margin: {
-                                        left: 0.5,
-                                    },
-                                    height: 1,
-                                    anchor: Comp.Anchor.WEST,
-                                    parentAnchor: Comp.Anchor.CENTER,
-                                    color: 0xffffff,
-                                    text: "0"
-                                }),
+                                this.labelAwayScore,
                             ]
                         }),
                     ]
@@ -129,6 +137,10 @@ export class UILayer implements EventListener {
         if (eventType == EventType.Resized) {
             this.scale = data.scale;
             this.redraw(data.w, data.h);
+        }
+        if (eventType == EventType.ModelChanged) {
+            this.labelHomeScore.setText(this.controller.Game.teamHome.getScore().toString());
+            this.labelAwayScore.setText(this.controller.Game.teamAway.getScore().toString());
         }
     }
 
