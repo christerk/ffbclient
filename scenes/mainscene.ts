@@ -29,7 +29,7 @@ export class MainScene extends AbstractScene implements EventListener {
     private scale: number;
     private width: number;
     private height: number;
-    private moveSquareIcons: Phaser.GameObjects.Graphics[];
+    private moveSquareIcons: Phaser.GameObjects.Sprite[];
     private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
     private ballIcon: Phaser.GameObjects.Graphics;
@@ -365,18 +365,15 @@ export class MainScene extends AbstractScene implements EventListener {
         for (let index in squares) {
             let coordinate = squares[i]
             let [w, h] = this.controller.convertToPixels(new Coordinate(0.8, 0.8));
+            let [x, y] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
             if (i == this.moveSquareIcons.length) {
-                let icon = this.add.graphics();
-                icon.clear();
-                icon.fillStyle(0xffffff, 0.25);
-                icon.fillRect(0, 0, w, h);
+                let icon = this.add.sprite(x, y, "moveSquare");
+                icon.setOrigin(0.5, 0.5);
                 this.moveSquareIcons.push(icon);
             }
             let icon = this.moveSquareIcons[i];
-
-            let [pX, pY] = this.controller.convertToPixels(coordinate.add(0.1, 0.1))
-
-            icon.setPosition(pX, pY);
+            icon.setDisplaySize(w, h);
+            icon.setPosition(x, y);
             icon.visible = true;
             i++;
         }

@@ -112,5 +112,15 @@ export class BootScene extends AbstractScene {
                 this.controller.setScene('mainScene');
             }
         });
+
+        this.generateTextures();
+    }
+
+    private generateTextures() {
+        let moveSquare = this.make.graphics({});
+        moveSquare.clear();
+        moveSquare.fillStyle(0xffffff, 0.25);
+        moveSquare.fillRect(0, 0, 100, 100);
+        moveSquare.generateTexture("moveSquare", 100, 100);
     }
 }
