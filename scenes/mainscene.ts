@@ -18,6 +18,9 @@ type IconState = {
 export class MainScene extends AbstractScene implements EventListener {
 
     private pitch: Phaser.GameObjects.Image;
+    private homeTeamName: Phaser.GameObjects.Text;
+    private awayTeamName: Phaser.GameObjects.Text;
+
     private pitchScale: number;
     private frameNumber: number;
     private cursors: CursorKeys;
@@ -166,6 +169,12 @@ export class MainScene extends AbstractScene implements EventListener {
 
         let game = this.controller.getGameState();
 
+        this.homeTeamName = this.createTeamName(game.teamHome.name);
+        this.awayTeamName = this.createTeamName(game.teamAway.name);
+
+        this.homeTeamName.setAngle(270);
+        this.awayTeamName.setAngle(90);
+
         let icons = {};
         for (let i in game.teamAway.roster.positions) {
             let pos = game.teamAway.roster.positions[i];
@@ -227,6 +236,18 @@ export class MainScene extends AbstractScene implements EventListener {
         this.resize();
     }
 
+    private createTeamName(name: string): Phaser.GameObjects.Text {
+        let t = this.add.text(0, 0, name.toUpperCase());
+        t.setFontFamily("arial");
+        t.setFontSize(this.gridSize * 0.9);
+        t.setColor("#ffffff");
+        t.setAlpha(0.5);
+        t.setOrigin(0.5, 0.5);
+        t.setBlendMode(Phaser.BlendModes.OVERLAY);
+
+        return t;
+    }
+
     public resize() {
         this.sys.canvas.style.width = "100%";
         this.sys.canvas.style.height = "100%";
@@ -251,7 +272,7 @@ export class MainScene extends AbstractScene implements EventListener {
         let zoomFactorY = h / this.pitch.height;
         let zoomFactor = Math.min(zoomFactorX, zoomFactorY);
 
-        this.gridSize = Math.floor(zoomFactor * this.pitch.width/26);
+        this.gridSize = zoomFactor * this.pitch.width/26;
 
         this.pitch.setScale(zoomFactor);
         this.pitchScale = zoomFactor;
@@ -270,6 +291,15 @@ export class MainScene extends AbstractScene implements EventListener {
             h: this.sys.canvas.clientHeight,
             scale: this.gridSize
         });
+
+        this.homeTeamName.setFontSize(this.gridSize * 0.9);
+        this.awayTeamName.setFontSize(this.gridSize * 0.9);
+
+        let [x,y] = this.controller.convertToPixels(new Coordinate(0.5, 7.5));
+        this.homeTeamName.setPosition(x, y);
+
+        [x,y] = this.controller.convertToPixels(new Coordinate(25.5, 7.5));
+        this.awayTeamName.setPosition(x, y);
     }
 
     public getGridSize(): number {

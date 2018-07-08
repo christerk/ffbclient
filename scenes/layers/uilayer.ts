@@ -83,28 +83,6 @@ export class UILayer implements EventListener {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x003300,
                     children: [
-                        new Comp.Label({
-                            id: "HomeTeam",
-                            margin: {
-                                left: 0.5,
-                            },
-                            height: 1,
-                            anchor: Comp.Anchor.WEST,
-                            parentAnchor: Comp.Anchor.WEST,
-                            color: 0xffffff,
-                            text: game.teamHome.name,
-                        }),
-                        new Comp.Label({
-                            id: "AwayTeam",
-                            margin: {
-                                right: 0.5,
-                            },
-                            height: 1,
-                            anchor: Comp.Anchor.EAST,
-                            parentAnchor: Comp.Anchor.EAST,
-                            color: 0xffffff,
-                            text: game.teamAway.name,
-                        }),
                         new Comp.Panel({
                             id: "ScorePanel",
                             width: 6,
