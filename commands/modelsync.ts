@@ -34,6 +34,7 @@ export default class CommandModelSync extends Command {
             "passRoll": this.handlePassRollReport,
             "blockChoice": this.handleBlockChoiceReport,
             "pickUpRoll": this.handlePickupRollReport,
+            "catchRoll": this.handleCatchRollReport,
         }
     }
 
@@ -122,6 +123,18 @@ export default class CommandModelSync extends Command {
         return new ClientCommands.SetActivePlayerId(playerId);
     }
 
+    private handleSetHomePlaying(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let homePlaying = <boolean>change.modelChangeValue;
+        let side = homePlaying ? Model.Side.Home : Model.Side.Away;
+        return new ClientCommands.SetPlayingSide(side);
+    }
+
+    private handleSetTurnNr(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
+        let side = change.modelChangeKey;
+        let turn = <number>change.modelChangeValue;
+        return new ClientCommands.SetTurnNr(side, turn);
+    }
+
     private handleSetScore(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
         let side:string = change.modelChangeKey;
         let score = <number>change.modelChangeValue;
@@ -138,7 +151,9 @@ export default class CommandModelSync extends Command {
     }
 
     private handleInjuryReport(report: FFB.Protocol.Messages.InjuryReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.Injury(report.attackerId, report.defenderId, report.armorRoll, report.injuryRoll, report.casualtyRoll, report.casualtyRollDecay)
+        let injuredPlayerState: Model.PlayerState = report.injury;
+
+        return new ClientCommands.Injury(report.attackerId, report.defenderId, report.armorRoll, report.injuryRoll, report.casualtyRoll, report.casualtyRollDecay, injuredPlayerState)
     }
 
     private handleDodgeRollReport(report: FFB.Protocol.Messages.DodgeRollReport): ClientCommands.AbstractCommand {
@@ -146,26 +161,19 @@ export default class CommandModelSync extends Command {
     }
 
     private handlePassRollReport(report: FFB.Protocol.Messages.PassRollReport): ClientCommands.AbstractCommand {
-        return new ClientCommands.PassRoll(report.roll, report.minimumRoll);
+        return new ClientCommands.PassRoll(report.playerId, report.roll, report.minimumRoll);
     }
 
     private handlePickupRollReport(report: FFB.Protocol.Messages.PickupRollReport): ClientCommands.AbstractCommand {
         return new ClientCommands.PickupRoll(report.playerId, report.roll, report.minimumRoll);
     }
 
+    private handleCatchRollReport(report: FFB.Protocol.Messages.CatchRollReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.CatchRoll(report.playerId, report.roll, report.minimumRoll);
+    }
+
     private handleBlockChoiceReport(report: FFB.Protocol.Messages.BlockChoiceReport): ClientCommands.AbstractCommand {
         return new ClientCommands.BlockChoice(report.diceIndex, report.blockResult);
     }
 
-    private handleSetHomePlaying(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let homePlaying = <boolean>change.modelChangeValue;
-        let side = homePlaying ? Model.Side.Home : Model.Side.Away;
-        return new ClientCommands.SetPlayingSide(side);
-    }
-
-    private handleSetTurnNr(change: FFB.Protocol.Messages.ModelChangeType): ClientCommands.AbstractCommand {
-        let side = change.modelChangeKey;
-        let turn = <number>change.modelChangeValue;
-        return new ClientCommands.SetTurnNr(side, turn);
-    }
 }

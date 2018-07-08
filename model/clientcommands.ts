@@ -147,10 +147,10 @@ export class MovePlayer extends PlayerCommand {
 }
 
 export class SetPlayerState extends PlayerCommand {
-    private newState: number;
-    private oldState: number;
+    private newState: Model.PlayerState;
+    private oldState: Model.PlayerState;
 
-    public constructor(playerId: string, newState: number) {
+    public constructor(playerId: string, newState: Model.PlayerState) {
         super(playerId);
         this.newState = newState;
     }
@@ -511,10 +511,11 @@ export class Injury extends AbstractCommand {
     private injuryRoll: [number, number];
     private casualtyRoll: [number, number];
     private casualtyRollDecay: [number, number];
+    private injuredPlayerState: Model.PlayerState;
 
     private location: Coordinate;
 
-    public constructor(attackerId: string, defenderId: string, armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number]) {
+    public constructor(attackerId: string, defenderId: string, armorRoll: [number, number], injuryRoll: [number, number], casualtyRoll: [number, number], casualtyRollDecay: [number, number], injuredPlayerState: Model.PlayerState) {
         super();
         this.attackerId = attackerId;
         this.defenderId = defenderId;
@@ -522,6 +523,7 @@ export class Injury extends AbstractCommand {
         this.injuryRoll = injuryRoll;
         this.casualtyRoll = casualtyRoll;
         this.casualtyRollDecay = casualtyRollDecay;
+        this.injuredPlayerState = injuredPlayerState;
     }
 
     private rollDice(type: DieType, targets: number[]) {
@@ -543,6 +545,11 @@ export class Injury extends AbstractCommand {
         if (this.casualtyRollDecay != null) {
             this.rollDice("d68", this.casualtyRollDecay);
         }
+
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.game.getPlayer(this.defenderId),
+            text: Model.PlayerState[this.injuredPlayerState]
+        });
     }
 
     public undo() {
@@ -578,9 +585,37 @@ export class DodgeRoll extends AbstractCommand {
 export class PassRoll extends AbstractCommand {
     private roll: number;
     private minimumRoll: number;
+    private playerId: string;
 
-    public constructor(roll: number, minimumRoll: number) {
+    public constructor(playerId: string, roll: number, minimumRoll: number) {
         super();
+        this.roll = roll;
+        this.minimumRoll = minimumRoll;
+        this.playerId = playerId;
+    }
+
+    public do() {
+        let location = this.getLocation([]);
+        this.controller.DiceManager.roll("d6", [this.roll], location);
+        this.controller.triggerEvent(EventType.FloatText, {
+            player: this.controller.Game.getPlayer(this.playerId),
+            text: "Pass " + this.minimumRoll + "+",
+        })
+    }
+
+    public undo() {
+
+    }
+}
+
+export class CatchRoll extends AbstractCommand {
+    private roll: number;
+    private playerId: string;
+    private minimumRoll: number;
+
+    public constructor(playerId: string, roll: number, minimumRoll: number) {
+        super();
+        this.playerId = playerId;
         this.roll = roll;
         this.minimumRoll = minimumRoll;
     }
@@ -589,8 +624,8 @@ export class PassRoll extends AbstractCommand {
         let location = this.getLocation([]);
         this.controller.DiceManager.roll("d6", [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
-            player: this.controller.Game.getActivePlayer(),
-            text: "Pass " + this.minimumRoll + "+",
+            player: this.controller.Game.getPlayer(this.playerId),
+            text: "Catch " + this.minimumRoll + "+",
         })
     }
 
