@@ -12,9 +12,12 @@ export class UILayer implements EventListener {
     private labelAwayScore: Comp.Label;
     private labelHalf: Comp.Label;
     private labelTurn: Comp.Label;
+    private input: Comp.Input;
     private controller: Controller;
 
     private component: Comp.UIComponent;
+
+    private renderContext: Comp.RenderContext;
 
     public constructor(scene: Phaser.Scene, game: Model.Game, controller: Controller) {
         this.controller = controller;
@@ -70,6 +73,22 @@ export class UILayer implements EventListener {
             text: "T0/0",
         });
 
+        this.input = new Comp.Input({
+            id: "Input",
+            width: "80%",
+            height: "0.8",
+            anchor: Comp.Anchor.SOUTH,
+            parentAnchor: Comp.Anchor.SOUTH,
+            background: 0x0,
+            backgroundAlpha: 0.4,
+            margin: {
+                bottom: 3
+            },
+            visible: false,
+        });
+
+        console.log("INPUT", this.input.isVisible());
+
         this.component = new Comp.Panel({
             id: "RootPanel",
             width: "100%",
@@ -105,6 +124,7 @@ export class UILayer implements EventListener {
                         }),
                     ]
                 }),
+                this.input,
                 new Comp.Button({
                     id: "DebugButton",
                     width: 0.9,
@@ -137,12 +157,30 @@ export class UILayer implements EventListener {
                 }, controller),
             ]
         });
+
+        this.renderContext = {
+            scene: this.scene,
+            parent: null,
+            w: this.scene.sys.canvas.clientWidth,
+            h: this.scene.sys.canvas.clientHeight,
+            scale: 30,
+            x: 0,
+            y: 0,
+        }
+
+        this.component.setContext(this.renderContext);
+        let phaserObject = this.component.create();
+        this.component.postCreate();
+        this.component.redraw();
+        this.container.add(phaserObject);
     }
 
     public handleEvent(eventType: EventType, data?: any) {
         if (eventType == EventType.Resized) {
-            this.scale = data.scale;
-            this.redraw(data.w, data.h);
+            this.renderContext.w = data.w;
+            this.renderContext.h = data.h;
+            this.renderContext.scale = data.scale;
+            this.redraw();
         }
         if (eventType == EventType.ModelChanged) {
             let g = this.controller.Game;
@@ -156,16 +194,8 @@ export class UILayer implements EventListener {
         }
     }
 
-    public redraw(w: number, h: number) {
-        let g = this.component.render({
-            scene: this.scene,
-            parent: null,
-            w: w,
-            h: h,
-            scale: this.scale,
-            x: 0,
-            y: 0,
-        });
-        this.container.add(g);
+    public redraw() {
+        this.component.setContext(this.renderContext);
+        this.component.redraw();
     }
 }

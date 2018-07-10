@@ -1,6 +1,7 @@
 import * as Comp from ".";
 
 export class Panel extends Comp.UIComponent {
+    private background: Phaser.GameObjects.Image;
     private children: Comp.UIComponent[];
 
     public constructor(config: Comp.ComponentConfiguration) {
@@ -19,40 +20,89 @@ export class Panel extends Comp.UIComponent {
         this.children.push(child);
     }
 
-    public render(ctx: Comp.RenderContext): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(ctx);
-
-        if (!this.phaserObject) {
-            this.phaserObject = ctx.scene.make.container({});
-        }
-
-        let container = <Phaser.GameObjects.Container> this.phaserObject;
-
-        container.removeAll(true);
-        this.children.map((c) => c.phaserObject = null);
-
-        if (this.config.background != null) {
-            let bg = ctx.scene.make.graphics({});
-            bg.fillStyle(this.config.background, 1);
-            bg.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-            bg.setPosition(0, 0);
-            container.add(bg);
-        }
+    public create(): Phaser.GameObjects.GameObject {
+        let bounds = this.getBounds(this.ctx);
+        let container = this.ctx.scene.make.container({});
         container.setPosition(0, 0);
 
+        if (this.config.background != null) {
+            let bg = this.ctx.scene.make.graphics({});
+            let alpha = this.config.backgroundAlpha;
+            if (alpha === null || alpha === undefined) {
+                alpha = 1;
+            }
+            bg.fillStyle(this.config.background, alpha);
+            bg.fillRect(0, 0, bounds.width, bounds.height);
+            let key = Comp.UIComponent.generateKey();
+            bg.generateTexture(key, bounds.width, bounds.height);
+            this.background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
+            this.background.setOrigin(0,0);
+            container.add(this.background);
+        }
+
+        let childCtx: Comp.RenderContext = {
+            scene: this.ctx.scene,
+            parent: this,
+            x: bounds.x,
+            y: bounds.y,
+            w: bounds.width,
+            h: bounds.height,
+            scale: this.ctx.scale,
+        };
+
         for (let c of this.children) {
-            let childGameObject = c.render({
-                scene: ctx.scene,
-                parent: this,
-                x: bounds.x,
-                y: bounds.y,
-                w: bounds.width,
-                h: bounds.height,
-                scale: ctx.scale,
-            });
+            c.setContext(childCtx);
+            let childGameObject = c.create();
             container.add(childGameObject);
         }
 
         return container;
+    }
+
+    public postCreate() {
+        super.postCreate();
+
+        for (let c of this.children) {
+            c.postCreate();
+        }
+    }
+
+    public show() {
+        if (this.background != null) {
+            this.background.visible = true;
+        }
+    }
+
+    public hide() {
+        if (this.background != null) {
+            this.background.visible = false;
+        }
+    }
+
+    public redraw(): void {
+        super.redraw();
+
+        let bounds = this.getBounds(this.ctx);
+
+        let bg = this.background;
+        if (bg != null) {
+            bg.setPosition(bounds.x, bounds.y);
+            bg.setDisplaySize(bounds.width, bounds.height);
+        }
+
+        let renderContext: Comp.RenderContext = {
+            scene: this.ctx.scene,
+            parent: this,
+            x: bounds.x,
+            y: bounds.y,
+            w: bounds.width,
+            h: bounds.height,
+            scale: this.ctx.scale,
+        };
+
+        for (let c of this.children) {
+            c.setContext(renderContext);
+            let childGameObject = c.redraw();
+        }
     }
 }

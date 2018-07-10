@@ -23,7 +23,6 @@ export class MainScene extends AbstractScene implements EventListener {
 
     private pitchScale: number;
     private frameNumber: number;
-    private cursors: CursorKeys;
     private i: Phaser.Input.InputPlugin;
     private dragStart: Phaser.Geom.Point;
     private scale: number;
@@ -148,7 +147,6 @@ export class MainScene extends AbstractScene implements EventListener {
     public init(config) {
         console.log('Main Scene: init', config);
 
-        this.cursors = this.input.keyboard.createCursorKeys();
         this.scale = 1.0;
 
         this.width = this.sys.canvas.width;
@@ -312,29 +310,6 @@ export class MainScene extends AbstractScene implements EventListener {
         if (this.dirty) {
             this.redraw(this.controller.getGameState());
             this.dirty = false;
-        }
-
-        if (this.cursors.shift.isDown) {
-            if (this.cursors.up.isDown) {
-                this.cameras.main.setZoom(2.0);
-
-            } else if (this.cursors.down.isDown) {
-                this.cameras.main.setZoom(1.0);
-            }
-
-            let scale = this.scale;
-            //this.cameras.main.setZoom(scale);
-            //this.cameras.main.setBounds(-this.width * ((scale-1)/(scale*2)), -this.height * ((scale-1)/(scale*2)), this.width * (2-1/scale), this.height * (2-1/scale));
-        } else {
-            if (this.cursors.up.isDown) {
-                this.cameras.main.scrollY--;
-            } else if (this.cursors.left.isDown) {
-                this.cameras.main.scrollX--;
-            } else if (this.cursors.down.isDown) {
-                this.cameras.main.scrollY++;
-            } else if (this.cursors.right.isDown) {
-                this.cameras.main.scrollX++;
-            }
         }
     }
 

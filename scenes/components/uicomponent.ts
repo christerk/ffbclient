@@ -52,13 +52,17 @@ export type ComponentConfiguration = {
     anchor?: Anchor,
     parentAnchor?: Anchor,
     background?: number,
+    backgroundAlpha?: number,
     color?: number,
     children?: UIComponent[],
+    visible?: boolean,
 }
 
 export abstract class UIComponent {
     protected config: ComponentConfiguration;
     public phaserObject: Phaser.GameObjects.GameObject;
+    protected ctx: RenderContext;
+    private static serialCounter: number = 0;
 
     private anchorFactors: [number,number][] = [
         [0.5, 0.5],
@@ -86,6 +90,8 @@ export abstract class UIComponent {
             parentAnchor: Anchor.CENTER,
             color: 0xffffff,
             background: null,
+            backgroundAlpha: 1,
+            visible: true,
             children: [],
         };
 
@@ -95,8 +101,15 @@ export abstract class UIComponent {
 
         this.config = deepmerge(defaults, config);
 
+        console.log(this.config.id, this.config.visible);
+
         // Restore children array
         config.children = children;
+    }
+
+    protected static generateKey(): string {
+        this.serialCounter++;
+        return "UIComponent:" + this.serialCounter;
     }
 
     protected numberToRGBString(data: number): string {
@@ -161,6 +174,41 @@ export abstract class UIComponent {
         return new Phaser.Geom.Rectangle(x, y, pos.innerWidth, pos.innerHeight);
     }
 
-    public abstract render(context: RenderContext): Phaser.GameObjects.GameObject;
+    public setContext(ctx: RenderContext) {
+        this.ctx = ctx;
+    }
+
+    public isVisible(): boolean {
+        return this.config.visible;
+    }
+
+    public setVisible(visible: boolean) {
+        this.config.visible = visible;
+
+        if (visible) {
+            this.show();
+        } else {
+            this.hide();
+        }
+
+        this.redraw();
+    }
+
+    public postCreate() {
+        console.log("postcreate", this.config.id, this.config.visible);
+        this.setVisible(this.config.visible);
+    }
+
+    public redraw(): void {
+        if (this.config.visible) {
+            this.show();
+        } else {
+            this.hide();
+        }
+    }
+
+    public abstract show(): void;
+    public abstract hide(): void;
+    public abstract create(): Phaser.GameObjects.GameObject;
 
 }
