@@ -101,8 +101,6 @@ export abstract class UIComponent {
 
         this.config = deepmerge(defaults, config);
 
-        console.log(this.config.id, this.config.visible);
-
         // Restore children array
         config.children = children;
     }
@@ -195,7 +193,6 @@ export abstract class UIComponent {
     }
 
     public postCreate() {
-        console.log("postcreate", this.config.id, this.config.visible);
         this.setVisible(this.config.visible);
     }
 

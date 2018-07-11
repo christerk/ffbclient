@@ -33,7 +33,7 @@ export class BootScene extends AbstractScene {
         console.log('Boot Scene: preload');
 
         for (let sprite of this.assets['sprites']) {
-            let key = ('sprite_'+sprite).replace(/[/]/g,'_');
+            let key = "/"+sprite; //('sprite_'+sprite).replace(/[/]/g,'_');
             let sheet = this.load.image(key, 'https://fumbbl.com/'+sprite);
             this.spritesheets[key] = '/'+sprite;
         }
@@ -96,24 +96,30 @@ export class BootScene extends AbstractScene {
 
         this.load.on('complete', () => {
 
-            if (this.phase == 1) {
-                this.loadingText.setText("Processing sprite sheets...");
-                this.phase = 2;
-                for (let key in this.spritesheets) {
-                    let img = this.add.image(0, 0, key);
-                    img.visible=false;
+            for (let key in this.spritesheets) {
+                let sprite = this.add.sprite(0, 0, key);
+                sprite.visible=false;
+                this.generateSpriteFrames(sprite);
 
-                    this.load.spritesheet(this.spritesheets[key], 'https://fumbbl.com'+this.spritesheets[key], {
-                        frameWidth: img.width/4
-                    });
-                }
-                this.load.start();
-            } else {
-                this.controller.setScene('mainScene');
             }
+            
+            this.controller.setScene("mainScene");
         });
 
         this.generateTextures();
+    }
+
+    private generateSpriteFrames(sprite: Phaser.GameObjects.Sprite) {
+        let width = sprite.width;
+        let height = sprite.height;
+        let tileSize = Math.floor(width / 4);
+
+        for (let y=0; y<height / tileSize; y++) {
+            for (let x=0; x<4; x++) {
+                let frameNumber: number = y * 4 + x;
+                sprite.texture.add(frameNumber, 0, x * tileSize, y * tileSize, tileSize, tileSize);
+            }
+        }
     }
 
     private generateTextures() {

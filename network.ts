@@ -18,6 +18,8 @@ export default class Network {
         let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:'
         let port = proto == 'wss:' ? 22224 : 22223;
 
+        console.log("Connecting to "+proto+"//"+host+":"+port);
+
         let ws: WebSocket = new WebSocket(proto+"//"+host+":"+port+"/command");
 
         ws.onopen = (evt) => {

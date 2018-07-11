@@ -45,7 +45,9 @@ export class Game {
             this.applyFieldModel(data.game.fieldModel);
             this.applyGameResult(data.game.gameResult);
             this.applyTurnData(data.game);
+            return true;
         }
+        return false;
     }
 
     public setActivePlayer(id: string) {

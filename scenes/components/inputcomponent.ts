@@ -145,6 +145,12 @@ export class Input extends Comp.UIComponent {
                 }
                 this.setText(this.pre() + post);
                 this.redraw();
+            } else if (event.key == "End") {
+                this.caretPosition = this.text.length;
+                this.redraw();
+            } else if (event.key == "Home") {
+                this.caretPosition = 0;
+                this.redraw();
             }
         }
     }

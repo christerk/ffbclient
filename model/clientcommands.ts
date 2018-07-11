@@ -97,7 +97,10 @@ export class Initialize extends AbstractCommand {
     }
 
     public do() {
-        this.game.initialize(this.data);
+        let firstInit = this.game.initialize(this.data);
+        if (firstInit) {
+            this.controller.setScene('bootScene');
+        }
     }
 
     public undo() {

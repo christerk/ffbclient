@@ -11,6 +11,5 @@ export default class CommandGameState extends Command {
         console.log("Processing game state command", data);
 
         this.controller.enqueueCommand(new ClientCommands.Initialize(data));
-        this.controller.setScene('bootScene');
     }
 }
