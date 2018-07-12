@@ -62,7 +62,6 @@ export class BootScene extends AbstractScene {
     }
 
     public update() {
-        console.log('Boot Scene: update');
     }
 
     private initialize() {

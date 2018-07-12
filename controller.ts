@@ -89,6 +89,10 @@ export default class Controller {
         }
     }
 
+    public sendChat(text: string) {
+        this.network.sendChat(text);
+    }
+
     public triggerEvent(eventType: EventType, data?: any) {
         this.handleEvent(eventType, data);
         this.eventListeners.forEach((listener) => listener.handleEvent(eventType, data));

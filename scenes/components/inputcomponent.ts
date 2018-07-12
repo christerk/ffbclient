@@ -7,6 +7,7 @@ export class Input extends Comp.UIComponent {
     private caret: Phaser.GameObjects.Sprite;
     private text: string;
     private caretPosition: number;
+    private callbackFunction: (string) => void;
 
     public constructor(config) {
         super(config);
@@ -14,6 +15,10 @@ export class Input extends Comp.UIComponent {
         this.background = null;
         this.text = "";
         this.caretPosition = 0;
+    }
+
+    public setCallback(callbackFunction: (string) => void) {
+        this.callbackFunction = callbackFunction;
     }
 
     public create(): Phaser.GameObjects.GameObject {
@@ -124,10 +129,15 @@ export class Input extends Comp.UIComponent {
                     this.redraw();
                 }
             } else if (event.key == "Enter") {
+                if (this.callbackFunction) {
+                    this.callbackFunction(this.text);
+                }
                 this.setText("");
+                this.caretPosition = 0;
                 this.setVisible(false);
             } else if (event.keyCode == "Escape") {
                 this.setText("");
+                this.caretPosition = 0;
                 this.setVisible(false);
             } else if (event.key == "Backspace") {
                 let pre = this.pre();

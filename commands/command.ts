@@ -1,6 +1,6 @@
 import Controller from "../controller";
 
-export default abstract class Command {
+export abstract class Command {
     protected controller: Controller;
 
     public constructor(controller: Controller) {

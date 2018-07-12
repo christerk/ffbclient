@@ -87,7 +87,9 @@ export class UILayer implements EventListener {
             visible: false,
         });
 
-        console.log("INPUT", this.input.isVisible());
+        this.input.setCallback((text) => {
+            controller.sendChat(text);
+        });
 
         this.component = new Comp.Panel({
             id: "RootPanel",

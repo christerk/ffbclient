@@ -721,4 +721,13 @@ declare namespace FFB.Protocol.Messages {
     interface ServerGameState extends NetCommand {
         game: GameType;
     }
+
+    interface ServerTalk extends NetCommand {
+        coach: string;
+        talks: string[];
+    }
+
+    interface ServerSound extends ServerCommand {
+        sound: string;
+    }
 }

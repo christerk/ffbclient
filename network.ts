@@ -60,6 +60,15 @@ export default class Network {
         this.send(joinMessage);
     }
 
+    public sendChat(text: string) {
+        let chatMessage = {
+            netCommandId: 'clientTalk',
+            talk: text,
+        }
+
+        this.send(chatMessage);
+    }
+
     public leave() {
         let requestVersionMessage = {
             netCommandId: "clientCloseSession"

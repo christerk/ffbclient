@@ -1,7 +1,7 @@
 import Controller from "../controller";
-import Command from "./command";
+import { Command } from ".";
 
-export default class CommandGameTime extends Command {
+export class CommandGameTime extends Command {
     public constructor(controller: Controller) {
         super(controller);
     }

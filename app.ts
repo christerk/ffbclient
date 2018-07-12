@@ -29,13 +29,16 @@ export default class App extends Phaser.Game implements EventListener {
 
         let config:GameConfig = {
             parent: 'phaserapp',
-            type: Phaser.AUTO,
+            type: Phaser.CANVAS,
             width: 960,
             height: 554,
             scene: <Phaser.Scene[]>scenes,
             "render.antialias": false,
             "render.pixelArt": true,
-            "render.roundPixels": true
+            "render.roundPixels": true,
+            fps: {
+                target: 60,
+            }
         };
         super(config);
 

@@ -1,8 +1,8 @@
-import Command from "./command";
+import { Command } from ".";
 import Controller from "../controller";
 import * as ClientCommands from "../model/clientcommands";
 
-export default class CommandGameState extends Command {
+export class CommandGameState extends Command {
     public constructor(controller: Controller) {
         super(controller);
     }

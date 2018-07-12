@@ -1,10 +1,10 @@
 import { Coordinate } from "../types";
 import Controller from "../controller";
-import Command from "./command";
+import { Command } from ".";
 import * as ClientCommands from "../model/clientcommands";
 import * as Model from "../model";
 
-export default class CommandModelSync extends Command {
+export class CommandModelSync extends Command {
     private handlers: { [id: string] : (ModelChange) => ClientCommands.AbstractCommand };
     private reportHandlers: { [id: string] : (Report) => ClientCommands.AbstractCommand };
 
