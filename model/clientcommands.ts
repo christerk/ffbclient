@@ -9,12 +9,23 @@ export abstract class AbstractCommand {
     protected game: Model.Game;
     protected controller: Controller;
     public triggerModelChanged: boolean;
+    private delay: number;
 
     public constructor() {
         this.applied = false;
         this.triggerModelChanged = true;
         this.controller = null;
+        this.delay = 0;
     }
+
+    public getDelay(): number {
+        return this.delay;
+    }
+
+    public setDelay(delay: number): void {
+        this.delay = delay;
+    }
+
 
     public apply(game: Model.Game, controller: Controller) {
         if (!this.applied) {
@@ -75,6 +86,10 @@ export class CompoundCommand extends AbstractCommand {
         }
     }
 
+    public getDelay(): number {
+        return this.commandList.map((c) => c.getDelay()).reduce((p, c) => p+c, 0);
+    }
+
     public do() {
         for (let command of this.commandList) {
             command.do();
@@ -133,6 +148,7 @@ export class MovePlayer extends PlayerCommand {
     public constructor(playerId:string, coordinate: Coordinate) {
         super(playerId);
         this.newCoordinate = coordinate;
+        this.setDelay(200);
     }
 
     public init(game: Model.Game, controller: Controller) {

@@ -62,24 +62,13 @@ export class MainScene extends AbstractScene implements EventListener {
                 break;
             case EventType.Click:
                 if (data.source == "TestButton") {
-                    let numDice = Math.floor(Math.random() * 3) + 1;
-                    let targets = [];
-                    for (let i=0; i<numDice; i++) {
-                        targets.push(Math.floor(Math.random()*6+1));
-                    }
-                    let x = Math.random() * this.width / 2 + this.width/4;
-                    let y = Math.random() * this.height / 2 + this.height/4;
-
-                    this.controller.DiceManager.setScale(this.pitchScale);
-
-                    let types:DieType[] = ["d6", "db", "d8"];
-                    let type = types[Math.floor(Math.random() * types.length)];
-
-                    if (Math.random() < 0.05 && targets.length == 2) {
-                        this.controller.DiceManager.roll("d68", targets, new Coordinate(x, y));
+                    let coach: string;
+                    if (Math.random() < 0.5) {
+                        coach = this.controller.Game.teamHome.getCoach();
                     } else {
-                        this.controller.DiceManager.roll(type, targets, new Coordinate(x, y));
+                        coach = this.controller.Game.teamAway.getCoach();
                     }
+
                 } else if (data.source == "TestButton2") {
                 }
                 break;
@@ -167,20 +156,22 @@ export class MainScene extends AbstractScene implements EventListener {
 
         let game = this.controller.getGameState();
 
-        this.homeTeamName = this.createTeamName(game.teamHome.name);
-        this.awayTeamName = this.createTeamName(game.teamAway.name);
+        this.homeTeamName = this.createTeamName(game.teamHome.getName());
+        this.awayTeamName = this.createTeamName(game.teamAway.getName());
 
         this.homeTeamName.setAngle(270);
         this.awayTeamName.setAngle(90);
 
         let icons = {};
-        for (let i in game.teamAway.roster.positions) {
-            let pos = game.teamAway.roster.positions[i];
+        let positions = game.teamAway.getRoster().getPositions();
+        for (let i in positions) {
+            let pos = positions[i];
             icons[pos['id']] = '/'+pos['iconURI'];
         }
 
-        for (let i in game.teamHome.roster.positions) {
-            let pos = game.teamHome.roster.positions[i];
+        positions = game.teamHome.getRoster().getPositions();
+        for (let i in positions) {
+            let pos = positions[i];
             icons[pos['id']] = '/'+pos['iconURI'];
         }
 

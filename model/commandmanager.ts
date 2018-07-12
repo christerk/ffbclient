@@ -10,6 +10,8 @@ export default class CommandManager {
     private commandQueue: AbstractCommand[];
     private queuePosition: number;
 
+    private executionQueue: Promise<any>;
+
     /**
      * The Command Manager is resposible for keeping track of model changes
      * and for moving back and forth in the history.
@@ -18,11 +20,36 @@ export default class CommandManager {
         this.game = game;
         this.queuePosition = 0;
         this.commandQueue = [];
+        this.executionQueue = Promise.resolve();
     }
 
     public setController(controller: Controller) {
         this.controller = controller;
         console.log("Command Manager setting controller", this.controller);
+    }
+
+    private applyCommand(command: AbstractCommand, fast: boolean) {
+        this.queuePosition++;
+        this.executionQueue = this.executionQueue
+        .then(() => {
+            command.apply(this.game, this.controller);
+
+            let delay = command.getDelay();
+            if (fast || delay == 0) {
+                return Promise.resolve();
+            }
+
+            if (command.triggerModelChanged) {
+                // Trigger a model change event to redraw the field if there's a delay on the command.
+                this.controller.triggerEvent(EventType.ModelChanged);
+            }
+
+            return new Promise<any>((resolve, reject) => {
+                setTimeout(() => {
+                    resolve();
+                }, delay);
+            });
+        });
     }
 
     public enqueueCommand(command: AbstractCommand) {
@@ -32,8 +59,7 @@ export default class CommandManager {
         // If we are standing at the end of the queue, we apply
         // the command immediately.
         if (this.queuePosition == this.commandQueue.length - 1) {
-            command.apply(this.game, this.controller);
-            this.queuePosition++;
+            this.applyCommand(command, false);
         }
     }
 
@@ -42,8 +68,7 @@ export default class CommandManager {
             let command = this.commandQueue[this.queuePosition]
             // We need to apply() here as the game may have progressed
             // while we were looking at the history.
-            command.apply(this.game, this.controller);
-            this.queuePosition++;
+            this.applyCommand(command, true);
         }
 
         this.controller.triggerEvent(EventType.ModelChanged);
@@ -54,8 +79,7 @@ export default class CommandManager {
             let command = this.commandQueue[this.queuePosition]
             // We need to apply() here as the game may have progressed
             // while we were looking at the history.
-            command.apply(this.game, this.controller);
-            this.queuePosition++;
+            this.applyCommand(command, false);
 
             // Note: This should probably check if there's an actual
             // model change in the command set...

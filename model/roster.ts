@@ -1,9 +1,9 @@
 import * as Model from ".";
 
 export class Roster {
-    public id: string;
-    public name: string;
-    public positions:any;
+    private id: string;
+    private name: string;
+    private positions:{[key: string]: Model.Position};
 
     public constructor(data: FFB.Protocol.Messages.RosterType) {
         this.id = data.rosterId;
@@ -13,6 +13,14 @@ export class Roster {
         for (let position of data.positionArray) {
             this.positions[position.positionId] = new Model.Position(position);
         }
+    }
+
+    public getPositions(): {[key: string]: Model.Position} {
+        return this.positions;
+    }
+
+    public getPosition(key: string): Model.Position {
+        return this.positions[key];
     }
 
     public getAssets() {

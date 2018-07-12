@@ -1,10 +1,11 @@
 import * as Model from ".";
 
 export class Team {
-    public name: string;
-    public roster: Model.Roster;
-    public players: { [key: string]: Model.Player };
-    public matchStats;
+    private coach: string;
+    private name: string;
+    private roster: Model.Roster;
+    private players: { [key: string]: Model.Player };
+    private matchStats;
 
     private score: number;
     private turn: number;
@@ -19,6 +20,19 @@ export class Team {
         }
         this.score = 0;
         this.turn = 0;
+        this.coach = data.coach;
+    }
+
+    public getName() {
+        return this.name;
+    }
+
+    public getCoach() {
+        return this.coach;
+    }
+
+    public getRoster() {
+        return this.roster;
     }
 
     public setScore(score: number) {
