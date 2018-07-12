@@ -4,7 +4,9 @@ export enum EventType {
     BlockChoice,
     BlockDice,
     Click,
+    Connected,
     FloatText,
+    Initialized,
     ModelChanged,
     Resized,
     Resizing

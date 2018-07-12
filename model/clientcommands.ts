@@ -115,6 +115,7 @@ export class Initialize extends AbstractCommand {
         let firstInit = this.game.initialize(this.data);
         if (firstInit) {
             this.controller.setScene('bootScene');
+            this.controller.triggerEvent(EventType.Connected);
         }
     }
 

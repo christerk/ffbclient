@@ -57,8 +57,6 @@ export class BootScene extends AbstractScene {
 
     public create(config) {
         console.log('Boot Scene: create', config);
-
-
     }
 
     public update() {
@@ -102,10 +100,10 @@ export class BootScene extends AbstractScene {
 
             }
             
+            this.generateTextures();
+            
             this.controller.setScene("mainScene");
         });
-
-        this.generateTextures();
     }
 
     private generateSpriteFrames(sprite: Phaser.GameObjects.Sprite) {

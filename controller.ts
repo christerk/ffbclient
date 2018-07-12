@@ -38,6 +38,12 @@ export default class Controller {
 
     public handleEvent(event: EventType, data?: any) {
         switch(event) {
+            case EventType.Connected:
+                this.commandManager.pause();
+                break;
+            case EventType.Initialized:
+                this.commandManager.resume();
+                break;
             case EventType.Resized:
                 console.log(data);
                 this.scale = data.scale;

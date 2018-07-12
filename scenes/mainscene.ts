@@ -223,6 +223,8 @@ export class MainScene extends AbstractScene implements EventListener {
 
         this.redraw(this.controller.getGameState());
         this.resize();
+
+        this.controller.triggerEvent(EventType.Initialized);
     }
 
     private createTeamName(name: string): Phaser.GameObjects.Text {

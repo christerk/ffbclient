@@ -9,6 +9,7 @@ export default class CommandManager {
 
     private commandQueue: AbstractCommand[];
     private queuePosition: number;
+    private pauseResolution: (value?: {} | PromiseLike<{}>)=>void;
 
     private executionQueue: Promise<any>;
 
@@ -21,6 +22,7 @@ export default class CommandManager {
         this.queuePosition = 0;
         this.commandQueue = [];
         this.executionQueue = Promise.resolve();
+        this.pauseResolution = null;
     }
 
     public setController(controller: Controller) {
@@ -50,6 +52,26 @@ export default class CommandManager {
                 }, delay);
             });
         });
+    }
+
+    public pause() {
+        if (this.pauseResolution == null) {
+            this.executionQueue = this.executionQueue
+            .then(() => {
+                console.log("CommandManager paused");
+                return new Promise((resolve, reject) => {
+                    this.pauseResolution = resolve;
+                });
+            });
+        }
+    }
+
+    public resume() {
+        if (this.pauseResolution != null) {
+            this.pauseResolution();
+            this.pauseResolution = null;
+            console.log("CommandManager resumed");
+        }
     }
 
     public enqueueCommand(command: AbstractCommand) {
