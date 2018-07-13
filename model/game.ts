@@ -15,6 +15,8 @@ export class Game {
     private half: number;
     private sidePlaying: Model.Side;
 
+    private playerLocations: {[key: string]: Model.Player};
+
     /**
      * Root internal model class.
      *
@@ -26,13 +28,14 @@ export class Game {
         this.isInitialized = false;
         this.sidePlaying = Model.Side.Home;
         this.half = 0;
+        this.playerLocations = {};
     }
 
     public initialize(data: FFB.Protocol.Messages.ServerGameState) {
         if (!this.isInitialized) {
             this.isInitialized = true;
-            this.teamHome = new Model.Team(data.game.teamHome);
-            this.teamAway = new Model.Team(data.game.teamAway);
+            this.teamHome = new Model.Team(this, data.game.teamHome);
+            this.teamAway = new Model.Team(this, data.game.teamAway);
 
             if (data.game.fieldModel.ballCoordinate != null) {
                 this.ballCoordinate = Coordinate.FromArray(data.game.fieldModel.ballCoordinate);
@@ -48,6 +51,16 @@ export class Game {
             return true;
         }
         return false;
+    }
+
+    public updatePlayerLocation(player: Model.Player, oldCoordinate: Coordinate, newCoordinate: Coordinate) {
+        if (oldCoordinate && oldCoordinate.isOnField()) {
+            this.playerLocations[oldCoordinate.x + "," + oldCoordinate.y] = null;
+        }
+
+        if (newCoordinate && newCoordinate.isOnField()) {
+            this.playerLocations[newCoordinate.x + "," + newCoordinate.y] = player;
+        }
     }
 
     public setActivePlayer(id: string) {
@@ -95,9 +108,8 @@ export class Game {
         return result;
     }
 
-    public movePlayer(id: string, coordinate: Coordinate) {
-        let player = this.getPlayer(id);
-        player.setPosition(coordinate);
+    public getPlayerOnLocation(coordinate: Coordinate) {
+        return this.playerLocations[coordinate.x + "," + coordinate.y];
     }
 
     public getPlayer(id: string): Model.Player {
@@ -131,7 +143,11 @@ export class Game {
             let player = this.getPlayer(pData.playerId);
             player.setState(pData.playerState);
             let [x,y] = pData.playerCoordinate;
-            player.setPosition(new Coordinate(x, y));
+            let coord = new Coordinate(x, y);
+            player.setPosition(coord);
+            if (coord.isOnField()) {
+                this.playerLocations[x + "," + y] = player;
+            }
         }
     }
 

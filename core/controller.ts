@@ -140,7 +140,6 @@ export class Controller {
                 blocked = blocked.concat(this.blockedSquares[key]);
             }
         }
-        console.log("Finding location", blocked, this.blockedSquares);
         return this.game.findEmptyPatchNearLocation(coordinate, width, height, blocked);
     }
 
@@ -154,15 +153,12 @@ export class Controller {
             }
         }
 
-        console.log("Allocated location", key);
-
         this.blockedSquares[key] = squares;
 
         return key;
     }
 
     public freeBoardSpace(key: string) {
-        console.log("Freeing location", key);
         delete this.blockedSquares[key];
     }
 }

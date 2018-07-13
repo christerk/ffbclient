@@ -223,6 +223,47 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
 
         this.controller.triggerEvent(Types.EventType.Initialized);
         this.controller.SoundEngine.start();
+
+
+        let pCard = this.make.graphics({});
+        pCard.clear();
+        pCard.fillStyle(0x0, 0.3);
+        pCard.fillRect(0, 0, 201, 268);
+        pCard.generateTexture("playerCard", 201, 268);
+        let playerCard = this.add.image(0, 0, "playerCard");
+        playerCard.setOrigin(0, 0);
+        playerCard.visible = false;
+
+        this.pitch.setInteractive();
+        let prevX = -1;
+        let prevY = -1;
+        this.input.on('gameobjectmove', (pointer, gameObject) => {
+            let x = pointer.worldX;
+            let y = pointer.worldY;
+
+            let sX = Math.floor(x / this.gridSize);
+            let sY = Math.floor(y / this.gridSize);
+
+            if (sX != prevX ||sY != prevY) {
+                prevX = sX;
+                prevY = sY;
+
+                let coord = new Types.Coordinate(sX, sY);
+
+                let player = this.controller.Game.getPlayerOnLocation(coord);
+
+                if (player != null) {
+                    let location = this.controller.findEmptyPatchNearLocation(coord, 3, 4);
+                    let pos = this.controller.convertToPixels(location);
+                    playerCard.setPosition(pos[0], pos[1]);
+                    let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
+                    playerCard.setDisplaySize(sz[0], sz[1]);
+                    playerCard.visible = true;
+                } else {
+                    playerCard.visible = false;
+                }
+            }
+        });
     }
 
     private createTeamName(name: string): Phaser.GameObjects.Text {

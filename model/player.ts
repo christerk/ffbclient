@@ -1,3 +1,4 @@
+import * as Model from ".";
 import { Coordinate } from "../types";
 
 export enum PlayerState {
@@ -35,6 +36,7 @@ export enum Side {
 }
 
 export class Player {
+    private team: Model.Team;
     private id: string;
     public number: number;
     public name: string;
@@ -50,7 +52,8 @@ export class Player {
     public positionIcon: number;
     private side: Side;
 
-    public constructor(data: FFB.Protocol.Messages.PlayerType) {
+    public constructor(team: Model.Team, data: FFB.Protocol.Messages.PlayerType) {
+        this.team = team;
         this.id = data.playerId;
         this.number = data.playerNr;
         this.name = data.playerName;
@@ -98,7 +101,9 @@ export class Player {
     }
 
     public setPosition(coordinate: Coordinate) {
+        let oldCoordinate = this.coordinate;
         this.coordinate = coordinate;
+        this.team.Game.updatePlayerLocation(this, oldCoordinate, coordinate);
     }
 
     public isActive(): boolean {

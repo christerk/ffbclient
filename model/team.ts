@@ -1,6 +1,7 @@
 import * as Model from ".";
 
 export class Team {
+    private game: Model.Game;
     private coach: string;
     private name: string;
     private roster: Model.Roster;
@@ -10,17 +11,22 @@ export class Team {
     private score: number;
     private turn: number;
 
-    public constructor(data: FFB.Protocol.Messages.TeamType) {
+    public constructor(game: Model.Game, data: FFB.Protocol.Messages.TeamType) {
+        this.game = game;
         this.name = data.teamName;
         this.roster = new Model.Roster(data.roster);
 
         this.players = {};
         for (let player of data.playerArray) {
-            this.players[player['playerId']] = new Model.Player(player);
+            this.players[player['playerId']] = new Model.Player(this, player);
         }
         this.score = 0;
         this.turn = 0;
         this.coach = data.coach;
+    }
+
+    public get Game(): Model.Game {
+        return this.game;
     }
 
     public getName() {
