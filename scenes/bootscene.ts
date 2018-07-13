@@ -52,6 +52,8 @@ export class BootScene extends AbstractScene {
             frameHeight: 100,
         })
 
+        this.controller.SoundEngine.load(this);
+
         this.initialize();
     }
 
@@ -99,7 +101,7 @@ export class BootScene extends AbstractScene {
                 this.generateSpriteFrames(sprite);
 
             }
-            
+
             this.generateTextures();
             
             this.controller.setScene("mainScene");

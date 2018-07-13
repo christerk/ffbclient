@@ -42,6 +42,7 @@ export class CommandModelSync extends Command {
         console.log("Processing model sync command", data);
 
         let compoundCommand = new ClientCommands.CompoundCommand();
+        compoundCommand.setSound(data.sound);
 
         for (let report of data.reportList.reports) {
             let reportId = report.reportId;

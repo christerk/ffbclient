@@ -8,5 +8,7 @@ export class CommandServerSound extends Command {
 
     public processCommand(data: FFB.Protocol.Messages.ServerSound) {
         console.log("Processing server sound command", data);
+        
+        this.controller.SoundEngine.play(data.sound);
     }
 }

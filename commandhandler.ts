@@ -13,6 +13,7 @@ export default class CommandHandler {
             "serverModelSync": new Commands.CommandModelSync(controller),
             "serverGameTime": new Commands.CommandGameTime(controller),
             "serverTalk": new Commands.CommandServerTalk(controller),
+            "serverSound": new Commands.CommandServerSound(controller),
         };
         this.network = network;
         this.controller = controller;

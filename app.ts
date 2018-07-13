@@ -8,6 +8,7 @@ import * as Model from "./model";
 import { EventListener, EventType } from "./types/eventlistener";
 import { AbstractScene } from "./scenes/abstractscene";
 import { DiceManager } from "./dicemanager";
+import { SoundEngine } from "./soundengine";
 
 export default class App extends Phaser.Game implements EventListener {
     private static controller: Controller;
@@ -17,9 +18,11 @@ export default class App extends Phaser.Game implements EventListener {
 
         let game = new Model.Game();
         let commandManager = new CommandManager(game);
-        let controller = new Controller(game, commandManager);
+        let soundEngine = new SoundEngine();
+        let controller = new Controller(game, commandManager, soundEngine);
         App.controller = controller;
         commandManager.setController(controller);
+        soundEngine.setController(controller);
 
         let scenes: AbstractScene[] = [
             new Scenes.ConnectScene(controller),

@@ -225,6 +225,7 @@ export class MainScene extends AbstractScene implements EventListener {
         this.resize();
 
         this.controller.triggerEvent(EventType.Initialized);
+        this.controller.SoundEngine.start();
     }
 
     private createTeamName(name: string): Phaser.GameObjects.Text {

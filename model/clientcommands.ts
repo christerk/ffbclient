@@ -10,12 +10,14 @@ export abstract class AbstractCommand {
     protected controller: Controller;
     public triggerModelChanged: boolean;
     private delay: number;
+    private sound: string;
 
     public constructor() {
         this.applied = false;
         this.triggerModelChanged = true;
         this.controller = null;
         this.delay = 0;
+        this.sound = null;
     }
 
     public getDelay(): number {
@@ -26,6 +28,9 @@ export abstract class AbstractCommand {
         this.delay = delay;
     }
 
+    public setSound(sound: string) {
+        this.sound = sound;
+    }
 
     public apply(game: Model.Game, controller: Controller) {
         if (!this.applied) {
@@ -33,6 +38,10 @@ export abstract class AbstractCommand {
             this.controller = controller;
             this.applied = true;
             this.init(game, controller);
+        }
+
+        if (this.sound != null) {
+            this.controller.SoundEngine.play(this.sound);
         }
 
         this.do();

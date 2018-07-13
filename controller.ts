@@ -7,6 +7,7 @@ import CommandManager from "./model/commandmanager";
 import { EventListener, EventType } from "./types/eventlistener";
 import { DiceManager } from "./dicemanager";
 import { AbstractScene } from "./scenes/abstractscene";
+import { SoundEngine } from "./soundengine";
 
 export default class Controller {
     private currentScene: string;
@@ -14,6 +15,7 @@ export default class Controller {
     public scene: Phaser.Scene;
     private game: Model.Game;
     private commandManager: CommandManager;
+    private soundEngine: SoundEngine;
     private eventListeners: EventListener[];
     private network: Network;
     private diceManager: DiceManager;
@@ -25,8 +27,9 @@ export default class Controller {
      * Core message passing class. Used to interface between the network and
      * the core model.
      */
-    public constructor(game: Model.Game, commandManager: CommandManager) {
+    public constructor(game: Model.Game, commandManager: CommandManager, soundEngine: SoundEngine) {
         this.commandManager = commandManager;
+        this.soundEngine = soundEngine;
         this.game = game;
         this.eventListeners = [];
         this.scenes = {};
@@ -55,6 +58,10 @@ export default class Controller {
         return this.game;
     }
 
+    public get SoundEngine(): SoundEngine {
+        return this.soundEngine;
+    }
+
     public setSceneManager(sceneManager: Phaser.Scenes.SceneManager) {
         this.sceneManager = sceneManager;
     }
@@ -62,6 +69,10 @@ export default class Controller {
     public registerScene(scene: AbstractScene) {
         console.log("Registering scene", scene.sys.settings.key);
         this.scenes[scene.sys.settings.key] = scene;
+    }
+
+    public getScene(key: string) {
+        return this.scenes[key];
     }
 
     public get DiceManager(): DiceManager {
@@ -96,7 +107,9 @@ export default class Controller {
     }
 
     public sendChat(text: string) {
-        this.network.sendChat(text);
+        if (text.length > 0) {
+            this.network.sendChat(text);
+        }
     }
 
     public triggerEvent(eventType: EventType, data?: any) {
