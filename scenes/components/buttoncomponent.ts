@@ -1,12 +1,12 @@
 import * as Comp from ".";
-import Controller from "../../controller";
+import * as Core from "../../core";
 import { EventType } from "../../types";
 
 export class Button extends Comp.UIComponent {
-    private controller: Controller;
+    private controller: Core.Controller;
     private button: Phaser.GameObjects.Image;
 
-    public constructor(config: Comp.ComponentConfiguration, controller: Controller) {
+    public constructor(config: Comp.ComponentConfiguration, controller: Core.Controller) {
         super(config);
 
         this.controller = controller;

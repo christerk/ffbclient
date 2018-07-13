@@ -1,25 +1,21 @@
 import Phaser from "phaser";
+import * as Core from "./core";
 import * as Scenes from "./scenes";
-import Controller from "./controller";
-import Network from "./network";
-import CommandHandler from "./commandhandler";
 import CommandManager from "./model/commandmanager";
 import * as Model from "./model";
 import { EventListener, EventType } from "./types/eventlistener";
 import { AbstractScene } from "./scenes/abstractscene";
-import { DiceManager } from "./dicemanager";
-import { SoundEngine } from "./soundengine";
 
 export default class App extends Phaser.Game implements EventListener {
-    private static controller: Controller;
+    private static controller: Core.Controller;
 
     public constructor() {
         console.log("Starting Phaser App");
 
         let game = new Model.Game();
         let commandManager = new CommandManager(game);
-        let soundEngine = new SoundEngine();
-        let controller = new Controller(game, commandManager, soundEngine);
+        let soundEngine = new Core.SoundEngine();
+        let controller = new Core.Controller(game, commandManager, soundEngine);
         App.controller = controller;
         commandManager.setController(controller);
         soundEngine.setController(controller);

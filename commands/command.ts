@@ -1,9 +1,9 @@
-import Controller from "../controller";
+import * as Core from "../core";
 
 export abstract class Command {
-    protected controller: Controller;
+    protected controller: Core.Controller;
 
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         this.controller = controller;
     }
 

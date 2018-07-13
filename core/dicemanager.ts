@@ -1,7 +1,7 @@
 import Phaser from "phaser";
-import { Dice } from "./scenes/animations/dice";
-import { Coordinate } from "./types";
-import Controller from "./controller";
+import * as Core from ".";
+import * as Types from "../types";
+import { Dice } from "../scenes/animations/dice";
 
 export type DieType = "d6" | "db" | "d8" | "d68";
 
@@ -15,7 +15,7 @@ type RollType = {
 }
 
 export class DiceManager {
-    private controller: Controller;
+    private controller: Core.Controller;
     private scene: Phaser.Scene;
     private scale: number;
     private dice: Dice;
@@ -31,7 +31,7 @@ export class DiceManager {
 
     private rollQueue: Promise<any>;
 
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         this.controller = controller;
         this.dieCache = {
             "d6": [],
@@ -91,7 +91,7 @@ export class DiceManager {
         }
     }
 
-    public roll(type: DieType, targets: number[], coordinate: Coordinate, duration = 1000, delay = 0): string {
+    public roll(type: DieType, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0): string {
         let rollKey = "Roll:" + (++this.rollCounter);
 
         this.rollQueue = this.rollQueue
@@ -105,7 +105,7 @@ export class DiceManager {
         return rollKey;
     }
 
-    public executeRoll(rollKey: string, type: DieType, targets: number[], coordinate: Coordinate, duration = 1000, delay = 0) {
+    public executeRoll(rollKey: string, type: DieType, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0) {
         let emptySpace = this.controller.findEmptyPatchNearLocation(coordinate, 2, 2);
 
         let locationKey = this.controller.allocateBoardSpace(emptySpace, 2, 2);
@@ -124,7 +124,7 @@ export class DiceManager {
         let bg = this.scene.add.graphics();
         bg.clear();
         bg.fillStyle(0x0, 0.3);
-        let [w,h] = this.controller.convertToPixels(new Coordinate(2,2));
+        let [w,h] = this.controller.convertToPixels(new Types.Coordinate(2,2));
         bg.fillRect(-w/2,-h/2,w,h);
         bg.setPosition(x, y);
 

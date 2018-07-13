@@ -1,10 +1,10 @@
 import Phaser from "phaser";
+import * as Core from "../../core";
 import * as Comp from "../components";
-import { EventListener, EventType } from "../../types/eventlistener";
+import * as Types from "../../types";
 import * as Model from "../../model";
-import Controller from "../../controller";
 
-export class UILayer implements EventListener {
+export class UILayer implements Types.EventListener {
     public container: Phaser.GameObjects.Container;
     private scene: Phaser.Scene;
     private scale: number;
@@ -13,13 +13,13 @@ export class UILayer implements EventListener {
     private labelHalf: Comp.Label;
     private labelTurn: Comp.Label;
     private input: Comp.Input;
-    private controller: Controller;
+    private controller: Core.Controller;
 
     private component: Comp.UIComponent;
 
     private renderContext: Comp.RenderContext;
 
-    public constructor(scene: Phaser.Scene, game: Model.Game, controller: Controller) {
+    public constructor(scene: Phaser.Scene, game: Model.Game, controller: Core.Controller) {
         this.controller = controller;
         this.scene = scene;
         this.container = scene.make.container({});
@@ -177,14 +177,14 @@ export class UILayer implements EventListener {
         this.container.add(phaserObject);
     }
 
-    public handleEvent(eventType: EventType, data?: any) {
-        if (eventType == EventType.Resized) {
+    public handleEvent(eventType: Types.EventType, data?: any) {
+        if (eventType == Types.EventType.Resized) {
             this.renderContext.w = data.w;
             this.renderContext.h = data.h;
             this.renderContext.scale = data.scale;
             this.redraw();
         }
-        if (eventType == EventType.ModelChanged) {
+        if (eventType == Types.EventType.ModelChanged) {
             let g = this.controller.Game;
             this.labelHomeScore.setText(g.teamHome.getScore().toString());
             this.labelAwayScore.setText(g.teamAway.getScore().toString());

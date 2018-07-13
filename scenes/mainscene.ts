@@ -1,12 +1,9 @@
 import Phaser from "phaser";
-import CommandHandler from "../commandhandler";
+import * as Core from "../core";
 import * as Model from "../model";
-import Controller from "../controller";
-import { EventListener, EventType } from "../types/eventlistener";
-import { Coordinate } from "../types";
+import * as Types from "../types";
 import * as Layers from "./layers";
-import { DiceManager, DieType } from "../dicemanager";
-import { AbstractScene } from "./abstractscene";
+import * as Scenes from "../scenes";
 
 type IconState = {
     alpha: number,
@@ -15,7 +12,7 @@ type IconState = {
     visible: boolean,
 }
 
-export class MainScene extends AbstractScene implements EventListener {
+export class MainScene extends Scenes.AbstractScene implements Types.EventListener {
 
     private pitch: Phaser.GameObjects.Image;
     private homeTeamName: Phaser.GameObjects.Text;
@@ -38,7 +35,7 @@ export class MainScene extends AbstractScene implements EventListener {
 
     private floatTextQueue: Promise<any>;
 
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         super('mainScene', controller);
         console.log("Main Scene: constructed");
         this.moveSquareIcons = [];
@@ -49,18 +46,18 @@ export class MainScene extends AbstractScene implements EventListener {
         controller.addEventListener(this);
     }
 
-    public handleEvent(event: EventType, data?: any) {
+    public handleEvent(event: Types.EventType, data?: any) {
         switch(event) {
-            case EventType.ModelChanged:
+            case Types.EventType.ModelChanged:
                 this.dirty = true;
                 break;
-            case EventType.Resizing:
+            case Types.EventType.Resizing:
                 this.resize();
                 break;
-            case EventType.Resized:
+            case Types.EventType.Resized:
                 this.controller.DiceManager.setScale(this.pitchScale);
                 break;
-            case EventType.Click:
+            case Types.EventType.Click:
                 if (data.source == "TestButton") {
                     let coach: string;
                     if (Math.random() < 0.5) {
@@ -72,20 +69,20 @@ export class MainScene extends AbstractScene implements EventListener {
                 } else if (data.source == "TestButton2") {
                 }
                 break;
-            case EventType.ActivePlayerAction:
+            case Types.EventType.ActivePlayerAction:
                 let activePlayer = this.controller.Game.getActivePlayer();
                 this.floatText(activePlayer, <string>data);
                 break;
-            case EventType.FloatText:
+            case Types.EventType.FloatText:
                 this.floatText(data.player, data.text);
                 break;
-            case EventType.BlockDice:
+            case Types.EventType.BlockDice:
                 if (this.blockDiceKey != null) {
                     this.controller.DiceManager.fadeRoll(this.blockDiceKey);
                 }
                 this.blockDiceKey = data;
                 break;
-            case EventType.BlockChoice:
+            case Types.EventType.BlockChoice:
                 let choice: number = data.choice;
                 if (this.blockDiceKey !== null) {
                     this.controller.DiceManager.displayBlockChoice(this.blockDiceKey, choice);
@@ -218,13 +215,13 @@ export class MainScene extends AbstractScene implements EventListener {
         this.uiCamera = uiCamera;
 
         window.onresize = () => {
-            this.controller.triggerEvent(EventType.Resizing);
+            this.controller.triggerEvent(Types.EventType.Resizing);
         };
 
         this.redraw(this.controller.getGameState());
         this.resize();
 
-        this.controller.triggerEvent(EventType.Initialized);
+        this.controller.triggerEvent(Types.EventType.Initialized);
         this.controller.SoundEngine.start();
     }
 
@@ -268,7 +265,7 @@ export class MainScene extends AbstractScene implements EventListener {
 
         this.pitch.setScale(zoomFactor);
         this.pitchScale = zoomFactor;
-        this.controller.triggerEvent(EventType.ModelChanged);
+        this.controller.triggerEvent(Types.EventType.ModelChanged);
 
         // Calculate margins to center field in viewport
         let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2);
@@ -278,7 +275,7 @@ export class MainScene extends AbstractScene implements EventListener {
         this.cameras.main.setViewport(marginLeft, marginTop, w, h);
         this.uiCamera.setViewport(0, 0, this.width, this.height);
 
-        this.controller.triggerEvent(EventType.Resized, {
+        this.controller.triggerEvent(Types.EventType.Resized, {
             w: this.sys.canvas.clientWidth,
             h: this.sys.canvas.clientHeight,
             scale: this.gridSize
@@ -287,10 +284,10 @@ export class MainScene extends AbstractScene implements EventListener {
         this.homeTeamName.setFontSize(this.gridSize * 0.9);
         this.awayTeamName.setFontSize(this.gridSize * 0.9);
 
-        let [x,y] = this.controller.convertToPixels(new Coordinate(0.5, 7.5));
+        let [x,y] = this.controller.convertToPixels(new Types.Coordinate(0.5, 7.5));
         this.homeTeamName.setPosition(x, y);
 
-        [x,y] = this.controller.convertToPixels(new Coordinate(25.5, 7.5));
+        [x,y] = this.controller.convertToPixels(new Types.Coordinate(25.5, 7.5));
         this.awayTeamName.setPosition(x, y);
     }
 
@@ -333,7 +330,7 @@ export class MainScene extends AbstractScene implements EventListener {
         let squares = game.getMoveSquares();
         for (let index in squares) {
             let coordinate = squares[i]
-            let [w, h] = this.controller.convertToPixels(new Coordinate(0.8, 0.8));
+            let [w, h] = this.controller.convertToPixels(new Types.Coordinate(0.8, 0.8));
             let [x, y] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
             if (i == this.moveSquareIcons.length) {
                 let icon = this.add.sprite(x, y, "moveSquare");

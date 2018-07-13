@@ -1,53 +1,49 @@
-import Network from "./network";
-import CommandHandler from "./commandhandler";
-import * as Model from "./model";
-import { Coordinate } from "./types";
-import { AbstractCommand } from "./model/clientcommands";
-import CommandManager from "./model/commandmanager";
-import { EventListener, EventType } from "./types/eventlistener";
-import { DiceManager } from "./dicemanager";
-import { AbstractScene } from "./scenes/abstractscene";
-import { SoundEngine } from "./soundengine";
+import * as Core from ".";
+import * as Model from "../model";
+import * as Types from "../types";
+import * as ClientCommands from "../model/clientcommands";
+import CommandManager from "../model/commandmanager";
+import * as Scenes from "../scenes";
 
-export default class Controller {
+export class Controller {
     private currentScene: string;
     private sceneManager: Phaser.Scenes.SceneManager;
     public scene: Phaser.Scene;
     private game: Model.Game;
     private commandManager: CommandManager;
-    private soundEngine: SoundEngine;
-    private eventListeners: EventListener[];
-    private network: Network;
-    private diceManager: DiceManager;
+    private soundEngine: Core.SoundEngine;
+    private eventListeners: Types.EventListener[];
+    private network: Core.Network;
+    private diceManager: Core.DiceManager;
     private scenes: { [key: string]: Phaser.Scene }
     private scale: number;
-    private blockedSquares: { [key: string] : Coordinate[] };
+    private blockedSquares: { [key: string] : Types.Coordinate[] };
 
     /**
      * Core message passing class. Used to interface between the network and
      * the core model.
      */
-    public constructor(game: Model.Game, commandManager: CommandManager, soundEngine: SoundEngine) {
+    public constructor(game: Model.Game, commandManager: CommandManager, soundEngine: Core.SoundEngine) {
         this.commandManager = commandManager;
         this.soundEngine = soundEngine;
         this.game = game;
         this.eventListeners = [];
         this.scenes = {};
-        this.network = new Network();
-        this.diceManager = new DiceManager(this);
+        this.network = new Core.Network();
+        this.diceManager = new Core.DiceManager(this);
         this.scale = 30;
         this.blockedSquares = {};
     }
 
-    public handleEvent(event: EventType, data?: any) {
+    public handleEvent(event: Types.EventType, data?: any) {
         switch(event) {
-            case EventType.Connected:
+            case Types.EventType.Connected:
                 this.commandManager.pause();
                 break;
-            case EventType.Initialized:
+            case Types.EventType.Initialized:
                 this.commandManager.resume();
                 break;
-            case EventType.Resized:
+            case Types.EventType.Resized:
                 console.log(data);
                 this.scale = data.scale;
                 break;
@@ -58,7 +54,7 @@ export default class Controller {
         return this.game;
     }
 
-    public get SoundEngine(): SoundEngine {
+    public get SoundEngine(): Core.SoundEngine {
         return this.soundEngine;
     }
 
@@ -66,7 +62,7 @@ export default class Controller {
         this.sceneManager = sceneManager;
     }
 
-    public registerScene(scene: AbstractScene) {
+    public registerScene(scene: Scenes.AbstractScene) {
         console.log("Registering scene", scene.sys.settings.key);
         this.scenes[scene.sys.settings.key] = scene;
     }
@@ -75,11 +71,11 @@ export default class Controller {
         return this.scenes[key];
     }
 
-    public get DiceManager(): DiceManager {
+    public get DiceManager(): Core.DiceManager {
         return this.diceManager;
     }
 
-    public addEventListener(listener: EventListener) {
+    public addEventListener(listener: Types.EventListener) {
         this.eventListeners.push(listener);
     }
 
@@ -96,13 +92,13 @@ export default class Controller {
         this.diceManager.setScene(this.scenes[scene]);
     }
 
-    public enqueueCommand(command: AbstractCommand) {
+    public enqueueCommand(command: ClientCommands.AbstractCommand) {
         this.commandManager.enqueueCommand(command);
 
         console.log('Command enqueued', command);
 
         if (command.triggerModelChanged == true) {
-            this.triggerEvent(EventType.ModelChanged);
+            this.triggerEvent(Types.EventType.ModelChanged);
         }
     }
 
@@ -112,7 +108,7 @@ export default class Controller {
         }
     }
 
-    public triggerEvent(eventType: EventType, data?: any) {
+    public triggerEvent(eventType: Types.EventType, data?: any) {
         this.handleEvent(eventType, data);
         this.eventListeners.forEach((listener) => listener.handleEvent(eventType, data));
     }
@@ -122,7 +118,7 @@ export default class Controller {
     }
 
     public connect(config: any) {
-        let commandHandler = new CommandHandler(this.network, this);
+        let commandHandler = new Core.CommandHandler(this.network, this);
         this.network.connect(commandHandler, config);
     }
 
@@ -130,15 +126,15 @@ export default class Controller {
         this.network.leave();
     }
 
-    public convertToPixels(coordinate: Coordinate) {
+    public convertToPixels(coordinate: Types.Coordinate) {
         return [
             Math.round(coordinate.x * this.scale),
             Math.round(coordinate.y * this.scale)
         ];
     }
 
-    public findEmptyPatchNearLocation(coordinate: Coordinate, width: number, height: number): Coordinate {
-        let blocked: Coordinate[] = [];
+    public findEmptyPatchNearLocation(coordinate: Types.Coordinate, width: number, height: number): Types.Coordinate {
+        let blocked: Types.Coordinate[] = [];
         for (let key in this.blockedSquares) {
             if (this.blockedSquares[key]) {
                 blocked = blocked.concat(this.blockedSquares[key]);
@@ -148,9 +144,9 @@ export default class Controller {
         return this.game.findEmptyPatchNearLocation(coordinate, width, height, blocked);
     }
 
-    public allocateBoardSpace(coordinate: Coordinate, width: number, height: number): string {
+    public allocateBoardSpace(coordinate: Types.Coordinate, width: number, height: number): string {
         let key = "roll:" + coordinate.x + ":" + coordinate.y + ":" + width + ":" + height;
-        let squares: Coordinate[] = [];
+        let squares: Types.Coordinate[] = [];
         
         for (let y=0; y<height; y++) {
             for (let x=0; x<width; x++) {

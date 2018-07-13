@@ -1,9 +1,9 @@
 import { Command } from ".";
-import Controller from "../controller";
+import * as Core from "../core";
 import * as ClientCommands from "../model/clientcommands";
 
 export class CommandGameState extends Command {
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         super(controller);
     }
 

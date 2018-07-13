@@ -1,13 +1,12 @@
-import * as Commands from "./commands";
-import Network from "./network";
-import Controller from "./controller";
+import * as Commands from "../commands";
+import * as Core from ".";
 
-export default class CommandHandler {
+export class CommandHandler {
     private commandHandlers: {[id:string]:Commands.Command};
-    private network: Network;
-    private controller: Controller;
+    private network: Core.Network;
+    private controller: Core.Controller;
 
-    public constructor(network: Network, controller: Controller) {
+    public constructor(network: Core.Network, controller: Core.Controller) {
         this.commandHandlers = {
             "serverGameState": new Commands.CommandGameState(controller),
             "serverModelSync": new Commands.CommandModelSync(controller),

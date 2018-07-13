@@ -1,5 +1,5 @@
-import Phaser from "phaser"
-import Controller from "../controller";
+import Phaser from "phaser";
+import * as Core from "../core";
 import { AbstractScene } from "./abstractscene";
 
 export class ConnectScene extends AbstractScene {
@@ -9,7 +9,7 @@ export class ConnectScene extends AbstractScene {
     private config: any;
     private auth: string;
 
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         super('connectScene', controller);
     }
 

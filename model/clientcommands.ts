@@ -1,13 +1,11 @@
-
+import * as Core from "../core";
 import * as Model from ".";
 import { Coordinate, EventType } from "../types";
-import Controller from "../controller";
-import { DiceManager, DieType } from "../dicemanager";
 
 export abstract class AbstractCommand {
     protected applied: boolean;
     protected game: Model.Game;
-    protected controller: Controller;
+    protected controller: Core.Controller;
     public triggerModelChanged: boolean;
     private delay: number;
     private sound: string;
@@ -32,7 +30,7 @@ export abstract class AbstractCommand {
         this.sound = sound;
     }
 
-    public apply(game: Model.Game, controller: Controller) {
+    public apply(game: Model.Game, controller: Core.Controller) {
         if (!this.applied) {
             this.game = game;
             this.controller = controller;
@@ -47,7 +45,7 @@ export abstract class AbstractCommand {
         this.do();
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         this.game = game;
         this.controller = controller;
     }
@@ -87,7 +85,7 @@ export class CompoundCommand extends AbstractCommand {
         this.commandList.push(command);
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         for (let command of this.commandList) {
             command.setGame(this.game);
@@ -141,7 +139,7 @@ abstract class PlayerCommand extends AbstractCommand {
         this.playerId = playerId;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.player = this.game.getPlayer(this.playerId);
     }
@@ -161,7 +159,7 @@ export class MovePlayer extends PlayerCommand {
         this.setDelay(200);
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.oldCoordinate = this.player.getPosition();
     }
@@ -184,7 +182,7 @@ export class SetPlayerState extends PlayerCommand {
         this.newState = newState;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.oldState = this.player.state;
     }
@@ -207,7 +205,7 @@ export class AddMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
@@ -234,7 +232,7 @@ export class RemoveMoveSquare extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.hasMoveSquare = this.game.hasMoveSquare(this.coordinate);
     }
@@ -261,7 +259,7 @@ export class AddTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
@@ -288,7 +286,7 @@ export class RemoveTrackNumber extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.hasTrackNumber = this.game.hasTrackNumber(this.coordinate);
     }
@@ -315,7 +313,7 @@ export class SetBallCoordinate extends AbstractCommand {
         this.coordinate = coordinate;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         this.oldCoordinate = this.game.getBallCoordinate();
     }
@@ -338,7 +336,7 @@ export class SetActivePlayerId extends AbstractCommand {
         this.activePlayerId = playerId;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
         let player = game.getActivePlayer();
         if (player != null) {
@@ -386,7 +384,7 @@ export class SetScore extends AbstractCommand {
         this.score = score;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
 
         if (this.side == "home") {
@@ -416,7 +414,7 @@ export class SetPlayingSide extends AbstractCommand {
         this.side = side;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
 
         this.oldSide = this.game.getPlayingSide();
@@ -443,7 +441,7 @@ export class SetTurnNr extends AbstractCommand {
         this.turn = turn;
     }
 
-    public init(game: Model.Game, controller: Controller) {
+    public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
 
         if (this.side == "home") {
@@ -555,7 +553,7 @@ export class Injury extends AbstractCommand {
         this.injuredPlayerState = injuredPlayerState;
     }
 
-    private rollDice(type: DieType, targets: number[]) {
+    private rollDice(type: Core.DieType, targets: number[]) {
         this.controller.DiceManager.roll(type, targets, this.location, 1000);
     }
 

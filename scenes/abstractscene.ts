@@ -1,10 +1,10 @@
 import Phaser from "phaser";
-import Controller from "../controller";
+import * as Core from "../core";
 
 export class AbstractScene extends Phaser.Scene {
-    protected controller: Controller;
+    protected controller: Core.Controller;
 
-    public constructor(key: string, controller: Controller) {
+    public constructor(key: string, controller: Core.Controller) {
         super({
             key: key,
         });

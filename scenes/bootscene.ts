@@ -1,5 +1,5 @@
-import Phaser from "phaser"
-import Controller from "../controller";
+import Phaser from "phaser";
+import * as Core from "../core";
 import { AbstractScene } from "./abstractscene";
 
 export class BootScene extends AbstractScene {
@@ -11,7 +11,7 @@ export class BootScene extends AbstractScene {
     private phase;
     private loadingText;
 
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         super('bootScene', controller);
         console.log("Boot Scene: constructed");
     }

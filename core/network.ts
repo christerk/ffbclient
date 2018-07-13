@@ -1,7 +1,7 @@
 //import * as WebSocket from "ws";
 import LZString from "lz-string";
 
-export default class Network {
+export class Network {
     private ws: WebSocket;
     private config: any;
 

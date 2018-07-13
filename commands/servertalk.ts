@@ -1,8 +1,8 @@
 import { Command } from ".";
-import Controller from "../controller";
+import * as Core from "../core";
 
 export class CommandServerTalk extends Command {
-    public constructor(controller: Controller) {
+    public constructor(controller: Core.Controller) {
         super(controller);
     }
 

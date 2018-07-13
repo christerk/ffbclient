@@ -1,11 +1,11 @@
 import * as Model from ".";
-import Controller from "../controller";
+import * as Core from "../core";
 import { AbstractCommand } from "./clientcommands";
 import { EventType } from "../types/eventlistener";
 
 export default class CommandManager {
     private game: Model.Game;
-    private controller: Controller;
+    private controller: Core.Controller;
 
     private commandQueue: AbstractCommand[];
     private queuePosition: number;
@@ -25,7 +25,7 @@ export default class CommandManager {
         this.pauseResolution = null;
     }
 
-    public setController(controller: Controller) {
+    public setController(controller: Core.Controller) {
         this.controller = controller;
         console.log("Command Manager setting controller", this.controller);
     }

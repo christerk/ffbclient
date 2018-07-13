@@ -1,8 +1,8 @@
 import Phaser from "phaser";
-import Controller from "./controller";
+import * as Core from ".";
 
 export class SoundEngine {
-    private controller: Controller;
+    private controller: Core.Controller;
     private scene: Phaser.Scene;
     private sounds: {[key: string]: string};
 
@@ -55,7 +55,7 @@ export class SoundEngine {
         this.addSound("silence");
     }
 
-    public setController(controller: Controller) {
+    public setController(controller: Core.Controller) {
         this.controller = controller;
     }
 
