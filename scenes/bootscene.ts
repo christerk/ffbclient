@@ -10,10 +10,21 @@ export class BootScene extends AbstractScene {
     private spritesheets;
     private phase;
     private loadingText;
+    private texts: string[];
 
     public constructor(controller: Core.Controller) {
         super('bootScene', controller);
         console.log("Boot Scene: constructed");
+
+        this.texts = [
+            "Loading Dice...",
+            "Rerolling Injury Rolls...",
+            "Fouling Witch Elves...",
+            "Pogoing Sticks...",
+            "Processing Warpstone...",
+            "Spiking Ball...",
+            "Bribing the Ref...",
+        ];
     }
 
     public init(config) {
@@ -76,7 +87,7 @@ export class BootScene extends AbstractScene {
         this.loadingText = this.make.text({
             x: width / 2,
             y: height / 2 - 50,
-            text: 'Loading assets...',
+            text: this.texts[Math.floor(Math.random() * this.texts.length)],
             style: {
                 font: '20px monospace',
                 fill: '#ffffff'
