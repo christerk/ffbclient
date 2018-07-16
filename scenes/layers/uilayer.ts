@@ -86,6 +86,7 @@ export class UILayer implements Types.EventListener {
                 bottom: 3
             },
             visible: false,
+            inheritVisibility: false,
         });
 
         this.input.setCallback((text) => {
@@ -100,6 +101,7 @@ export class UILayer implements Types.EventListener {
             parentAnchor: Comp.Anchor.NORTHWEST,
             background: 0xc91321,
             visible: false,
+            inheritVisibility: false,
         });
 
         this.component = new Comp.Panel({

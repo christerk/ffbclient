@@ -24,6 +24,8 @@ export class BootScene extends AbstractScene {
             "Processing Warpstone...",
             "Spiking Ball...",
             "Bribing the Ref...",
+            "Arguing Calls...",
+            "Nuffle, Nuffle, Nuffle...",
         ];
     }
 

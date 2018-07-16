@@ -56,6 +56,7 @@ export type ComponentConfiguration = {
     color?: number,
     children?: UIComponent[],
     visible?: boolean,
+    inheritVisibility?: boolean,
     text?: string,
     image?: string,
 }
@@ -94,6 +95,7 @@ export abstract class UIComponent {
             background: null,
             backgroundAlpha: 1,
             visible: true,
+            inheritVisibility: true,
             children: [],
         };
 
@@ -105,6 +107,10 @@ export abstract class UIComponent {
 
         // Restore children array
         config.children = children;
+    }
+
+    public get InheritVisibility(): boolean {
+        return this.config.inheritVisibility;
     }
 
     protected static generateKey(): string {
@@ -192,20 +198,22 @@ export abstract class UIComponent {
         this.config.height = h + "px";
     }
 
-    public setVisible(visible: boolean, processChildren: boolean = true) {
-        this.config.visible = visible;
+    public setVisible(visible: boolean) {
+        if (this.config.visible != visible) {
+            this.config.visible = visible;
 
-        if (visible) {
-            this.show();
-        } else {
-            this.hide();
+            if (visible) {
+                this.show();
+            } else {
+                this.hide();
+            }
+
+            this.redraw();
         }
-
-        this.redraw();
     }
 
     public postCreate() {
-        this.setVisible(this.config.visible, false);
+        this.setVisible(this.config.visible);
     }
 
     public redraw(): void {

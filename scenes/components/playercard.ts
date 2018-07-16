@@ -45,6 +45,7 @@ export class PlayerCard extends Comp.Panel {
             parentAnchor: Comp.Anchor.NORTHWEST,
             color: 0xffffff,
             text: "#1",
+            visible: false,
         });
         this.numberLabel.setStroke(1);
 
@@ -55,6 +56,7 @@ export class PlayerCard extends Comp.Panel {
             parentAnchor: Comp.Anchor.NORTHEAST,
             color: 0xffffff,
             text: "Lineman",
+            visible: false,
         });
 
         this.nameLabel = new Comp.Label({
@@ -68,6 +70,7 @@ export class PlayerCard extends Comp.Panel {
             parentAnchor: Comp.Anchor.NORTHWEST,
             color: 0xffffff,
             text: "Alpha Beta",
+            visible: false,
         });
 
         this.maLabel = new Comp.Label({
@@ -77,7 +80,8 @@ export class PlayerCard extends Comp.Panel {
             anchor: Comp.Anchor.SOUTH,
             parentAnchor: Comp.Anchor.SOUTH,
             color: 0x0,
-            text: "6"
+            text: "6",
+            visible: false,
         });
 
         this.stLabel = new Comp.Label({
@@ -87,7 +91,8 @@ export class PlayerCard extends Comp.Panel {
             anchor: Comp.Anchor.SOUTH,
             parentAnchor: Comp.Anchor.SOUTH,
             color: 0x0,
-            text: "3"
+            text: "3",
+            visible: false,
         });
 
         this.agLabel = new Comp.Label({
@@ -97,7 +102,8 @@ export class PlayerCard extends Comp.Panel {
             anchor: Comp.Anchor.SOUTH,
             parentAnchor: Comp.Anchor.SOUTH,
             color: 0x0,
-            text: "3"
+            text: "3",
+            visible: false,
         });
 
         this.avLabel = new Comp.Label({
@@ -107,7 +113,8 @@ export class PlayerCard extends Comp.Panel {
             anchor: Comp.Anchor.SOUTH,
             parentAnchor: Comp.Anchor.SOUTH,
             color: 0x0,
-            text: "7"
+            text: "7",
+            visible: false,
         });
 
         let maPanel = new Comp.Panel({
@@ -121,6 +128,7 @@ export class PlayerCard extends Comp.Panel {
                 left: 0.2,
             },
             background: 0xffffff,
+            visible: false,
             children: [
                 new Comp.Panel({
                     id: "MaHeader",
@@ -130,6 +138,7 @@ export class PlayerCard extends Comp.Panel {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x0,
                     color: 0xffffff,
+                    visible: false,
                     children: [
                         new Comp.Label({
                             id: "MaHeaderText",
@@ -139,6 +148,7 @@ export class PlayerCard extends Comp.Panel {
                             width: "100%",
                             text: "MA",
                             color: 0xffffff,
+                            visible: false,
                         })
                     ]
                 }),
@@ -157,6 +167,7 @@ export class PlayerCard extends Comp.Panel {
                 right: 0.2,
             },
             background: 0xffffff,
+            visible: false,
             children: [
                 new Comp.Panel({
                     id: "StHeader",
@@ -166,6 +177,7 @@ export class PlayerCard extends Comp.Panel {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x0,
                     color: 0xffffff,
+                    visible: false,
                     children: [
                         new Comp.Label({
                             id: "StHeaderText",
@@ -175,6 +187,7 @@ export class PlayerCard extends Comp.Panel {
                             width: "100%",
                             text: "ST",
                             color: 0xffffff,
+                            visible: false,
                         })
                     ]
                 }),
@@ -193,6 +206,7 @@ export class PlayerCard extends Comp.Panel {
                 left: 0.2,
             },
             background: 0xffffff,
+            visible: false,
             children: [
                 new Comp.Panel({
                     id: "AgHeader",
@@ -202,6 +216,7 @@ export class PlayerCard extends Comp.Panel {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x0,
                     color: 0xffffff,
+                    visible: false,
                     children: [
                         new Comp.Label({
                             id: "AgHeaderText",
@@ -211,6 +226,7 @@ export class PlayerCard extends Comp.Panel {
                             width: "100%",
                             text: "AG",
                             color: 0xffffff,
+                            visible: false,
                         })
                     ]
                 }),
@@ -229,6 +245,7 @@ export class PlayerCard extends Comp.Panel {
                 right: 0.2,
             },
             background: 0xffffff,
+            visible: false,
             children: [
                 new Comp.Panel({
                     id: "AvHeader",
@@ -238,6 +255,7 @@ export class PlayerCard extends Comp.Panel {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x0,
                     color: 0xffffff,
+                    visible: false,
                     children: [
                         new Comp.Label({
                             id: "AvHeaderText",
@@ -247,6 +265,7 @@ export class PlayerCard extends Comp.Panel {
                             width: "100%",
                             text: "AV",
                             color: 0xffffff,
+                            visible: false,
                         })
                     ]
                 }),
@@ -266,6 +285,7 @@ export class PlayerCard extends Comp.Panel {
             },
             background: 0xffffff,
             color: 0x0,
+            visible: false,
         });
 
         this.skills = new Comp.Panel({
@@ -280,6 +300,7 @@ export class PlayerCard extends Comp.Panel {
             },
             background: 0xffffff,
             color: 0x0,
+            visible: false,
         });
 
         this.sppLabel = new Comp.Label({
@@ -292,6 +313,7 @@ export class PlayerCard extends Comp.Panel {
             parentAnchor: Comp.Anchor.SOUTH,
             color: 0xffffff,
             text: "55 + 13 Star",
+            visible: false,
         });
 
         config.children = [];
@@ -318,7 +340,9 @@ export class PlayerCard extends Comp.Panel {
     }
 
     public create(): Phaser.GameObjects.GameObject {
-        return super.create();
+        let obj = super.create();
+
+        return obj;
     }
 
     public setPlayer(player: Model.Player) {

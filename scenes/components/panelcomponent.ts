@@ -79,12 +79,14 @@ export class Panel extends Comp.UIComponent {
         }
     }
 
-    public setVisible(visible: boolean, processChildren: boolean = true) {
-        super.setVisible(visible);
+    public setVisible(visible: boolean) {
+        if (this.config.visible != visible) {
+            super.setVisible(visible);
 
-        if (processChildren) {
             for (let c of this.children) {
-                c.setVisible(visible);
+                if (c.InheritVisibility) {
+                    c.setVisible(visible);
+                }
             }
         }
     }
