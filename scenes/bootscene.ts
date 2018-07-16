@@ -41,12 +41,17 @@ export class BootScene extends AbstractScene {
     }
 
     public preload() {
-        console.log('Boot Scene: preload');
+        console.log('Boot Scene: preload', this.assets);
 
         for (let sprite of this.assets['sprites']) {
-            let key = "/"+sprite; //('sprite_'+sprite).replace(/[/]/g,'_');
+            let key = "/"+sprite;
             let sheet = this.load.image(key, 'https://fumbbl.com/'+sprite);
             this.spritesheets[key] = '/'+sprite;
+        }
+
+        for (let image of this.assets['graphics']) {
+            console.log("Loading image", image);
+            this.load.image(image, 'https://fumbbl.com/'+image);
         }
 
         this.load.image("pitch", "https://fumbbl.com/i/561518");

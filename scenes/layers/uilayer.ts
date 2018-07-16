@@ -14,6 +14,7 @@ export class UILayer implements Types.EventListener {
     private labelTurn: Comp.Label;
     private input: Comp.Input;
     private controller: Core.Controller;
+    private playerCard: Comp.PlayerCard;
 
     private component: Comp.UIComponent;
 
@@ -91,6 +92,16 @@ export class UILayer implements Types.EventListener {
             controller.sendChat(text);
         });
 
+        this.playerCard = new Comp.PlayerCard({
+            id: "PlayerCard",
+            width: 3,
+            height: 4,
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            background: 0xc91321,
+            visible: false,
+        });
+
         this.component = new Comp.Panel({
             id: "RootPanel",
             width: "100%",
@@ -157,6 +168,7 @@ export class UILayer implements Types.EventListener {
                     parentAnchor: Comp.Anchor.SOUTHWEST,
                     background: 0x999999,
                 }, controller),
+                this.playerCard,
             ]
         });
 
@@ -175,6 +187,18 @@ export class UILayer implements Types.EventListener {
         this.component.postCreate();
         this.component.redraw();
         this.container.add(phaserObject);
+    }
+
+    public setPlayerCard(player: Model.Player, pos?: number[], sz?: number[]) {
+        if (player == null) {
+            this.playerCard.setVisible(false);
+        } else {
+            this.playerCard.setPosition(pos[0], pos[1]);
+            this.playerCard.setSize(sz[0], sz[1]);
+            this.playerCard.setVisible(true);
+            this.playerCard.setPlayer(player);
+            this.playerCard.redraw();
+        }
     }
 
     public handleEvent(eventType: Types.EventType, data?: any) {

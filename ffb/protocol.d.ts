@@ -252,7 +252,7 @@ declare namespace FFB.Protocol.Messages {
         seriousInjurySuffered:  number;
         ripSuffered:            number;
         spirallingExpenses:     number;
-        playerResults:          [string, PlayerResult];
+        playerResults:          PlayerResult[];
         pettyCashTransferred:   number;
         pettyCashUsed:          number;
         teamValue:              number;

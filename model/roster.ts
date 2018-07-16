@@ -36,6 +36,10 @@ export class Roster {
             for (let sprite in positionAssets['sprites']) {
                 assets['sprites'].push(positionAssets['sprites'][sprite]);
             }
+
+            for (let image in positionAssets['graphics']) {
+                assets['graphics'].push(positionAssets['graphics'][image]);
+            }
         }
 
         return assets;

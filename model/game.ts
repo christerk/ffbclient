@@ -86,10 +86,16 @@ export class Game {
         for (let sprite in homeAssets['sprites']) {
             assets['sprites'].push(homeAssets['sprites'][sprite]);
         }
+        for (let image in homeAssets['graphics']) {
+            assets['graphics'].push(homeAssets['graphics'][image]);
+        }
 
         let awayAssets = this.teamAway.getAssets();
         for (let sprite in awayAssets['sprites']) {
             assets['sprites'].push(awayAssets['sprites'][sprite]);
+        }
+        for (let image in awayAssets['graphics']) {
+            assets['graphics'].push(awayAssets['graphics'][image]);
         }
 
         return assets;
@@ -144,7 +150,7 @@ export class Game {
             player.setState(pData.playerState);
             let [x,y] = pData.playerCoordinate;
             let coord = new Coordinate(x, y);
-            player.setPosition(coord);
+            player.setLocation(coord);
             if (coord.isOnField()) {
                 this.playerLocations[x + "," + y] = player;
             }
@@ -153,6 +159,20 @@ export class Game {
 
     private applyTeamResult(team: Model.Team, data: FFB.Protocol.Messages.TeamResult) {
         team.setScore(data.score);
+        this.applyPlayerResults(team, data.playerResults);
+    }
+
+    private applyPlayerResults(team: Model.Team, data: FFB.Protocol.Messages.PlayerResult[]) {
+        for (let pr of data) {
+            let player = team.getPlayer(pr.playerId);
+            player.setSpp(pr.currentSpps);
+            let gameSpp =
+                pr.touchdowns * 3 +
+                pr.casualties * 2 +
+                pr.interceptions * 2 +
+                pr.completions;
+            player.setGameSpp(gameSpp);
+        }
     }
 
     private applyTurnData(data: FFB.Protocol.Messages.GameType) {
@@ -280,7 +300,7 @@ export class Game {
         }
 
         let blockedSquares = this.getPlayers().map((p) => {
-            return p.getPosition();
+            return p.getLocation();
         });
 
         if (additionalBlockedSquares != null) {

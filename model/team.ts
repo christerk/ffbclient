@@ -68,6 +68,21 @@ export class Team {
         for (let sprite in rosterAssets['sprites']) {
             assets['sprites'].push(rosterAssets['sprites'][sprite]);
         }
+        for (let image in rosterAssets['graphics']) {
+            assets['graphics'].push(rosterAssets['graphics'][image]);
+        }
+
+        for (let playerId in this.players) {
+            let player = this.players[playerId];
+            let playerAssets = player.getAssets();
+
+            for (let sprite in playerAssets['sprites']) {
+                assets['sprites'].push(playerAssets['sprites'][sprite]);
+            }
+            for (let image in playerAssets['graphics']) {
+                assets['graphics'].push(playerAssets['graphics'][image]);
+            }
+        }
 
         return assets;
     }

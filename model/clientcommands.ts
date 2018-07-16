@@ -58,13 +58,13 @@ export abstract class AbstractCommand {
         for (let id of playerIds) {
             let p = this.game.getPlayer(id);
             if (p && p.isOnField()) {
-                return p.getPosition();
+                return p.getLocation();
             }
         }
 
         let p = this.game.getActivePlayer();
         if (p && p.isOnField())
-            return p.getPosition();
+            return p.getLocation();
 
         return new Coordinate(13, 7);
     }
@@ -161,15 +161,15 @@ export class MovePlayer extends PlayerCommand {
 
     public init(game: Model.Game, controller: Core.Controller) {
         super.init(game, controller);
-        this.oldCoordinate = this.player.getPosition();
+        this.oldCoordinate = this.player.getLocation();
     }
 
     public do() {
-        this.player.setPosition(this.newCoordinate);
+        this.player.setLocation(this.newCoordinate);
     }
 
     public undo() {
-        this.player.setPosition(this.oldCoordinate);
+        this.player.setLocation(this.oldCoordinate);
     }
 }
 

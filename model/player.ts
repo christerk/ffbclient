@@ -51,6 +51,9 @@ export class Player {
     public coordinate: Coordinate;
     public positionIcon: number;
     private side: Side;
+    private spp: number;
+    private gameSpp: number;
+    private portrait: string;
 
     public constructor(team: Model.Team, data: FFB.Protocol.Messages.PlayerType) {
         this.team = team;
@@ -63,6 +66,7 @@ export class Player {
         this.agility = data.agility;
         this.armour = data.armour;
         this.positionIcon = data.positionIconIndex;
+        this.portrait = data.urlPortrait;
 
         this.state = PlayerState.Unknown;
     }
@@ -79,8 +83,32 @@ export class Player {
         this.side = side;
     }
 
+    public setSpp(spp: number) {
+        this.spp = spp;
+    }
+
+    public getSpp(): number {
+        return this.spp;
+    }
+
+    public setGameSpp(spp: number) {
+        this.gameSpp = spp;
+    }
+
+    public getGameSpp(): number {
+        return this.gameSpp;
+    }
+
+    public getPosition(): Model.Position {
+        return this.team.getRoster().getPosition(this.positionId);
+    }
+
     public getBaseIconFrame(): number {
         return 4 * this.positionIcon + (this.side == Side.Away ? 2 : 0);
+    }
+
+    public getPortrait(): string {
+        return this.portrait;
     }
 
     public getState(): PlayerState {
@@ -96,11 +124,11 @@ export class Player {
         this.flags = state & ~0xff;
     }
 
-    public getPosition(): Coordinate {
+    public getLocation(): Coordinate {
         return this.coordinate;
     }
 
-    public setPosition(coordinate: Coordinate) {
+    public setLocation(coordinate: Coordinate) {
         let oldCoordinate = this.coordinate;
         this.coordinate = coordinate;
         this.team.Game.updatePlayerLocation(this, oldCoordinate, coordinate);
@@ -112,5 +140,18 @@ export class Player {
 
     public isOnField(): boolean {
         return this.coordinate.isOnField();
+    }
+
+    public getAssets() {
+        let assets = {
+            graphics: [ ],
+            sprites: [ ],
+        };
+
+        if (this.portrait != null) {
+            assets.graphics.push(this.portrait);
+        }
+
+        return assets;
     }
 }

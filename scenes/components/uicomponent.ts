@@ -56,11 +56,13 @@ export type ComponentConfiguration = {
     color?: number,
     children?: UIComponent[],
     visible?: boolean,
+    text?: string,
+    image?: string,
 }
 
 export abstract class UIComponent {
     protected config: ComponentConfiguration;
-    public phaserObject: Phaser.GameObjects.GameObject;
+    //public phaserObject: Phaser.GameObjects.GameObject;
     protected ctx: RenderContext;
     private static serialCounter: number = 0;
 
@@ -180,7 +182,17 @@ export abstract class UIComponent {
         return this.config.visible;
     }
 
-    public setVisible(visible: boolean) {
+    public setPosition(x: number, y: number) {
+        this.config.margin.left = x + "px";
+        this.config.margin.top = y + "px";
+    }
+
+    public setSize(w: number, h: number) {
+        this.config.width = w + "px";
+        this.config.height = h + "px";
+    }
+
+    public setVisible(visible: boolean, processChildren: boolean = true) {
         this.config.visible = visible;
 
         if (visible) {
@@ -193,7 +205,7 @@ export abstract class UIComponent {
     }
 
     public postCreate() {
-        this.setVisible(this.config.visible);
+        this.setVisible(this.config.visible, false);
     }
 
     public redraw(): void {

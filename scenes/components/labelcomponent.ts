@@ -3,11 +3,13 @@ import * as Comp from ".";
 export class Label extends Comp.UIComponent {
     private text: string;
     private textObject: Phaser.GameObjects.Text;
+    private stroke: number;
 
-    public constructor(config) {
+    public constructor(config: Comp.ComponentConfiguration) {
         super(config);
 
         this.text = config.text;
+        this.stroke = 0;
     }
 
     public create(): Phaser.GameObjects.GameObject {
@@ -33,7 +35,11 @@ export class Label extends Comp.UIComponent {
         let bg = this.numberToRGBString(this.config.background);
         let bounds = this.getBounds(this.ctx);
         let g = this.textObject;
-        g.setFontSize(bounds.height * 0.9);
+
+        if (this.stroke > 0) {
+            g.setStroke("#000000", this.stroke);
+        }
+        g.setFontSize(Math.floor(bounds.height * 0.9));
         g.setColor(col);
         g.setText(this.text);
         g.setBackgroundColor(bg);
@@ -42,6 +48,10 @@ export class Label extends Comp.UIComponent {
         bounds = this.getBounds(this.ctx);
 
         g.setPosition(bounds.x, bounds.y);
+    }
+
+    public setStroke(width: number) {
+        this.stroke = width;
     }
 
     public setText(text: string) {

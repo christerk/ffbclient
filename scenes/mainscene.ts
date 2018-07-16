@@ -4,6 +4,7 @@ import * as Model from "../model";
 import * as Types from "../types";
 import * as Layers from "./layers";
 import * as Scenes from "../scenes";
+import * as Comp from "./components";
 
 type IconState = {
     alpha: number,
@@ -107,7 +108,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
             return;
         }
 
-        let pos = player.getPosition();
+        let pos = player.getLocation();
         let [x, y] = this.controller.convertToPixels(pos);
         let t = this.add.text(x, y, text.toUpperCase(), {
             fontSize: (10 * this.pitchScale) + 'px',
@@ -224,7 +225,6 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         this.controller.triggerEvent(Types.EventType.Initialized);
         this.controller.SoundEngine.start();
 
-
         let pCard = this.make.graphics({});
         pCard.clear();
         pCard.fillStyle(0x0, 0.3);
@@ -259,8 +259,13 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
                     playerCard.setDisplaySize(sz[0], sz[1]);
                     playerCard.visible = true;
+
+                    pos[0] -= this.cameras.main.scrollX;
+                    pos[1] -= this.cameras.main.scrollY - this.sys.canvas.clientHeight / 16;
+                    uiLayer.setPlayerCard(player, pos, sz);
                 } else {
                     playerCard.visible = false;
+                    uiLayer.setPlayerCard(null);
                 }
             }
         });
