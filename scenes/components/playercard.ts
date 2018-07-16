@@ -322,10 +322,6 @@ export class PlayerCard extends Comp.Panel {
         config.children.push(this.numberLabel);
         config.children.push(this.positionLabel);
         config.children.push(this.nameLabel);
-        config.children.push(this.maLabel);
-        config.children.push(this.stLabel);
-        config.children.push(this.agLabel);
-        config.children.push(this.avLabel);
         config.children.push(maPanel);
         config.children.push(stPanel);
         config.children.push(agPanel);
