@@ -12,6 +12,7 @@ export class PlayerCard extends Comp.Panel {
     private avLabel: Comp.Label;
     private portrait: Comp.Image;
     private skills: Comp.Panel;
+    private skillLabels: Comp.Label[];
     private homeBackground: Comp.Panel;
     private awayBackground: Comp.Panel;
 
@@ -288,6 +289,20 @@ export class PlayerCard extends Comp.Panel {
             visible: false,
         });
 
+        this.skillLabels = []
+        for (let i=1; i<=20; i++) {
+            this.skillLabels.push(new Comp.Label({
+                id: "skill_"+i,
+                text: "skill_"+i,
+                color: 0x0,
+                width: "100%",
+                height: 0.2,
+                anchor: Comp.Anchor.NORTHWEST,
+                parentAnchor: Comp.Anchor.NORTHWEST,
+                visible: false,
+            }));
+        }
+
         this.skills = new Comp.Panel({
             id: "Skills",
             height: 2.2,
@@ -301,6 +316,8 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             color: 0x0,
             visible: false,
+            layout: Comp.Layout.VerticalList,
+            children: this.skillLabels
         });
 
         this.sppLabel = new Comp.Label({
@@ -339,6 +356,21 @@ export class PlayerCard extends Comp.Panel {
         let obj = super.create();
 
         return obj;
+    }
+
+    public destroy(): void {
+        this.numberLabel.destroy();
+        this.positionLabel.destroy();
+        this.nameLabel.destroy();
+        this.sppLabel.destroy();
+        this.maLabel.destroy();
+        this.stLabel.destroy();
+        this.agLabel.destroy();
+        this.avLabel.destroy();
+        this.portrait.destroy();
+        this.skills.destroy();
+        this.homeBackground.destroy();
+        this.awayBackground.destroy();
     }
 
     public setPlayer(player: Model.Player) {
@@ -395,5 +427,17 @@ export class PlayerCard extends Comp.Panel {
         }
 
         this.sppLabel.setText(sppString + " " + rank);
+
+        let skills = player.getSkills();
+
+        let index=0;
+        for (let skill of skills) {
+            this.skillLabels[index].setText(skill);
+            this.skillLabels[index].setVisible(true);
+            index++;
+        }
+        for (; index < this.skillLabels.length; index++) {
+            this.skillLabels[index].setVisible(false);
+        }
     }
 }

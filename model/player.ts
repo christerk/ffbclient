@@ -54,6 +54,7 @@ export class Player {
     private spp: number;
     private gameSpp: number;
     private portrait: string;
+    private skills: string[];
 
     public constructor(team: Model.Team, data: FFB.Protocol.Messages.PlayerType) {
         this.team = team;
@@ -67,12 +68,17 @@ export class Player {
         this.armour = data.armour;
         this.positionIcon = data.positionIconIndex;
         this.portrait = data.urlPortrait;
+        this.skills = data.skillArray;
 
         this.state = PlayerState.Unknown;
     }
 
     public getId(): string {
         return this.id;
+    }
+
+    public getSkills(): string[] {
+        return this.skills;
     }
 
     public getTeam(): Side {

@@ -12,6 +12,10 @@ export class Image extends Comp.UIComponent {
         return this.image;
     }
 
+    public destroy(): void {
+        this.image.destroy();
+    }
+
     public show() {
         this.image.setVisible(true);
     }
@@ -21,7 +25,6 @@ export class Image extends Comp.UIComponent {
     }
 
     public setImage(key: string) {
-        console.log("Setting image", key);
         this.image.setTexture(key);
     }
 

@@ -20,6 +20,13 @@ export class Panel extends Comp.UIComponent {
         this.children.push(child);
     }
 
+    public clearChildren() {
+        for (let child of this.children) {
+            child.destroy();
+        }
+        this.children = [];
+    }
+
     public create(): Phaser.GameObjects.GameObject {
         let bounds = this.getBounds(this.ctx);
         let container = this.ctx.scene.make.container({});
@@ -57,6 +64,11 @@ export class Panel extends Comp.UIComponent {
         }
 
         return container;
+    }
+
+    public destroy(): void {
+        this.clearChildren();
+        this.background.destroy();
     }
 
     public postCreate() {
@@ -102,6 +114,33 @@ export class Panel extends Comp.UIComponent {
             bg.setDisplaySize(bounds.width, bounds.height);
         }
 
+        if (this.config.layout == Comp.Layout.Border) {
+            this.renderChildrenBorderLayout(bounds);
+        } else {
+            this.renderChildrenVerticalLayout(bounds);
+        }
+    }
+
+    private renderChildrenVerticalLayout(bounds: Phaser.Geom.Rectangle) {
+        let childHeight = 4 * this.ctx.scale / 30;
+        let childNumber = 0;
+        for (let c of this.children) {
+            let renderContext: Comp.RenderContext = {
+                scene: this.ctx.scene,
+                parent: this,
+                x: bounds.x,
+                y: bounds.y + childNumber * (childHeight*1.2),
+                w: bounds.width,
+                h: childHeight,
+                scale: this.ctx.scale,
+            };
+            c.setContext(renderContext);
+            c.redraw();
+            childNumber++;
+        }
+    }
+
+    private renderChildrenBorderLayout(bounds: Phaser.Geom.Rectangle) {
         let renderContext: Comp.RenderContext = {
             scene: this.ctx.scene,
             parent: this,
@@ -115,6 +154,6 @@ export class Panel extends Comp.UIComponent {
         for (let c of this.children) {
             c.setContext(renderContext);
             let childGameObject = c.redraw();
-        }
+        }        
     }
 }

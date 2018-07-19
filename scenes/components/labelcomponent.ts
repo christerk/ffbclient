@@ -5,6 +5,7 @@ export class Label extends Comp.UIComponent {
     private textObject: Phaser.GameObjects.Text;
     private stroke: number;
     private fontSize: number;
+    private numRows: number;
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
@@ -12,6 +13,7 @@ export class Label extends Comp.UIComponent {
         this.text = config.text;
         this.stroke = 0;
         this.fontSize = -1;
+        this.numRows = this.text ? this.text.split("\n").length : 1;
     }
 
     public create(): Phaser.GameObjects.GameObject {
@@ -21,16 +23,23 @@ export class Label extends Comp.UIComponent {
             this.textObject.setStroke("#000000", this.stroke);
         }
 
-
         return this.textObject;
     }
 
+    public destroy(): void {
+        this.textObject.destroy();
+    }
+
     public show() {
-        this.textObject.visible = true;
+        if (this.textObject != null) {
+            this.textObject.visible = true;
+        }
     }
 
     public hide() {
-        this.textObject.visible = false;
+        if (this.textObject != null) {
+            this.textObject.visible = false;
+        }
     }
 
     public redraw(): void {
@@ -42,7 +51,11 @@ export class Label extends Comp.UIComponent {
         let bounds = this.getBounds(this.ctx);
         let g = this.textObject;
 
-        let fontSize = Math.floor(bounds.height * 0.9);
+        let rows = this.numRows;
+        if (rows < 1) {
+            rows = 1;
+        }
+        let fontSize = Math.floor(bounds.height * 0.9) / rows;
         if (fontSize != this.fontSize) {
             g.setFontSize(fontSize);
             this.fontSize = fontSize;
@@ -67,7 +80,8 @@ export class Label extends Comp.UIComponent {
         this.text = text;
 
         let g = this.textObject;
-        if (g) {
+        if (g && text != null) {
+            this.numRows = text.split("\n").length;
             g.setText(text);
             this.config.width = g.displayWidth + "px";
             let bounds = this.getBounds(this.ctx);

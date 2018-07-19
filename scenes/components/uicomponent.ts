@@ -39,6 +39,11 @@ export type RenderContext = {
     scale: number,
 }
 
+export enum Layout {
+    Border,
+    VerticalList
+};
+
 export type ComponentConfiguration = {
     id?: string,
     margin?: {
@@ -59,6 +64,7 @@ export type ComponentConfiguration = {
     inheritVisibility?: boolean,
     text?: string,
     image?: string,
+    layout?: Layout,
 }
 
 export abstract class UIComponent {
@@ -97,6 +103,7 @@ export abstract class UIComponent {
             visible: true,
             inheritVisibility: true,
             children: [],
+            layout: Layout.Border,
         };
 
         // Hack to avoid children being merged (causes problems)
@@ -227,5 +234,6 @@ export abstract class UIComponent {
     public abstract show(): void;
     public abstract hide(): void;
     public abstract create(): Phaser.GameObjects.GameObject;
+    public abstract destroy(): void;
 
 }

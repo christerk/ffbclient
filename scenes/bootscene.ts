@@ -17,15 +17,21 @@ export class BootScene extends AbstractScene {
         console.log("Boot Scene: constructed");
 
         this.texts = [
-            "Loading Dice...",
-            "Rerolling Injury Rolls...",
-            "Fouling Witch Elves...",
-            "Pogoing Sticks...",
-            "Processing Warpstone...",
-            "Spiking Ball...",
-            "Bribing the Ref...",
-            "Arguing Calls...",
-            "Nuffle, Nuffle, Nuffle...",
+            "Loading Dice",
+            "Rerolling Injury Rolls",
+            "Fouling Witch Elves",
+            "Pogoing Sticks",
+            "Processing Warpstone",
+            "Spiking Ball",
+            "Bribing the Ref",
+            "Arguing Calls",
+            "Nuffle, Nuffle, Nuffle",
+            "Preparing Avalance of Ones",
+            "Biting Thralls",
+            "Breaking Cages",
+            "Topdecking Pit Trap",
+            "Always Hungry",
+            "Taking Root",
         ];
     }
 
@@ -94,7 +100,7 @@ export class BootScene extends AbstractScene {
         this.loadingText = this.make.text({
             x: width / 2,
             y: height / 2 - 50,
-            text: this.texts[Math.floor(Math.random() * this.texts.length)],
+            text: this.texts[Math.floor(Math.random() * this.texts.length)] + "...",
             style: {
                 font: '20px monospace',
                 fill: '#ffffff'

@@ -36,6 +36,10 @@ export class Button extends Comp.UIComponent {
         return button;
     }
 
+    public destroy(): void {
+        this.button.destroy();
+    }
+
     public show() {
         this.button.visible = true;
     }

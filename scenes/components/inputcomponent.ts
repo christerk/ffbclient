@@ -94,6 +94,13 @@ export class Input extends Comp.UIComponent {
         return this.container;
     }
 
+    public destroy(): void {
+        this.caret.destroy();
+        this.textObject.destroy();
+        this.background.destroy();
+        this.container.destroy();
+    }
+
     public show() {
         if (this.background != null) {
             this.background.visible = true;

@@ -1,5 +1,5 @@
 
-export { Anchor, ComponentConfiguration, UIComponent, RenderContext } from "./uicomponent";
+export { Anchor, Layout, ComponentConfiguration, UIComponent, RenderContext } from "./uicomponent";
 
 export { Label } from "./labelcomponent";
 export { Panel } from "./panelcomponent";
