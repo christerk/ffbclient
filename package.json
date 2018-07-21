@@ -23,7 +23,7 @@
     "@types/ws": "^5.1.2",
     "deepmerge": "^2.1.1",
     "lz-string": "^1.4.4",
-    "phaser": "^3.10.1",
+    "phaser": "^3.11.0",
     "ts-loader": "^4.4.1",
     "typescript": "^2.9.2",
     "webpack": "^4.12.1",
