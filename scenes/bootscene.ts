@@ -67,6 +67,8 @@ export class BootScene extends AbstractScene {
         }
 
         this.load.image("pitch", "https://fumbbl.com/i/561518");
+        this.load.image("dugout", "https://fumbbl.com/i/563498");
+        
         this.load.spritesheet("d6", "https://fumbbl.com/i/562665", {
             frameWidth: 100,
             frameHeight: 100,
@@ -140,14 +142,15 @@ export class BootScene extends AbstractScene {
         let width = sprite.width;
         let height = sprite.height;
         let tileSize = Math.floor(width / 4);
+        let numRows = height / tileSize;
 
-        for (let y=0; y<height / tileSize; y++) {
+        for (let y=0; y<numRows; y++) {
             for (let x=0; x<4; x++) {
                 let frameNumber: number = y * 4 + x;
                 sprite.texture.add(frameNumber, 0, x * tileSize, y * tileSize, tileSize, tileSize);
             }
         }
-    }
+     }
 
     private generateTextures() {
         let moveSquare = this.make.graphics({});

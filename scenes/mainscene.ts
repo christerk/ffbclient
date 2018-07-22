@@ -13,9 +13,16 @@ type IconState = {
     visible: boolean,
 }
 
+enum CameraView {
+    Field,
+    Dugouts
+}
+
 export class MainScene extends Scenes.AbstractScene implements Types.EventListener {
 
     private pitch: Phaser.GameObjects.Image;
+    private homeDugout: Phaser.GameObjects.Image;
+    private awayDugout: Phaser.GameObjects.Image;
     private homeTeamName: Phaser.GameObjects.Text;
     private awayTeamName: Phaser.GameObjects.Text;
 
@@ -33,6 +40,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     private uiCamera: Phaser.Cameras.Scene2D.Camera;
     private gridSize: number; // Size of a grid square
     private blockDiceKey: string;
+    private currentCamera: CameraView;
 
     private floatTextQueue: Promise<any>;
 
@@ -41,6 +49,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         console.log("Main Scene: constructed");
         this.moveSquareIcons = [];
         this.trackNumberIcons = [];
+        this.currentCamera = CameraView.Field;
 
         this.floatTextQueue = Promise.resolve();
 
@@ -68,6 +77,13 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     }
 
                 } else if (data.source == "TestButton2") {
+                    if (this.currentCamera == CameraView.Field) {
+                        this.cameras.main.scrollY -= this.homeDugout.displayHeight;
+                        this.currentCamera = CameraView.Dugouts;
+                    } else {
+                        this.resize();
+                        this.currentCamera = CameraView.Field;
+                    }
                 }
                 break;
             case Types.EventType.ActivePlayerAction:
@@ -148,6 +164,11 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         console.log('Main Scene: create', config);
 
         this.pitch = this.add.image(0, 0, 'pitch').setOrigin(0, 0);
+        this.homeDugout = this.add.image(0, 0, 'dugout').setOrigin(0, 1);
+        this.awayDugout = this.add.image(391, 0, 'dugout');
+        this.awayDugout.setFlipX(true);
+        this.awayDugout.setOrigin(1, 1);
+
         this.frameNumber = 0;
 
         this.pitchScale = 1.0;
@@ -298,6 +319,9 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         this.gridSize = zoomFactor * (this.pitch.width-2)/26;
 
         this.pitch.setScale(zoomFactor);
+        this.homeDugout.setScale(zoomFactor);
+        this.awayDugout.setScale(zoomFactor);
+        this.awayDugout.setPosition(this.pitch.displayWidth / 2, 0);
         this.pitchScale = zoomFactor;
         this.controller.triggerEvent(Types.EventType.ModelChanged);
 
