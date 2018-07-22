@@ -83,7 +83,7 @@ export class UILayer implements Types.EventListener {
             background: 0x0,
             backgroundAlpha: 0.4,
             margin: {
-                bottom: 3
+                bottom: 0.2
             },
             visible: false,
             inheritVisibility: false,

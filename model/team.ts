@@ -61,7 +61,6 @@ export class Team {
         let assets = {
             graphics: [],
             sprites: []
-
         };
 
         let rosterAssets = this.roster.getAssets();

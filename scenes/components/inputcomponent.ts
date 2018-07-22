@@ -74,7 +74,9 @@ export class Input extends Comp.UIComponent {
 
         this.container.add([this.background, this.textObject, this.caret]);
 
-        this.ctx.scene.input.keyboard.addListener("keydown", (event) => {
+        //this.ctx.scene.input.keyboard.addListener("keydown", (event) => {
+        window.onkeydown = (event) => {
+            console.log(event);
             if (this.config.visible) {
                 this.onKeydown(event);
                 event.preventDefault();
@@ -83,7 +85,7 @@ export class Input extends Comp.UIComponent {
                 this.setVisible(true);
                 event.preventDefault();
             }
-        });
+        };
 
         window.addEventListener("keydown", (event) => {
             if (this.config.visible) {
@@ -119,7 +121,6 @@ export class Input extends Comp.UIComponent {
 
     private onKeydown(event) {
         let key = event.key;
-
         if (key.length == 1) {
             this.setText(this.pre() + key + this.post());
             this.caretPosition++;
@@ -142,10 +143,11 @@ export class Input extends Comp.UIComponent {
                 this.setText("");
                 this.caretPosition = 0;
                 this.setVisible(false);
-            } else if (event.keyCode == "Escape") {
+            } else if (event.key == "Escape") {
                 this.setText("");
                 this.caretPosition = 0;
                 this.setVisible(false);
+                this.redraw();
             } else if (event.key == "Backspace") {
                 let pre = this.pre();
                 let post = this.post();

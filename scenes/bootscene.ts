@@ -17,21 +17,25 @@ export class BootScene extends AbstractScene {
         console.log("Boot Scene: constructed");
 
         this.texts = [
-            "Loading Dice",
-            "Rerolling Injury Rolls",
-            "Fouling Witch Elves",
-            "Pogoing Sticks",
-            "Processing Warpstone",
-            "Spiking Ball",
-            "Bribing the Ref",
+            "Always Hungry",
             "Arguing Calls",
-            "Nuffle, Nuffle, Nuffle",
-            "Preparing Avalance of Ones",
             "Biting Thralls",
             "Breaking Cages",
-            "Topdecking Pit Trap",
-            "Always Hungry",
+            "Bribing the Ref",
+            "Fouling Witch Elves",
+            "Greasing Shoes",
+            "Loading Dice",
+            "Nuffle, Nuffle, Nuffle",
+            "Pogoing Sticks",
+            "Preparing Avalance of Ones",
+            "Processing Warpstone",
+            "Refueling Deathroller",
+            "Rerolling Injury Rolls",
+            "Spiking Ball",
+            "Stealing Playbooks",
             "Taking Root",
+            "Topdecking Pit Trap",
+            "Voting for Pie",
         ];
     }
 

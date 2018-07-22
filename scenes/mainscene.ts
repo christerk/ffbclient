@@ -30,7 +30,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
     private ballIcon: Phaser.GameObjects.Graphics;
-    private uiCamera;
+    private uiCamera: Phaser.Cameras.Scene2D.Camera;
     private gridSize: number; // Size of a grid square
     private blockDiceKey: string;
 
@@ -250,7 +250,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     let pos = this.controller.convertToPixels(location);
                     let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
                     pos[0] -= this.cameras.main.scrollX;
-                    pos[1] -= this.cameras.main.scrollY - this.sys.canvas.clientHeight / 16;
+                    pos[1] -= this.cameras.main.scrollY;
                     uiLayer.setPlayerCard(player, pos, sz);
                 } else {
                     uiLayer.setPlayerCard(null);
@@ -284,9 +284,9 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         this.sys.game.resize(w, h);
 
         let marginTop = h / 16;
-        let marginLeft = w * 0;
-        let marginRight = w * 0;
-        let marginBottom = h * 0;
+        let marginBottom = 0;
+        let marginLeft = 0;
+        let marginRight = 0;
 
         w -= marginLeft + marginRight;
         h -= marginTop + marginBottom;
@@ -295,18 +295,18 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         let zoomFactorY = h / this.pitch.height;
         let zoomFactor = Math.min(zoomFactorX, zoomFactorY);
 
-        this.gridSize = zoomFactor * this.pitch.width/26;
+        this.gridSize = zoomFactor * (this.pitch.width-2)/26;
 
         this.pitch.setScale(zoomFactor);
         this.pitchScale = zoomFactor;
         this.controller.triggerEvent(Types.EventType.ModelChanged);
 
         // Calculate margins to center field in viewport
-        let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2);
-        let scrollY = -Math.floor((h - this.pitch.displayHeight) / 2);
+        let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2) - marginLeft;
+        let scrollY = -Math.floor((h - this.pitch.displayHeight) / 2) - marginTop;
         this.cameras.main.setScroll(scrollX, scrollY);
 
-        this.cameras.main.setViewport(marginLeft, marginTop, w, h);
+        this.cameras.main.setViewport(0, 0, w-scrollX, h-scrollY);
         this.uiCamera.setViewport(0, 0, this.width, this.height);
 
         this.controller.triggerEvent(Types.EventType.Resized, {
