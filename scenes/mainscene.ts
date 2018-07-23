@@ -6,52 +6,23 @@ import * as Layers from "./layers";
 import * as Scenes from "../scenes";
 import * as Comp from "./components";
 
-type IconState = {
-    alpha: number,
-    angle: number,
-    frameOffset: number,
-    visible: boolean,
-}
-
-enum CameraView {
-    Field,
-    Dugouts
-}
-
 export class MainScene extends Scenes.AbstractScene implements Types.EventListener {
-
-    private pitch: Phaser.GameObjects.Image;
-    private homeDugout: Phaser.GameObjects.Image;
-    private awayDugout: Phaser.GameObjects.Image;
-    private homeTeamName: Phaser.GameObjects.Text;
-    private awayTeamName: Phaser.GameObjects.Text;
-
-    private pitchScale: number;
-    private frameNumber: number;
     private i: Phaser.Input.InputPlugin;
     private dragStart: Phaser.Geom.Point;
     private scale: number;
     private width: number;
     private height: number;
-    private moveSquareIcons: Phaser.GameObjects.Sprite[];
-    private trackNumberIcons: Phaser.GameObjects.Graphics[];
     private dirty: boolean;
-    private ballIcon: Phaser.GameObjects.Graphics;
     private uiCamera: Phaser.Cameras.Scene2D.Camera;
-    private gridSize: number; // Size of a grid square
     private blockDiceKey: string;
-    private currentCamera: CameraView;
+    private currentCamera: Layers.CameraView;
+    private worldLayer: Layers.World;
 
-    private floatTextQueue: Promise<any>;
 
     public constructor(controller: Core.Controller) {
         super('mainScene', controller);
         console.log("Main Scene: constructed");
-        this.moveSquareIcons = [];
-        this.trackNumberIcons = [];
-        this.currentCamera = CameraView.Field;
-
-        this.floatTextQueue = Promise.resolve();
+        this.currentCamera = Layers.CameraView.Field;
 
         controller.addEventListener(this);
     }
@@ -65,33 +36,21 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                 this.resize();
                 break;
             case Types.EventType.Resized:
-                this.controller.DiceManager.setScale(this.pitchScale);
+                this.controller.DiceManager.setScale(data.scale / 30);
                 break;
             case Types.EventType.Click:
                 if (data.source == "TestButton") {
-                    let coach: string;
-                    if (Math.random() < 0.5) {
-                        coach = this.controller.Game.teamHome.getCoach();
-                    } else {
-                        coach = this.controller.Game.teamAway.getCoach();
-                    }
-
+                    this.worldLayer.setCamera(this.cameras.main, Layers.CameraView.Field);
                 } else if (data.source == "TestButton2") {
-                    if (this.currentCamera == CameraView.Field) {
-                        this.cameras.main.scrollY -= this.homeDugout.displayHeight;
-                        this.currentCamera = CameraView.Dugouts;
-                    } else {
-                        this.resize();
-                        this.currentCamera = CameraView.Field;
-                    }
+                    this.worldLayer.setCamera(this.cameras.main, Layers.CameraView.Dugouts);
                 }
                 break;
             case Types.EventType.ActivePlayerAction:
                 let activePlayer = this.controller.Game.getActivePlayer();
-                this.floatText(activePlayer, <string>data);
+                this.worldLayer.floatText(activePlayer, <string>data);
                 break;
             case Types.EventType.FloatText:
-                this.floatText(data.player, data.text);
+                this.worldLayer.floatText(data.player, data.text);
                 break;
             case Types.EventType.BlockDice:
                 if (this.blockDiceKey != null) {
@@ -107,44 +66,6 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                 }
                 break;
         }
-    }
-
-    private floatText(player: Model.Player, text: string) {
-        this.floatTextQueue = this.floatTextQueue
-        .then(() => {
-            return new Promise<any>((resolve, reject) => {
-                setTimeout(() => { resolve(); }, 333);
-                this.executeFloatText(player, text);
-            });
-        });
-    }
-
-    private executeFloatText(player: Model.Player, text: string) {
-        if (player == null) {
-            return;
-        }
-
-        let pos = player.getLocation();
-        let [x, y] = this.controller.convertToPixels(pos);
-        let t = this.add.text(x, y, text.toUpperCase(), {
-            fontSize: (10 * this.pitchScale) + 'px',
-            fill: 'white',
-            stroke: 'black',
-            strokeThickness: 2,
-
-        });
-        t.x = t.x - t.width / 2 + 15 * this.pitchScale;
-        this.tweens.add({
-            targets: t,
-            duration: 1000,
-            ease: 'Quad.easeIn',
-            alpha: 0,
-            y: y - 60 * this.pitchScale,
-            onComplete: () => {
-                t.visible = false;
-                t.destroy();
-            }
-        });
     }
 
     public init(config) {
@@ -163,67 +84,16 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     public create(config) {
         console.log('Main Scene: create', config);
 
-        this.pitch = this.add.image(0, 0, 'pitch').setOrigin(0, 0);
-        this.homeDugout = this.add.image(0, 0, 'dugout').setOrigin(0, 1);
-        this.awayDugout = this.add.image(391, 0, 'dugout');
-        this.awayDugout.setFlipX(true);
-        this.awayDugout.setOrigin(1, 1);
-
-        this.frameNumber = 0;
-
-        this.pitchScale = 1.0;
-
         let game = this.controller.getGameState();
 
-        this.homeTeamName = this.createTeamName(game.teamHome.getName());
-        this.awayTeamName = this.createTeamName(game.teamAway.getName());
-
-        this.homeTeamName.setAngle(270);
-        this.awayTeamName.setAngle(90);
-
-        let icons = {};
-        let positions = game.teamAway.getRoster().getPositions();
-        for (let i in positions) {
-            let pos = positions[i];
-            icons[pos['id']] = '/'+pos['iconURI'];
-        }
-
-        positions = game.teamHome.getRoster().getPositions();
-        for (let i in positions) {
-            let pos = positions[i];
-            icons[pos['id']] = '/'+pos['iconURI'];
-        }
-
-        let awayPlayers = game.teamAway.getPlayers();
-        for (let i in awayPlayers) {
-            let player = awayPlayers[i];
-            player.setTeam(Model.Side.Away);
-            player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 2);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
-        }
-
-        let homePlayers = game.teamHome.getPlayers();
-        for (let i in homePlayers) {
-            let player = homePlayers[i];
-            player.setTeam(Model.Side.Home);
-            player.icon = this.add.sprite(0,0,icons[player.positionId], player.positionIcon * 4 + 0);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
-        }
-
-        if (!this.ballIcon) {
-            // Ugly. Needs to be a sprite...
-            this.ballIcon = this.add.graphics();
-            this.ballIcon.clear();
-            this.ballIcon.fillStyle(0xffff00, 1);
-            this.ballIcon.fillCircle(0, 0, 5);
-        }
+        this.worldLayer = new Layers.World(this, game, this.controller);
+        this.worldLayer.create();
+        this.add.existing(this.worldLayer.getView());
 
         const FAR_AWAY = -10000;
 
         // Set up UI overlay
-        let uiLayer = new Layers.UILayer(this, game, this.controller);
+        let uiLayer = new Layers.UI(this, game, this.controller);
 
         uiLayer.container.setPosition(FAR_AWAY, FAR_AWAY);
         this.add.existing(uiLayer.container);
@@ -246,16 +116,20 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         this.controller.triggerEvent(Types.EventType.Initialized);
         this.controller.SoundEngine.start();
 
-        this.pitch.setInteractive();
         let prevX = -1;
         let prevY = -1;
         let fieldSquare = new Types.Coordinate(0, 0);
-        this.input.on('gameobjectmove', (pointer, gameObject) => {
-            let x = pointer.worldX;
-            let y = pointer.worldY;
+        this.input.on('pointermove', (pointer: Phaser.Input.Pointer, gameObject) => {
+            let p = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
 
-            let sX = Math.floor(x / this.gridSize);
-            let sY = Math.floor(y / this.gridSize);
+            let x = p.x;
+            let y = p.y;
+
+            uiLayer.setDebugText(Math.round(pointer.x) + "," + Math.round(pointer.y) + " :: " + Math.round(p.x) + "," + Math.round(p.y));
+
+            let gridSize = this.getGridSize();
+            let sX = Math.floor(x / gridSize);
+            let sY = Math.floor(y / gridSize);
 
             if (sX != prevX ||sY != prevY) {
                 prevX = sX;
@@ -280,18 +154,6 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         });
     }
 
-    private createTeamName(name: string): Phaser.GameObjects.Text {
-        let t = this.add.text(0, 0, name.toUpperCase());
-        t.setFontFamily("arial");
-        t.setFontSize(this.gridSize * 0.9);
-        t.setColor("#ffffff");
-        t.setAlpha(0.5);
-        t.setOrigin(0.5, 0.5);
-        t.setBlendMode(Phaser.BlendModes.OVERLAY);
-
-        return t;
-    }
-
     public resize() {
         this.sys.canvas.style.width = "100%";
         this.sys.canvas.style.height = "100%";
@@ -312,45 +174,18 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         w -= marginLeft + marginRight;
         h -= marginTop + marginBottom;
 
-        let zoomFactorX = w / this.pitch.width;
-        let zoomFactorY = h / this.pitch.height;
-        let zoomFactor = Math.min(zoomFactorX, zoomFactorY);
+        this.worldLayer.resize(w, h);
 
-        this.gridSize = zoomFactor * (this.pitch.width-2)/26;
-
-        this.pitch.setScale(zoomFactor);
-        this.homeDugout.setScale(zoomFactor);
-        this.awayDugout.setScale(zoomFactor);
-        this.awayDugout.setPosition(this.pitch.displayWidth / 2, 0);
-        this.pitchScale = zoomFactor;
         this.controller.triggerEvent(Types.EventType.ModelChanged);
 
-        // Calculate margins to center field in viewport
-        let scrollX = -Math.floor((w - this.pitch.displayWidth) / 2) - marginLeft;
-        let scrollY = -Math.floor((h - this.pitch.displayHeight) / 2) - marginTop;
-        this.cameras.main.setScroll(scrollX, scrollY);
+        this.cameras.main.setViewport(0, 0, this.width, this.height + marginTop);
+        this.worldLayer.setCamera(this.cameras.main, Layers.CameraView.Field, false);
 
-        this.cameras.main.setViewport(0, 0, w-scrollX, h-scrollY);
         this.uiCamera.setViewport(0, 0, this.width, this.height);
-
-        this.controller.triggerEvent(Types.EventType.Resized, {
-            w: this.sys.canvas.clientWidth,
-            h: this.sys.canvas.clientHeight,
-            scale: this.gridSize
-        });
-
-        this.homeTeamName.setFontSize(this.gridSize * 0.9);
-        this.awayTeamName.setFontSize(this.gridSize * 0.9);
-
-        let [x,y] = this.controller.convertToPixels(new Types.Coordinate(0.5, 7.5));
-        this.homeTeamName.setPosition(x, y);
-
-        [x,y] = this.controller.convertToPixels(new Types.Coordinate(25.5, 7.5));
-        this.awayTeamName.setPosition(x, y);
     }
 
     public getGridSize(): number {
-        return this.gridSize;
+        return this.worldLayer.getGridSize();
     }
 
     public update() {
@@ -363,123 +198,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     }
 
     public redraw(game: Model.Game) {
-        for (let player of game.getPlayers()) {
-            if (player) {
-                let iconScale = Math.max(1, Math.floor(this.pitchScale));
-                player.icon.setScale(iconScale, iconScale);
-                player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
-
-                let iconState = this.getIconState(player);
-
-                let [pX, pY] = this.controller.convertToPixels(player.coordinate.add(0.5, 0.5));
-
-                player.icon.setFrame(player.getBaseIconFrame() + iconState.frameOffset);
-                player.icon.angle = iconState.angle;
-                player.icon.setAlpha(iconState.alpha);
-                player.icon.visible = iconState.visible;
-
-                player.icon.setPosition(pX, pY);
-            }
-        }
-
-        this.moveSquareIcons.map((i) => i.visible = false);
-
-        let i=0;
-        let squares = game.getMoveSquares();
-        for (let index in squares) {
-            let coordinate = squares[i]
-            let [w, h] = this.controller.convertToPixels(new Types.Coordinate(0.8, 0.8));
-            let [x, y] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
-            if (i == this.moveSquareIcons.length) {
-                let icon = this.add.sprite(x, y, "moveSquare");
-                icon.setOrigin(0.5, 0.5);
-                this.moveSquareIcons.push(icon);
-            }
-            let icon = this.moveSquareIcons[i];
-            icon.setDisplaySize(w, h);
-            icon.setPosition(x, y);
-            icon.visible = true;
-            i++;
-        }
-
-        this.trackNumberIcons.map((i) => i.visible = false);
-        i=0;
-        squares = game.getTrackNumbers();
-        for (let index in squares) {
-            let coordinate = squares[i]
-            if (i == this.trackNumberIcons.length) {
-                let icon = this.add.graphics();
-                icon.clear();
-                icon.fillStyle(0xff9F00, 1);
-                icon.fillCircle(0, 0, 5);
-                this.trackNumberIcons.push(icon);
-            }
-            let icon = this.trackNumberIcons[i];
-
-            let [pX,pY] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
-
-            icon.setPosition(pX, pY);
-            icon.visible = true;
-            i++;
-        }
-
-        let ballCoordinate = game.getBallCoordinate();
-
-        if (ballCoordinate) {
-            let [pX,pY] = this.controller.convertToPixels(ballCoordinate.add(0.8, 0.8));
-
-            this.ballIcon.setPosition(pX, pY);
-            this.ballIcon.visible = true;
-        } else {
-            this.ballIcon.visible = false;
-        }
+        this.worldLayer.redraw();
     }
 
-    private getIconState(player: Model.Player): IconState {
-        let result: IconState = {
-            alpha: 0,
-            angle: 0,
-            frameOffset: 0,
-            visible: false
-        };
-
-        switch(player.getState()) {
-            case Model.PlayerState.Prone:
-                result.angle = -90;
-                result.frameOffset = 1;
-                break;
-            case Model.PlayerState.Stunned:
-                result.angle = 90;
-                result.frameOffset = 1;
-                break;
-            case Model.PlayerState.Moving:
-                result.angle = 0;
-                result.frameOffset = 1;
-                break;
-            case Model.PlayerState.Falling:
-                result.angle = 90;
-                result.frameOffset = 0;
-                break;
-            default:
-                result.angle = 0;
-                result.frameOffset = 0;
-                break;
-        }
-
-        let flags = player.getFlags();
-
-        if (flags & Model.PlayerState._bit_active) {
-            result.alpha = 1;
-        } else {
-            result.alpha = 0.5;
-        }
-
-        if (player.getTeam() == Model.Side.Away) {
-            result.angle = -result.angle;
-        }
-
-        result.visible = player.isOnField();
-
-        return result;
-    }
 }

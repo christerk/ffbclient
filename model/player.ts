@@ -30,6 +30,13 @@ export enum PlayerState {
    _bit_used_pro    = 0x2000,
 }
 
+export type IconState = {
+    alpha: number,
+    angle: number,
+    frameOffset: number,
+    visible: boolean,
+}
+
 export enum Side {
     Home,
     Away
@@ -160,4 +167,52 @@ export class Player {
 
         return assets;
     }
+
+    public getIconState(): IconState {
+        let result: IconState = {
+            alpha: 0,
+            angle: 0,
+            frameOffset: 0,
+            visible: false
+        };
+
+        switch(this.getState()) {
+            case Model.PlayerState.Prone:
+                result.angle = -90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Stunned:
+                result.angle = 90;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Moving:
+                result.angle = 0;
+                result.frameOffset = 1;
+                break;
+            case Model.PlayerState.Falling:
+                result.angle = 90;
+                result.frameOffset = 0;
+                break;
+            default:
+                result.angle = 0;
+                result.frameOffset = 0;
+                break;
+        }
+
+        let flags = this.getFlags();
+
+        if (flags & Model.PlayerState._bit_active) {
+            result.alpha = 1;
+        } else {
+            result.alpha = 0.5;
+        }
+
+        if (this.getTeam() == Model.Side.Away) {
+            result.angle = -result.angle;
+        }
+
+        result.visible = true; //player.isOnField();
+
+        return result;
+    }    
 }

@@ -4,7 +4,7 @@ import * as Comp from "../components";
 import * as Types from "../../types";
 import * as Model from "../../model";
 
-export class UILayer implements Types.EventListener {
+export class UI implements Types.EventListener {
     public container: Phaser.GameObjects.Container;
     private scene: Phaser.Scene;
     private scale: number;
@@ -15,6 +15,8 @@ export class UILayer implements Types.EventListener {
     private input: Comp.Input;
     private controller: Core.Controller;
     private playerCard: Comp.PlayerCard;
+
+    private debugText: Comp.Label;
 
     private component: Comp.UIComponent;
 
@@ -104,6 +106,15 @@ export class UILayer implements Types.EventListener {
             inheritVisibility: false,
         });
 
+        this.debugText = new Comp.Label({
+            id: "DebugText",
+            height: 0.5,
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            color: 0xffffff,
+            text: "",
+        })
+
         this.component = new Comp.Panel({
             id: "RootPanel",
             width: "100%",
@@ -117,6 +128,7 @@ export class UILayer implements Types.EventListener {
                     parentAnchor: Comp.Anchor.NORTH,
                     background: 0x003300,
                     children: [
+                        this.debugText,
                         new Comp.Panel({
                             id: "ScorePanel",
                             width: 6,
@@ -189,6 +201,10 @@ export class UILayer implements Types.EventListener {
         this.component.postCreate();
         this.component.redraw();
         this.container.add(phaserObject);
+    }
+
+    public setDebugText(text: string) {
+        this.debugText.setText(text);
     }
 
     public setPlayerCard(player: Model.Player, pos?: number[], sz?: number[]) {
