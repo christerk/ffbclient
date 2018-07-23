@@ -72,8 +72,8 @@ export class SoundEngine {
         this.scene = scene;
         for (let s in this.sounds) {
             scene.load.audio(s, [
-                this.sounds[s] + ".ogg",
-                this.sounds[s] + ".mp3"
+                "https://fumbbl.com" + this.sounds[s] + ".ogg",
+                "https://fumbbl.com" + this.sounds[s] + ".mp3"
             ]);
         }
     }
