@@ -17,6 +17,7 @@ export class BootScene extends AbstractScene {
     private vsText: Phaser.GameObjects.Text;
     private bg: Phaser.GameObjects.Image;
     private texts: string[];
+    private sceneSwitch: Promise<any>;
 
     public constructor(controller: Core.Controller) {
         super("bootScene", controller);
@@ -43,6 +44,7 @@ export class BootScene extends AbstractScene {
             "Topdecking Pit Trap",
             "Voting for Pie",
         ];
+        this.sceneSwitch = Promise.resolve();
     }
 
     public init(config) {
@@ -106,10 +108,6 @@ export class BootScene extends AbstractScene {
             this.progressBar.setDisplaySize((this.progressBox.displayWidth - 2 * margin) * value, this.progressBox.displayHeight - 2 * margin)
         });
 
-        let homeLoaded = false;
-        let awayLoaded = false;
-        let bgLoaded = false;
-        let fadeInTriggered = false;
         this.vsText = this.make.text({
             x: 0,
             y: 0,
@@ -141,8 +139,6 @@ export class BootScene extends AbstractScene {
                 this.awayLogo.alpha = 0;
                 this.awayLogo.setScale(0);
                 this.add.existing(this.awayLogo);
-
-                fadeInTriggered = true;
 
                 this.tweens.add({
                     targets: [this.homeLogo, this.vsText, this.awayLogo],
@@ -181,7 +177,12 @@ export class BootScene extends AbstractScene {
                 })
 
                 this.controller.SoundEngine.load(this);
-                this.load.start();
+                this.sceneSwitch
+                .then(() => {
+                    setTimeout(() => {
+                        this.load.start();
+                    }, 1000);
+                });
             } else {
                 for (let key in this.spritesheets) {
                     let sprite = this.add.sprite(0, 0, key);
@@ -254,6 +255,16 @@ export class BootScene extends AbstractScene {
         this.bg.setTexture("loadingscreen");
         let scale = Math.min(this.width / this.bg.width, this.height / this.bg.height);
         this.bg.setScale(scale);
+        this.bg.alpha = 0;
+
+        this.tweens.add({
+            targets: [this.bg],
+            duration: 200,
+            delay: 0,
+            ease: 'Linear',
+            alpha: 1,
+        });
+
         this.bg.visible = true;
     }
 
@@ -277,5 +288,12 @@ export class BootScene extends AbstractScene {
         moveSquare.fillStyle(0xffffff, 0.25);
         moveSquare.fillRect(0, 0, 100, 100);
         moveSquare.generateTexture("moveSquare", 100, 100);
+
+        let trackNumber = this.make.graphics({});
+        trackNumber.clear();
+        trackNumber.fillStyle(0xff9F00, 1);
+        trackNumber.fillCircle(50, 50, 40);
+        trackNumber.generateTexture("trackNumber", 100, 100);
+
     }
 }

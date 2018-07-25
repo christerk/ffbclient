@@ -26,6 +26,7 @@ export class FloatText extends Layers.Abstract {
     }
 
     public resize(scale: number, gridSize) {
+        super.resize(scale, gridSize);
     }
 
     public floatText(player: Model.Player, text: string) {
