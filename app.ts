@@ -30,11 +30,11 @@ export default class App extends Phaser.Game implements EventListener {
             parent: 'phaserapp',
             type: Phaser.CANVAS,
             width: 960,
-            height: 554,
+            height: 540,
             scene: <Phaser.Scene[]>scenes,
-            "render.antialias": false,
-            "render.pixelArt": true,
-            "render.roundPixels": true,
+            "render.antialias": true,
+            "render.pixelArt": false,
+            "render.roundPixels": false,
             fps: {
                 target: 60,
             }
