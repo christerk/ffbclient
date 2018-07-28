@@ -162,6 +162,7 @@ export class BootScene extends AbstractScene {
 
                 this.load.image("pitch", "https://fumbbl.com/i/561518");
                 this.load.image("dugout", "https://fumbbl.com/i/563498");
+                this.load.image("pictograms", "https://fumbbl.com/i/564211");
                 
                 this.load.spritesheet("d6", "https://fumbbl.com/i/562665", {
                     frameWidth: 100,
@@ -188,9 +189,9 @@ export class BootScene extends AbstractScene {
                     let sprite = this.add.sprite(0, 0, key);
                     sprite.visible=false;
                     this.generateSpriteFrames(sprite);
-
                 }
 
+                this.generatePictogramFrames();
                 this.generateTextures();
                 
                 this.controller.setScene("mainScene");
@@ -280,6 +281,24 @@ export class BootScene extends AbstractScene {
                 sprite.texture.add(frameNumber, 0, x * tileSize, y * tileSize, tileSize, tileSize);
             }
         }
+     }
+
+     private generatePictogramFrames() {
+         let frames = [
+             "Apothecary", "Argue the Call", "Armour", "Block", "Bribe", "Card Effect",
+             "Casualty", "Catch", "Confusion", "Dauntless", "Dodge", "Fame", "Fan Factor",
+             "Foul", "Gaze", "GFI", "Injury", "Intercept", "Kick Scatter", "Kick-off", 
+             "Kick-off Extra RR", "Leap", "Pass", "Pick-up", "Pro", "Right Stuff", "Riot",
+             "Scatter Ball", "Scatter Player", "Shadowing", "Shootout", "Stand Up", 
+             "SW Ban", "Tentacles", "Throw Rock", "Throw-in", "TTM", "Weather",
+             "Wild Animal", "Winnings"
+         ];
+         let image = new Phaser.GameObjects.Image(this, 0, 0, "pictograms");
+         for (let i=0; i<frames.length; i++) {
+             let x = Math.floor(i % 8) * 128;
+             let y = Math.floor(i / 8) * 128;
+             image.texture.add(frames[i], 0, x, y, 128, 128);
+         }
      }
 
     private generateTextures() {

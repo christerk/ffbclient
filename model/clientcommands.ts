@@ -473,7 +473,7 @@ export class BlockRoll extends AbstractCommand {
     public do() {
         let location = this.getLocation([]);
 
-        let rollKey = this.controller.DiceManager.roll("db", this.rolls, location);
+        let rollKey = this.controller.DiceManager.roll("db", Core.Pictogram.Block, this.rolls, location);
         this.controller.triggerEvent(EventType.BlockDice, rollKey);
     }
 
@@ -519,7 +519,7 @@ export class GoForItRoll extends AbstractCommand {
     public do() {
         let location = this.getLocation([]);
 
-        this.controller.DiceManager.roll("d6", [this.roll], location);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.GFI, [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "GFI " + this.minimumRoll + "+",
@@ -553,24 +553,24 @@ export class Injury extends AbstractCommand {
         this.injuredPlayerState = injuredPlayerState;
     }
 
-    private rollDice(type: Core.DieType, targets: number[]) {
-        this.controller.DiceManager.roll(type, targets, this.location, 1000);
+    private rollDice(type: Core.DieType, pictogram: Core.Pictogram, targets: number[]) {
+        this.controller.DiceManager.roll(type, pictogram, targets, this.location, 1000);
     }
 
     public do() {
         this.location = this.getLocation([ this.defenderId, this.attackerId]);
 
         if (this.armorRoll != null) {
-            this.rollDice("d6", this.armorRoll);
+            this.rollDice("d6", Core.Pictogram.Armour, this.armorRoll);
         }
         if (this.injuryRoll != null) {
-            this.rollDice("d6", this.injuryRoll);
+            this.rollDice("d6", Core.Pictogram.Injury, this.injuryRoll);
         }
         if (this.casualtyRoll != null) {
-            this.rollDice("d68", this.casualtyRoll);
+            this.rollDice("d68", Core.Pictogram.Casualty, this.casualtyRoll);
         }
         if (this.casualtyRollDecay != null) {
-            this.rollDice("d68", this.casualtyRollDecay);
+            this.rollDice("d68", Core.Pictogram.Casualty, this.casualtyRollDecay);
         }
 
         this.controller.triggerEvent(EventType.FloatText, {
@@ -597,7 +597,7 @@ export class DodgeRoll extends AbstractCommand {
     public do() {
         let location = this.getLocation([]);
 
-        this.controller.DiceManager.roll("d6", [this.roll], location);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.Dodge, [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getActivePlayer(),
             text: "Dodge " + this.minimumRoll + "+",
@@ -623,7 +623,7 @@ export class PassRoll extends AbstractCommand {
 
     public do() {
         let location = this.getLocation([]);
-        this.controller.DiceManager.roll("d6", [this.roll], location);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.Pass, [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getPlayer(this.playerId),
             text: "Pass " + this.minimumRoll + "+",
@@ -648,8 +648,8 @@ export class CatchRoll extends AbstractCommand {
     }
 
     public do() {
-        let location = this.getLocation([]);
-        this.controller.DiceManager.roll("d6", [this.roll], location);
+        let location = this.getLocation([this.playerId]);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.Catch, [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getPlayer(this.playerId),
             text: "Catch " + this.minimumRoll + "+",
@@ -675,7 +675,7 @@ export class PickupRoll extends AbstractCommand {
 
     public do() {
         let location = this.getLocation([this.playerId]);
-        this.controller.DiceManager.roll("d6", [this.roll], location);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.PickUp, [this.roll], location);
         this.controller.triggerEvent(EventType.FloatText, {
             player: this.controller.Game.getPlayer(this.playerId),
             text: "Pickup " + this.minimumRoll + "+",

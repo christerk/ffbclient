@@ -40,7 +40,7 @@ export class FloatText extends Layers.Abstract {
     }
 
     private executeFloatText(player: Model.Player, text: string) {
-        if (player == null) {
+        if (player == null || !text) {
             return;
         }
 
