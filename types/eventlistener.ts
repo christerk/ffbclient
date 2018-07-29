@@ -7,6 +7,7 @@ export enum EventType {
     Connected,
     FloatText,
     Initialized,
+    Kickoff,
     ModelChanged,
     Resized,
     Resizing

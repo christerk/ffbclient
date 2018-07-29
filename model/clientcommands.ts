@@ -686,3 +686,26 @@ export class PickupRoll extends AbstractCommand {
 
     }
 }
+
+export class KickoffResult extends AbstractCommand {
+    private roll: number[];
+    private result: string;
+
+    public constructor(roll: number[], result: string) {
+        super();
+        this.roll = roll;
+        this.result = result;
+    }
+
+    public do() {
+        let location = this.getLocation([]);
+        this.controller.DiceManager.roll("d6", Core.Pictogram.KickOff, this.roll, location);
+        this.controller.triggerEvent(EventType.Kickoff, {
+            kickoff: this.result,
+        });
+    }
+
+    public undo() {
+
+    }
+}

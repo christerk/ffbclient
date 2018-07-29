@@ -433,10 +433,16 @@ declare namespace FFB.Protocol.Messages {
         nrOfDice: number;
     }
 
+    type KickoffResultReport = {
+        reportId: "kickoffResult";
+        kickoffResult: string;
+        kickoffRoll: number[];
+    }
+
     type Report =
         BlockReport | BlockRollReport | GoForItReport | InjuryReport |
         DodgeRollReport | PassRollReport | PickupRollReport | BlockChoiceReport |
-        CatchRollReport;
+        CatchRollReport | KickoffResultReport;
 
     type ReportList = {
         reports: Report[];

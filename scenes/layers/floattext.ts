@@ -39,6 +39,42 @@ export class FloatText extends Layers.Abstract {
         });
     }
 
+    public kickoff(kickoff: string) {
+        this.floatTextQueue = this.floatTextQueue
+        .then(() => {
+            return new Promise<any>((resolve, reject) => {
+                setTimeout(() => { resolve(); }, 333);
+                this.executeKickoff(kickoff);
+            });            
+        });
+    }
+
+    private executeKickoff(kickoff: string) {
+        let [x, y] = this.controller.convertToPixels(new Types.Coordinate(13, 7.5));
+
+        let t = this.scene.add.text(x, y, kickoff.toUpperCase(), {
+            fontSize: (this.gridSize * 5) + 'px',
+            fill: 'white',
+            stroke: 'black',
+            strokeThickness: 2,
+        });
+        t.setOrigin(0.5);
+        t.setScale(0);
+
+        this.scene.tweens.add({
+            targets: t,
+            duration: 1500,
+            ease: 'Quad.easeIn',
+            scaleX: 1,
+            scaleY: 1,
+            onComplete: () => {
+                t.visible = false;
+                t.destroy();
+            }
+        });
+
+    }
+
     private executeFloatText(player: Model.Player, text: string) {
         if (player == null || !text) {
             return;
@@ -47,7 +83,7 @@ export class FloatText extends Layers.Abstract {
         let pos = player.getLocation();
         let [x, y] = this.controller.convertToPixels(pos);
         let t = this.scene.add.text(x, y, text.toUpperCase(), {
-            fontSize: (this.gridSize/ 3) + 'px',
+            fontSize: (this.gridSize / 3) + 'px',
             fill: 'white',
             stroke: 'black',
             strokeThickness: 2,
