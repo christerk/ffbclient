@@ -2,21 +2,19 @@
     display: flex;
 }
 
-.menu__entry {
+.menu__item {
     visibility: hidden;
     overflow: hidden;
-}
-  
-.menu__entryContainer {
-    position: absolute
 }
 
 .menu__slot {
     flex: item;
     position: relative;
-
-    &:hover .menu__entry {
+    &:hover .menu__item {
         visibility: visible
     }
 }
-  
+
+.menu__entryContainer {
+    position: absolute
+}
