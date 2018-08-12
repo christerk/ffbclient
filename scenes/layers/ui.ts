@@ -109,8 +109,8 @@ export class UI implements Types.EventListener {
         this.debugText = new Comp.Label({
             id: "DebugText",
             height: 0.5,
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
+            anchor: Comp.Anchor.NORTHEAST,
+            parentAnchor: Comp.Anchor.NORTHEAST,
             color: 0xffffff,
             text: "",
         })
@@ -149,8 +149,14 @@ export class UI implements Types.EventListener {
                                 this.labelTurn
                             ]
                         }),
+                        new Comp.Menu({
+                            height: 0.9,
+                            anchor: Comp.Anchor.NORTHWEST,
+                            parentAnchor: Comp.Anchor.NORTHWEST
+                        })
                     ]
                 }),
+
                 this.input,
                 new Comp.Button({
                     id: "DebugButton",
