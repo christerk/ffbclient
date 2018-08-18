@@ -12,7 +12,7 @@ export class Menu extends Comp.Panel {
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
             visible: true
-        }))
+        }));
 
         this.tabs.push(new Comp.Label({
             id: 'viewMenu',
@@ -20,17 +20,11 @@ export class Menu extends Comp.Panel {
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
             visible: true
-        }))
+        }));
 
-        let self = this;
-
-        this.tabs.forEach( function(tab){
-            self.addChild(tab);
-        });
-    }
-
-    public create(): Phaser.GameObjects.GameObject {
-        return super.create();
+        for (let tab of this.tabs) {
+            this.addChild(tab);
+        }
     }
 
     public destroy(): void {
@@ -40,14 +34,14 @@ export class Menu extends Comp.Panel {
     }
 
     public show(): void {
-        this.tabs.forEach( function(tab){
+        for (let tab of this.tabs) {
             tab.setVisible(true);
-        });
+        }
         
     }
     public hide(): void {
-        this.tabs.forEach( function(tab){
+        for (let tab of this.tabs) {
             tab.setVisible(false);
-        });
+        }
     }
 }
