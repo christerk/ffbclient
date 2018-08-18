@@ -1,58 +1,67 @@
 import * as Comp from "."
 
-export class Menu extends Comp.UIComponent {
-    private menu: Phaser.GameObjects.Container;
-    private tab1: Phaser.GameObjects.Image;
-    private tab2: Phaser.GameObjects.Image;
+export class Menu extends Comp.Panel {
+    private tabs: Comp.Label[] = []
     
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
+
+        this.tabs.push(new Comp.Label({
+            id: 'gameMenu',
+            text: 'Game',
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            visible: true
+        }))
+
+        this.tabs.push(new Comp.Label({
+            id: 'viewMenu',
+            text: 'View',
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            visible: true
+        }))
+
+        let self = this;
+
+        this.tabs.forEach( function(tab){
+            self.addChild(tab);
+        });
     }
 
     public create(): Phaser.GameObjects.GameObject {
-        this.menu = this.ctx.scene.make.container({})
-        let graphics1: Phaser.GameObjects.Graphics = this.ctx.scene.make.graphics({})
-        graphics1.fillStyle(0xFF0000, 1)
-        graphics1.fillRect(0,0,100, 100)
-
-        let key1 = 'ui:menu:gameMenu';
-        let bounds: Phaser.Geom.Rectangle = this.getBounds(this.ctx);
-        graphics1.generateTexture(key1, bounds.width/2, bounds.height);
-        
-
-        let graphics2: Phaser.GameObjects.Graphics = this.ctx.scene.make.graphics({})
-        graphics2.fillStyle(0x0000FF, 1)
-        graphics2.fillRect(0,0,100, 100)
-
-        let key2 = 'ui:menu:viewMenu';
-        graphics2.generateTexture(key2, bounds.width/2, bounds.height);
-
-        this.tab1 = new Phaser.GameObjects.Image(this.ctx.scene, 0,0,key1)
-        this.tab2 = new Phaser.GameObjects.Image(this.ctx.scene, 0,0,key2)
-
-        this.menu.add(this.tab1);
-        this.menu.add(this.tab2);
-
-        return this.menu;
+        return super.create();
     }
 
     public destroy(): void {
-        this.menu.destroy;
+        while (this.tabs.length > 0) {
+            this.tabs.pop().destroy();
+        }
     }
 
     public show(): void {
-       this.menu.visible = true;
+        this.tabs.forEach( function(tab){
+            tab.setVisible(true);
+        });
+        
     }
     public hide(): void {
-        this.menu.visible = false;
+        this.tabs.forEach( function(tab){
+            tab.setVisible(false);
+        });
     }
 
     public redraw(): void {
         super.redraw();
-        let bounds = this.getBounds(this.ctx);
-        this.tab1.setPosition(0,0);
-        this.tab2.setPosition(bounds.width/2,0);
-        this.menu.setPosition(bounds.x, bounds.y);
-        this.menu.setDisplaySize(bounds.width, bounds.height);
+        let context = this.ctx
+        let bounds = this.getBounds(context);
+        let offSet: number = bounds.x;
+
+        this.tabs.forEach( function(tab){
+            console.log("offset is :" + offSet);
+            tab.setPosition(offSet, bounds.y);
+            tab.redraw();
+            offSet += tab.getBounds(context).width
+        });
     }
 }
