@@ -41,7 +41,8 @@ export type RenderContext = {
 
 export enum Layout {
     Border,
-    VerticalList
+    VerticalList,
+    HorizontalList
 };
 
 export type ComponentConfiguration = {

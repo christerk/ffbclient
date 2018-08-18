@@ -4,7 +4,7 @@ export class Menu extends Comp.Panel {
     private tabs: Comp.Label[] = []
     
     public constructor(config: Comp.ComponentConfiguration) {
-        super(config);
+        super({...config, layout: Comp.Layout.HorizontalList});
 
         this.tabs.push(new Comp.Label({
             id: 'gameMenu',
@@ -48,20 +48,6 @@ export class Menu extends Comp.Panel {
     public hide(): void {
         this.tabs.forEach( function(tab){
             tab.setVisible(false);
-        });
-    }
-
-    public redraw(): void {
-        super.redraw();
-        let context = this.ctx
-        let bounds = this.getBounds(context);
-        let offSet: number = bounds.x;
-
-        this.tabs.forEach( function(tab){
-            console.log("offset is :" + offSet);
-            tab.setPosition(offSet, bounds.y);
-            tab.redraw();
-            offSet += tab.getBounds(context).width
         });
     }
 }

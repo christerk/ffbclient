@@ -116,7 +116,9 @@ export class Panel extends Comp.UIComponent {
 
         if (this.config.layout == Comp.Layout.Border) {
             this.renderChildrenBorderLayout(bounds);
-        } else {
+        } else if (this.config.layout == Comp.Layout.HorizontalList) {
+            this.renderChildrenHorizontalLayout(bounds);
+        }else {
             this.renderChildrenVerticalLayout(bounds);
         }
     }
@@ -155,5 +157,24 @@ export class Panel extends Comp.UIComponent {
             c.setContext(renderContext);
             let childGameObject = c.redraw();
         }        
+    }
+
+    private renderChildrenHorizontalLayout(bounds: Phaser.Geom.Rectangle) {
+        super.redraw();
+        let offSet: number = bounds.x;
+        for (let c of this.children) {
+            let renderContext: Comp.RenderContext = {
+                scene: this.ctx.scene,
+                parent: this,
+                x: offSet,
+                y: bounds.y,
+                w: bounds.width,
+                h: bounds.height,
+                scale: this.ctx.scale,
+            };
+            c.setContext(renderContext);
+            c.redraw();
+            offSet += c.getBounds(renderContext).width
+        }
     }
 }
