@@ -43,7 +43,7 @@ export enum Layout {
     Border,
     VerticalList,
     HorizontalList
-};
+}
 
 export type ComponentConfiguration = {
     id?: string,

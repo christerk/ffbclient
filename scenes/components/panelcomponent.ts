@@ -108,12 +108,6 @@ export class Panel extends Comp.UIComponent {
 
         let bounds = this.getBounds(this.ctx);
 
-        let bg = this.background;
-        if (bg != null) {
-            bg.setPosition(bounds.x, bounds.y);
-            bg.setDisplaySize(bounds.width, bounds.height);
-        }
-
         if (this.config.layout == Comp.Layout.Border) {
             this.renderChildrenBorderLayout(bounds);
         } else if (this.config.layout == Comp.Layout.HorizontalList) {
@@ -121,11 +115,18 @@ export class Panel extends Comp.UIComponent {
         }else {
             this.renderChildrenVerticalLayout(bounds);
         }
+        bounds = this.getBounds(this.ctx);
+        let bg = this.background;
+        if (bg != null) {
+            bg.setPosition(bounds.x, bounds.y);
+            bg.setDisplaySize(bounds.width, bounds.height);
+        }
     }
 
     private renderChildrenVerticalLayout(bounds: Phaser.Geom.Rectangle) {
         let childHeight = 4 * this.ctx.scale / 30;
         let childNumber = 0;
+        let newWidth = 0;
         for (let c of this.children) {
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
@@ -138,7 +139,12 @@ export class Panel extends Comp.UIComponent {
             };
             c.setContext(renderContext);
             c.redraw();
+            newWidth = Math.max(c.getBounds(renderContext).width, newWidth);
             childNumber++;
+        }
+
+        if (newWidth !== 0) {
+            this.config.width = newWidth + 'px';
         }
     }
 
@@ -160,7 +166,6 @@ export class Panel extends Comp.UIComponent {
     }
 
     private renderChildrenHorizontalLayout(bounds: Phaser.Geom.Rectangle) {
-        super.redraw();
         let offSet: number = bounds.x;
         for (let c of this.children) {
             let renderContext: Comp.RenderContext = {

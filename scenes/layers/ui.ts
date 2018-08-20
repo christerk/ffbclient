@@ -113,7 +113,7 @@ export class UI implements Types.EventListener {
             parentAnchor: Comp.Anchor.NORTHEAST,
             color: 0xffffff,
             text: "",
-        })
+        });
 
         this.component = new Comp.Panel({
             id: "RootPanel",
@@ -150,7 +150,7 @@ export class UI implements Types.EventListener {
                             ]
                         }),
                         new Comp.Menu({
-                            height: 0.9,
+                            height: 1,
                             anchor: Comp.Anchor.NORTHWEST,
                             parentAnchor: Comp.Anchor.NORTHWEST
                         })
@@ -200,7 +200,7 @@ export class UI implements Types.EventListener {
             scale: 30,
             x: 0,
             y: 0,
-        }
+        };
 
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();

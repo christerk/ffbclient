@@ -11,7 +11,7 @@ module.exports = {
     output: {
         filename: '[name]-[hash].js',
         library: 'EntryPoint',
-        path: buildPath,
+        path: buildPath
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -78,4 +78,4 @@ module.exports = {
           chunks: "all"
         }
       }
-}
+};
