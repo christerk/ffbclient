@@ -1,8 +1,8 @@
 import * as Comp from ".";
 
 export class Panel extends Comp.UIComponent {
-    private background: Phaser.GameObjects.Image;
-    private children: Comp.UIComponent[];
+    protected background: Phaser.GameObjects.Image;
+    protected children: Comp.UIComponent[];
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
@@ -108,47 +108,6 @@ export class Panel extends Comp.UIComponent {
 
         let bounds = this.getBounds(this.ctx);
 
-        if (this.config.layout == Comp.Layout.Border) {
-            this.renderChildrenBorderLayout(bounds);
-        } else if (this.config.layout == Comp.Layout.HorizontalList) {
-            this.renderChildrenHorizontalLayout(bounds);
-        }else {
-            this.renderChildrenVerticalLayout(bounds);
-        }
-        bounds = this.getBounds(this.ctx);
-        let bg = this.background;
-        if (bg != null) {
-            bg.setPosition(bounds.x, bounds.y);
-            bg.setDisplaySize(bounds.width, bounds.height);
-        }
-    }
-
-    private renderChildrenVerticalLayout(bounds: Phaser.Geom.Rectangle) {
-        let childHeight = 4 * this.ctx.scale / 30;
-        let childNumber = 0;
-        let newWidth = 0;
-        for (let c of this.children) {
-            let renderContext: Comp.RenderContext = {
-                scene: this.ctx.scene,
-                parent: this,
-                x: bounds.x,
-                y: bounds.y + childNumber * (childHeight*1.2),
-                w: bounds.width,
-                h: childHeight,
-                scale: this.ctx.scale,
-            };
-            c.setContext(renderContext);
-            c.redraw();
-            newWidth = Math.max(c.getBounds(renderContext).width, newWidth);
-            childNumber++;
-        }
-
-        if (newWidth !== 0) {
-            this.config.width = newWidth + 'px';
-        }
-    }
-
-    private renderChildrenBorderLayout(bounds: Phaser.Geom.Rectangle) {
         let renderContext: Comp.RenderContext = {
             scene: this.ctx.scene,
             parent: this,
@@ -161,9 +120,43 @@ export class Panel extends Comp.UIComponent {
 
         for (let c of this.children) {
             c.setContext(renderContext);
-            let childGameObject = c.redraw();
-        }        
+            c.redraw();
+        }
+
+        let bg = this.background;
+        if (bg != null) {
+            bg.setPosition(bounds.x, bounds.y);
+            bg.setDisplaySize(bounds.width, bounds.height);
+        }
     }
+
+    private renderChildrenVerticalLayout(bounds: Phaser.Geom.Rectangle) {
+        let childNumber = 0;
+        let newWidth = 0;
+        let offSet = 0;
+        for (let c of this.children) {
+            let renderContext: Comp.RenderContext = {
+                scene: this.ctx.scene,
+                parent: this,
+                x: bounds.x,
+                y: bounds.y + offSet,
+                w: bounds.width,
+                h: 100,
+                scale: this.ctx.scale,
+            };
+            c.setContext(renderContext);
+            c.redraw();
+            let newBounds = c.getBounds(renderContext);
+            newWidth = Math.max(newBounds.width/this.ctx.scale, newWidth);
+            offSet += newBounds.height;
+            childNumber++;
+        }
+
+        if (newWidth > 0) {
+            this.config.width = newWidth;
+        }
+    }
+
 
     private renderChildrenHorizontalLayout(bounds: Phaser.Geom.Rectangle) {
         let offSet: number = bounds.x;

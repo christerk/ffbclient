@@ -220,6 +220,7 @@ export class UI implements Types.EventListener {
             this.playerCard.setPosition(pos[0], pos[1]);
             this.playerCard.setSize(sz[0], sz[1]);
             this.playerCard.setVisible(true);
+            console.log("Playercard: " + player.name)
             this.playerCard.setPlayer(player);
             this.playerCard.redraw();
         }

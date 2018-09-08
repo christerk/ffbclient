@@ -18,15 +18,19 @@ export class Menu extends Comp.Panel {
                     id: 'gameMenu',
                     text: 'Game',
                     visible: true,
+                    height: 1,
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
 
-                })/*,
+                }),
                 new Comp.Label({
                     id: 'quitButton',
                     text: 'Quit',
+                    height: 1,
+                    anchor: Comp.Anchor.NORTHWEST,
+                    parentAnchor: Comp.Anchor.NORTHWEST,
                     visible: true
-                })*/
+                })
             ]
         }));
 

@@ -440,4 +440,8 @@ export class PlayerCard extends Comp.Panel {
             this.skillLabels[index].setVisible(false);
         }
     }
+
+    public redraw() {
+        super.redraw();
+    }
 }
