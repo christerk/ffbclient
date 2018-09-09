@@ -1,15 +1,14 @@
 import * as Comp from "."
 
-export class Menu extends Comp.Panel {
+export class Menu extends Comp.HorizontalPanel {
     private tabs: Comp.Panel[] = [];
 
     public constructor(config: Comp.ComponentConfiguration) {
-        super({...config, layout: Comp.Layout.HorizontalList});
+        super(config);
 
-        this.tabs.push(new Comp.Panel({
+        this.tabs.push(new Comp.VerticalPanel({
             id: 'gameMenuSlot',
             visible: true,
-            layout: Comp.Layout.VerticalList,
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
             background: 0x0000FF,
@@ -39,7 +38,6 @@ export class Menu extends Comp.Panel {
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
             visible: true,
-            layout: Comp.Layout.VerticalList,
             background: 0xFF0000,
             children: [
                 new Comp.Label({

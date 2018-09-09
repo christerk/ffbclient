@@ -303,7 +303,7 @@ export class PlayerCard extends Comp.Panel {
             }));
         }
 
-        this.skills = new Comp.Panel({
+        this.skills = new Comp.VerticalPanel({
             id: "Skills",
             height: 2.2,
             width: 1.4,
@@ -316,7 +316,6 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             color: 0x0,
             visible: false,
-            layout: Comp.Layout.VerticalList,
             children: this.skillLabels
         });
 
