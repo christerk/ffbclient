@@ -58,7 +58,8 @@ export type ComponentConfiguration = {
     visible?: boolean,
     inheritVisibility?: boolean,
     text?: string,
-    image?: string
+    image?: string,
+    adjustSize?: boolean
 }
 
 export abstract class UIComponent {

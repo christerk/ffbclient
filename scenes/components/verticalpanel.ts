@@ -24,7 +24,7 @@ export class VerticalPanel extends Comp.LinearPanel {
             childNumber++;
         }
 
-        if (newWidth > 0) {
+        if (super.shouldAdjustSize() && newWidth > 0) {
             this.config.width = newWidth;
         }
 

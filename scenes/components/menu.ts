@@ -12,6 +12,7 @@ export class Menu extends Comp.HorizontalPanel {
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
             background: 0x0000FF,
+            adjustSize: true,
             children: [
                 new Comp.Label({
                     id: 'gameMenu',
@@ -20,6 +21,7 @@ export class Menu extends Comp.HorizontalPanel {
                     height: 1,
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
+                    adjustSize: true,
 
                 }),
                 new Comp.Label({
@@ -28,7 +30,8 @@ export class Menu extends Comp.HorizontalPanel {
                     height: 1,
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
-                    visible: true
+                    visible: true,
+                    adjustSize: true,
                 })
             ]
         }));
@@ -39,6 +42,7 @@ export class Menu extends Comp.HorizontalPanel {
             parentAnchor: Comp.Anchor.NORTHWEST,
             visible: true,
             background: 0xFF0000,
+            adjustSize: true,
             children: [
                 new Comp.Label({
                     id: 'viewMenu',
@@ -46,6 +50,7 @@ export class Menu extends Comp.HorizontalPanel {
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
                     visible: true,
+                    adjustSize: true,
 
                 })
             ]
