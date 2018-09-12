@@ -1,0 +1,19 @@
+.menu {
+    display: flex;
+}
+
+.menu__item {
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.menu__slot {
+    position: relative;
+    &:hover .menu__item {
+        visibility: visible
+    }
+}
+
+.menu__entryContainer {
+    position: absolute
+}

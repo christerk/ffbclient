@@ -109,18 +109,18 @@ export class UI implements Types.EventListener {
         this.debugText = new Comp.Label({
             id: "DebugText",
             height: 0.5,
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
+            anchor: Comp.Anchor.NORTHEAST,
+            parentAnchor: Comp.Anchor.NORTHEAST,
             color: 0xffffff,
             text: "",
-        })
+        });
 
-        this.component = new Comp.Panel({
+        this.component = new Comp.BorderPanel({
             id: "RootPanel",
             width: "100%",
             height: "100%",
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "TopBar",
                     width: "100%",
                     height: 1,
@@ -129,7 +129,7 @@ export class UI implements Types.EventListener {
                     background: 0x003300,
                     children: [
                         this.debugText,
-                        new Comp.Panel({
+                        new Comp.BorderPanel({
                             id: "ScorePanel",
                             width: 6,
                             height: 1,
@@ -149,8 +149,14 @@ export class UI implements Types.EventListener {
                                 this.labelTurn
                             ]
                         }),
+                      /*  new Comp.Menu({
+                            height: 1,
+                            anchor: Comp.Anchor.NORTHWEST,
+                            parentAnchor: Comp.Anchor.NORTHWEST
+                        })*/
                     ]
                 }),
+
                 this.input,
                 new Comp.Button({
                     id: "DebugButton",
@@ -194,7 +200,7 @@ export class UI implements Types.EventListener {
             scale: 30,
             x: 0,
             y: 0,
-        }
+        };
 
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();

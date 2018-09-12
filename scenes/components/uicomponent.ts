@@ -39,11 +39,6 @@ export type RenderContext = {
     scale: number,
 }
 
-export enum Layout {
-    Border,
-    VerticalList
-};
-
 export type ComponentConfiguration = {
     id?: string,
     margin?: {
@@ -64,7 +59,7 @@ export type ComponentConfiguration = {
     inheritVisibility?: boolean,
     text?: string,
     image?: string,
-    layout?: Layout,
+    adjustSize?: boolean
 }
 
 export abstract class UIComponent {
@@ -102,8 +97,7 @@ export abstract class UIComponent {
             backgroundAlpha: 1,
             visible: true,
             inheritVisibility: true,
-            children: [],
-            layout: Layout.Border,
+            children: []
         };
 
         // Hack to avoid children being merged (causes problems)
