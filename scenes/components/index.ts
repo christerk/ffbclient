@@ -5,6 +5,7 @@ export { Label } from "./labelcomponent";
 export { Panel } from "./panelcomponent";
 export { Button } from "./buttoncomponent";
 export { Input } from "./inputcomponent";
+export { BorderPanel } from "./borderpanel";
 export { PlayerCard } from "./playercard";
 export { Image } from "./imagecomponent";
 export { LinearPanel } from "./linearpanel";

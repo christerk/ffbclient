@@ -115,12 +115,12 @@ export class UI implements Types.EventListener {
             text: "",
         });
 
-        this.component = new Comp.Panel({
+        this.component = new Comp.BorderPanel({
             id: "RootPanel",
             width: "100%",
             height: "100%",
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "TopBar",
                     width: "100%",
                     height: 1,
@@ -129,7 +129,7 @@ export class UI implements Types.EventListener {
                     background: 0x003300,
                     children: [
                         this.debugText,
-                        new Comp.Panel({
+                        new Comp.BorderPanel({
                             id: "ScorePanel",
                             width: 6,
                             height: 1,
@@ -220,7 +220,6 @@ export class UI implements Types.EventListener {
             this.playerCard.setPosition(pos[0], pos[1]);
             this.playerCard.setSize(sz[0], sz[1]);
             this.playerCard.setVisible(true);
-            console.log("Playercard: " + player.name)
             this.playerCard.setPlayer(player);
             this.playerCard.redraw();
         }

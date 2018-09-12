@@ -36,7 +36,7 @@ export class Menu extends Comp.HorizontalPanel {
             ]
         }));
 
-        this.tabs.push(new Comp.Panel({
+        this.tabs.push(new Comp.VerticalPanel({
             id: 'viewMenuSlot',
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
