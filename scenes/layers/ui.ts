@@ -148,12 +148,7 @@ export class UI implements Types.EventListener {
                                 this.labelAwayScore,
                                 this.labelTurn
                             ]
-                        }),
-                      /*  new Comp.Menu({
-                            height: 1,
-                            anchor: Comp.Anchor.NORTHWEST,
-                            parentAnchor: Comp.Anchor.NORTHWEST
-                        })*/
+                        })
                     ]
                 }),
 

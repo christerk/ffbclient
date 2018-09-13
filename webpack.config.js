@@ -32,7 +32,7 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin()
     ],
     resolve: {
-        extensions: ['.ts', '.js', '.scss'],
+        extensions: ['.ts', '.js'],
     },
     node: {
         fs: 'empty'
@@ -43,20 +43,6 @@ module.exports = {
                 test: /\.ts$/,
                 exclude: '/node_modules/',
                 loader: 'ts-loader',
-            }, 
-            {
-                test: /\.scss$/, 
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    }, 
-                    {
-                        loader: "css-loader"
-                    }, 
-                    {
-                        loader: "sass-loader"
-                    }
-                ]
             }
         ]
     },
