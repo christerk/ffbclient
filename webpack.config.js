@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const buildPath = path.join(__dirname, "build");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -24,10 +23,6 @@ module.exports = {
         // Minify CSS
         new webpack.LoaderOptionsPlugin({
             minimize: true,
-        }),
-        new MiniCssExtractPlugin({
-            filename: "[name]-[chunkhash].css",
-            chunkFilename: "[id]-[chunkhash].css"
         }),
         new webpack.HotModuleReplacementPlugin()
     ],
