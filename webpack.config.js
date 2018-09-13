@@ -20,10 +20,6 @@ module.exports = {
         }),
         new CleanWebpackPlugin([buildPath]),
         new HtmlWebpackPlugin({title: "ffbclient", template: "index.html"}),
-        // Minify CSS
-        new webpack.LoaderOptionsPlugin({
-            minimize: true,
-        }),
         new webpack.HotModuleReplacementPlugin()
     ],
     resolve: {
