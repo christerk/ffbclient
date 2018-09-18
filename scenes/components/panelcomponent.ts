@@ -1,8 +1,8 @@
 import * as Comp from ".";
 
-export class Panel extends Comp.UIComponent {
-    private background: Phaser.GameObjects.Image;
-    private children: Comp.UIComponent[];
+export abstract class Panel extends Comp.UIComponent {
+    protected background: Phaser.GameObjects.Image;
+    protected children: Comp.UIComponent[];
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
@@ -77,83 +77,30 @@ export class Panel extends Comp.UIComponent {
         for (let c of this.children) {
             c.postCreate();
         }
-    }
+                }
 
-    public show() {
-        if (this.background != null) {
-            this.background.visible = true;
-        }
-    }
+            public show() {
 
-    public hide() {
-        if (this.background != null) {
-            this.background.visible = false;
-        }
-    }
+                    if (this.background != null) {
+                        this.background.visible = true;
+                    }
+                }
 
-    public setVisible(visible: boolean) {
-        if (this.config.visible != visible) {
-            super.setVisible(visible);
+            public hide() {
+                    if (this.background != null) {
+                        this.background.visible = false;
+                    }
+                }
 
-            for (let c of this.children) {
-                if (c.InheritVisibility) {
+            public setVisible(visible: boolean) {
+                    if (this.config.visible != visible) {
+                        super.setVisible(visible);
+
+                        for (let c of this.children) {
+                            if (c.InheritVisibility) {
                     c.setVisible(visible);
                 }
             }
         }
-    }
-
-    public redraw(): void {
-        super.redraw();
-
-        let bounds = this.getBounds(this.ctx);
-
-        let bg = this.background;
-        if (bg != null) {
-            bg.setPosition(bounds.x, bounds.y);
-            bg.setDisplaySize(bounds.width, bounds.height);
-        }
-
-        if (this.config.layout == Comp.Layout.Border) {
-            this.renderChildrenBorderLayout(bounds);
-        } else {
-            this.renderChildrenVerticalLayout(bounds);
-        }
-    }
-
-    private renderChildrenVerticalLayout(bounds: Phaser.Geom.Rectangle) {
-        let childHeight = 4 * this.ctx.scale / 30;
-        let childNumber = 0;
-        for (let c of this.children) {
-            let renderContext: Comp.RenderContext = {
-                scene: this.ctx.scene,
-                parent: this,
-                x: bounds.x,
-                y: bounds.y + childNumber * (childHeight*1.2),
-                w: bounds.width,
-                h: childHeight,
-                scale: this.ctx.scale,
-            };
-            c.setContext(renderContext);
-            c.redraw();
-            childNumber++;
-        }
-    }
-
-    private renderChildrenBorderLayout(bounds: Phaser.Geom.Rectangle) {
-        let renderContext: Comp.RenderContext = {
-            scene: this.ctx.scene,
-            parent: this,
-            x: bounds.x,
-            y: bounds.y,
-            w: bounds.width,
-            h: bounds.height,
-            scale: this.ctx.scale,
-        };
-
-        for (let c of this.children) {
-            c.setContext(renderContext);
-            let childGameObject = c.redraw();
-        }        
     }
 }
