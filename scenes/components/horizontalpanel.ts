@@ -16,7 +16,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 };
                 c.setContext(renderContext);
                 c.redraw();
-                offSet += c.getBounds(renderContext).width
+                offSet += c.getBounds(renderContext).width / this.ctx.scale
             }
 
             if (super.shouldAdjustSize() && offSet > 0) {

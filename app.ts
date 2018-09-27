@@ -126,6 +126,10 @@ export default class App extends Phaser.Game implements EventListener {
                     App.controller.triggerEvent(EventType.Resizing);
                 }
                 break;
+            case EventType.FullScreen: this.canvas[this.device.fullscreen.request](); break;
+            case EventType.Quit:
+                App.controller.disconnect();
+                super.destroy(true); break;
         }
     }
 }

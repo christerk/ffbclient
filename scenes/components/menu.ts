@@ -1,4 +1,35 @@
 import * as Comp from "."
+import {EventType} from "../../types";
+
+
+export class MenuPanelConfiguration {
+    orientation: Orientation;
+    elements: (MenuEntryConfiguration | MenuNodeConfiguration)[]
+}
+
+export class MenuNodeConfiguration {
+    id: string;
+    orientation: Orientation;
+    label: string;
+    panel: MenuPanelConfiguration;
+}
+
+export class MenuEntryConfiguration {
+    public constructor(id: string, label: string, event: EventType){
+        this.label = label;
+        this.id = id;
+        this.event = event;
+    }
+
+    label: string;
+    id: string;
+    event: EventType;
+}
+
+export enum Orientation {
+    Vertical, Horizontal
+}
+
 
 export class Menu extends Comp.HorizontalPanel {
     private tabs: Comp.Panel[] = [];

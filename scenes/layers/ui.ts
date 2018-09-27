@@ -3,6 +3,9 @@ import * as Core from "../../core";
 import * as Comp from "../components";
 import * as Types from "../../types";
 import * as Model from "../../model";
+import {MenuEntryConfiguration, MenuPanelConfiguration, Orientation} from "../components";
+import {EventType} from "../../types";
+import {MenuBuilder} from "../helper/menubuilder";
 
 export class UI implements Types.EventListener {
     public container: Phaser.GameObjects.Container;
@@ -18,7 +21,7 @@ export class UI implements Types.EventListener {
 
     private debugText: Comp.Label;
 
-    private component: Comp.UIComponent;
+    private component: Comp.BorderPanel;
 
     private renderContext: Comp.RenderContext;
 
@@ -27,6 +30,76 @@ export class UI implements Types.EventListener {
         this.scene = scene;
         this.container = scene.make.container({});
         controller.addEventListener(this);
+
+        let menuConfig: MenuPanelConfiguration = {
+            orientation: Orientation.Horizontal,
+            elements: [
+                new MenuEntryConfiguration('quitButton', 'Quit', EventType.Quit)/*{
+                id: 'gameMenu',
+                orientation: Orientation.Vertical,
+                label: 'Game',
+                panel: {
+                    orientation: Orientation.Vertical,
+                    elements: [{
+                        label: 'Quit',
+                        id: 'quitButton',
+                        event: EventType.Quit
+                    }]
+
+            }}*/]
+        };
+
+/*
+        this.tabs.push(new Comp.VerticalPanel({
+            id: 'gameMenuSlot',
+            visible: true,
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            background: 0x0000FF,
+            adjustSize: true,
+            children: [
+                new Comp.Label({
+                    id: 'gameMenu',
+                    text: 'Game',
+                    visible: true,
+                    height: 1,
+                    anchor: Comp.Anchor.NORTHWEST,
+                    parentAnchor: Comp.Anchor.NORTHWEST,
+                    adjustSize: true,
+
+                }),
+                new Comp.Label({}
+                    id: 'quitButton',
+                    text: 'Quit',
+                    height: 1,
+                    anchor: Comp.Anchor.NORTHWEST,
+                    parentAnchor: Comp.Anchor.NORTHWEST,
+                    visible: true,
+                    adjustSize: true,
+                })
+            ]
+        }));
+
+        this.tabs.push(new Comp.VerticalPanel({
+            id: 'viewMenuSlot',
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            visible: true,
+            background: 0xFF0000,
+            adjustSize: true,
+            children: [
+                new Comp.Label({
+                    id: 'viewMenu',
+                    text: 'View',
+                    anchor: Comp.Anchor.NORTHWEST,
+                    parentAnchor: Comp.Anchor.NORTHWEST,
+                    visible: true,
+                    adjustSize: true,
+
+                })
+            ]
+        }));
+ */
 
         this.labelHomeScore = new Comp.Label({
             id: "HomeScore",
@@ -149,6 +222,7 @@ export class UI implements Types.EventListener {
                                 this.labelTurn
                             ]
                         }),
+                        //new MenuBuilder(0xFF0000, 0x000000).build(menuConfig, 'TopBar')
                       /*  new Comp.Menu({
                             height: 1,
                             anchor: Comp.Anchor.NORTHWEST,
@@ -202,6 +276,7 @@ export class UI implements Types.EventListener {
             y: 0,
         };
 
+        this.component.addChild(new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar'))
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();
         this.component.postCreate();

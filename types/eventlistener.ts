@@ -6,8 +6,10 @@ export enum EventType {
     Click,
     Connected,
     FloatText,
+    FullScreen,
     Initialized,
     ModelChanged,
+    Quit,
     Resized,
     Resizing
 }

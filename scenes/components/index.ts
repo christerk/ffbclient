@@ -11,4 +11,4 @@ export { Image } from "./imagecomponent";
 export { LinearPanel } from "./linearpanel";
 export { VerticalPanel } from "./verticalpanel";
 export { HorizontalPanel } from "./horizontalpanel"
-export { Menu } from "./menu";
+export * from "./menu";
