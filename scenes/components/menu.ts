@@ -2,25 +2,19 @@ import * as Comp from "."
 import {EventType} from "../../types";
 
 
-export class MenuPanelConfiguration {
+export type MenuPanelConfiguration = {
     orientation: Orientation;
     elements: (MenuEntryConfiguration | MenuNodeConfiguration)[]
 }
 
-export class MenuNodeConfiguration {
+export type MenuNodeConfiguration = {
     id: string;
     orientation: Orientation;
     label: string;
     panel: MenuPanelConfiguration;
 }
 
-export class MenuEntryConfiguration {
-    public constructor(id: string, label: string, event: EventType){
-        this.label = label;
-        this.id = id;
-        this.event = event;
-    }
-
+export type MenuEntryConfiguration = {
     label: string;
     id: string;
     event: EventType;

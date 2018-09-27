@@ -34,17 +34,17 @@ export class UI implements Types.EventListener {
         let menuConfig: MenuPanelConfiguration = {
             orientation: Orientation.Horizontal,
             elements: [
-                new MenuEntryConfiguration('quitButton', 'Quit', EventType.Quit)/*{
+                /*{
                 id: 'gameMenu',
                 orientation: Orientation.Vertical,
                 label: 'Game',
                 panel: {
                     orientation: Orientation.Vertical,
-                    elements: [{
+                    elements: [*/{
                         label: 'Quit',
                         id: 'quitButton',
                         event: EventType.Quit
-                    }]
+                    }/*]
 
             }}*/]
         };

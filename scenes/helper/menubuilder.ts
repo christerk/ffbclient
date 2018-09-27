@@ -1,5 +1,5 @@
 import * as Comp from "../components";
-import {Anchor, UIComponent} from "../components";
+import {Anchor, MenuEntryConfiguration, MenuNodeConfiguration, UIComponent} from "../components";
 import {Orientation} from "../components";
 
 export class MenuBuilder {
@@ -42,10 +42,10 @@ export class MenuBuilder {
     }
 
     private convertPanelChild(childConfig: Comp.MenuNodeConfiguration | Comp.MenuEntryConfiguration): Comp.LinearPanel | Comp.Label {
-        if (childConfig instanceof Comp.MenuEntryConfiguration) {
-            return this.convertEntry(childConfig);
+        if (childConfig["event"]) {
+            return this.convertEntry(childConfig as MenuEntryConfiguration);
         } else {
-            return this.convertNode(childConfig);
+            return this.convertNode(childConfig as MenuNodeConfiguration);
         }
     }
 
