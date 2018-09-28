@@ -34,72 +34,85 @@ export class UI implements Types.EventListener {
         let menuConfig: MenuPanelConfiguration = {
             orientation: Orientation.Horizontal,
             elements: [
-                /*{
-                id: 'gameMenu',
-                orientation: Orientation.Vertical,
-                label: 'Game',
-                panel: {
+                {
+                    id: 'gameMenu',
                     orientation: Orientation.Vertical,
-                    elements: [*/{
-                        label: 'Quit',
-                        id: 'quitButton',
-                        event: EventType.Quit
-                    }/*]
+                    label: 'Game',
+                    panel: {
+                        orientation: Orientation.Vertical,
+                        elements: [{
+                            label: 'Quit',
+                            id: 'quitButton',
+                            event: EventType.Quit
+                        }]
 
-            }}*/]
+                    }
+                }, {
+                    id: 'viewMenu',
+                    orientation: Orientation.Vertical,
+                    label: 'View',
+                    panel: {
+                        orientation: Orientation.Vertical,
+                        elements: [{
+                            label: 'Fullscreen',
+                            id: 'fullscreenButton',
+                            event: EventType.FullScreen
+                        }]
+                    }
+                }]
         };
 
-/*
-        this.tabs.push(new Comp.VerticalPanel({
-            id: 'gameMenuSlot',
-            visible: true,
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
-            background: 0x0000FF,
-            adjustSize: true,
-            children: [
-                new Comp.Label({
-                    id: 'gameMenu',
-                    text: 'Game',
+        /*
+                this.tabs.push(new Comp.VerticalPanel({
+                    id: 'gameMenuSlot',
                     visible: true,
-                    height: 1,
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
+                    background: 0x0000FF,
                     adjustSize: true,
+                    children: [
+                        new Comp.Label({
+                            id: 'gameMenu',
+                            text: 'Game',
+                            visible: true,
+                            height: 1,
+                            anchor: Comp.Anchor.NORTHWEST,
+                            parentAnchor: Comp.Anchor.NORTHWEST,
+                            adjustSize: true,
 
-                }),
-                new Comp.Label({}
-                    id: 'quitButton',
-                    text: 'Quit',
-                    height: 1,
-                    anchor: Comp.Anchor.NORTHWEST,
-                    parentAnchor: Comp.Anchor.NORTHWEST,
-                    visible: true,
-                    adjustSize: true,
-                })
-            ]
-        }));
+                        }),
+                        new Comp.Label({}
+                            id: 'quitButton',
+                            text: 'Quit',
+                            height: 1,
+                            anchor: Comp.Anchor.NORTHWEST,
+                            parentAnchor: Comp.Anchor.NORTHWEST,
+                            visible: true,
+                            adjustSize: true,
+                        })
+                    ]
+                }));
 
-        this.tabs.push(new Comp.VerticalPanel({
-            id: 'viewMenuSlot',
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
-            visible: true,
-            background: 0xFF0000,
-            adjustSize: true,
-            children: [
-                new Comp.Label({
-                    id: 'viewMenu',
-                    text: 'View',
+                this.tabs.push(new Comp.VerticalPanel({
+                    id: 'viewMenuSlot',
                     anchor: Comp.Anchor.NORTHWEST,
                     parentAnchor: Comp.Anchor.NORTHWEST,
                     visible: true,
+                    background: 0xFF0000,
                     adjustSize: true,
+                    children: [
+                        new Comp.Label({
+                            id: 'viewMenu',
+                            text: 'View',
+                            anchor: Comp.Anchor.NORTHWEST,
+                            parentAnchor: Comp.Anchor.NORTHWEST,
+                            visible: true,
+                            adjustSize: true,
 
-                })
-            ]
-        }));
- */
+                        })
+                    ]
+                }));
+         */
 
         this.labelHomeScore = new Comp.Label({
             id: "HomeScore",
@@ -127,7 +140,7 @@ export class UI implements Types.EventListener {
 
         this.labelHalf = new Comp.Label({
             id: "Half",
-            margin:  {
+            margin: {
                 right: 1.5,
             },
             height: 1,
@@ -139,7 +152,7 @@ export class UI implements Types.EventListener {
 
         this.labelTurn = new Comp.Label({
             id: "Turn",
-            margin:  {
+            margin: {
                 left: 1.5,
             },
             height: 1,
@@ -223,11 +236,11 @@ export class UI implements Types.EventListener {
                             ]
                         }),
                         //new MenuBuilder(0xFF0000, 0x000000).build(menuConfig, 'TopBar')
-                      /*  new Comp.Menu({
-                            height: 1,
-                            anchor: Comp.Anchor.NORTHWEST,
-                            parentAnchor: Comp.Anchor.NORTHWEST
-                        })*/
+                        /*  new Comp.Menu({
+                              height: 1,
+                              anchor: Comp.Anchor.NORTHWEST,
+                              parentAnchor: Comp.Anchor.NORTHWEST
+                          })*/
                     ]
                 }),
 
@@ -312,8 +325,8 @@ export class UI implements Types.EventListener {
             this.labelHomeScore.setText(g.teamHome.getScore().toString());
             this.labelAwayScore.setText(g.teamAway.getScore().toString());
 
-            let half = "H"+g.getHalf();
-            let turn = "T"+g.teamHome.getTurn()+"/"+g.teamAway.getTurn();
+            let half = "H" + g.getHalf();
+            let turn = "T" + g.teamHome.getTurn() + "/" + g.teamAway.getTurn();
             this.labelHalf.setText(half);
             this.labelTurn.setText(turn);
         }
