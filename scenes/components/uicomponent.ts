@@ -47,6 +47,12 @@ export type ComponentConfiguration = {
         top?: Size,
         bottom?: Size,
     },
+    offset?: {
+        left?: number,
+        right?: number,
+        top?: number,
+        bottom?: number,
+    },
     width?: Size,
     height?: Size,
     anchor?: Anchor,
@@ -83,6 +89,12 @@ export abstract class UIComponent {
     public constructor(config: ComponentConfiguration) {
         let defaults: ComponentConfiguration = {
             margin: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+            },
+            offset: {
                 left: 0,
                 right: 0,
                 top: 0,
@@ -160,23 +172,29 @@ export abstract class UIComponent {
             innerWidth: this.translateScalar(this.config.width, ctx.scale, ctx.w),
             innerHeight: this.translateScalar(this.config.height, ctx.scale, ctx.h),
             margin: {
-                left: this.translateScalar(this.config.margin.left, ctx.scale, ctx.h),
-                right: this.translateScalar(this.config.margin.right, ctx.scale, ctx.h),
+                left: this.translateScalar(this.config.margin.left, ctx.scale, ctx.w),
+                right: this.translateScalar(this.config.margin.right, ctx.scale, ctx.w),
                 top: this.translateScalar(this.config.margin.top, ctx.scale, ctx.h),
                 bottom: this.translateScalar(this.config.margin.bottom, ctx.scale, ctx.h),
+            },
+            offset: {
+                left: this.translateScalar(this.config.offset.left, ctx.scale, ctx.w),
+                right: this.translateScalar(this.config.offset.right, ctx.scale, ctx.w),
+                top: this.translateScalar(this.config.offset.top, ctx.scale, ctx.h),
+                bottom: this.translateScalar(this.config.offset.bottom, ctx.scale, ctx.h),
             },
             outerWidth: 0,
             outerHeight: 0,
         };
 
-        pos.outerWidth = pos.innerWidth + pos.margin.left + pos.margin.right;
-        pos.outerHeight = pos.innerHeight + pos.margin.top + pos.margin.bottom;
+        pos.outerWidth = pos.innerWidth + pos.margin.left + pos.margin.right + pos.offset.left + pos.offset.right;
+        pos.outerHeight = pos.innerHeight + pos.margin.top + pos.margin.bottom + pos.offset.top + pos.offset.bottom;
 
         let centerX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*pos.outerWidth) + ctx.x;
         let centerY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*pos.outerHeight) + ctx.y;
 
-        let x = centerX - pos.outerWidth / 2 + pos.margin.left;
-        let y = centerY - pos.outerHeight / 2 + pos.margin.top;
+        let x = centerX - pos.outerWidth / 2 + pos.margin.left + pos.offset.left;
+        let y = centerY - pos.outerHeight / 2 + pos.margin.top + pos.offset.top;
 
         return new Phaser.Geom.Rectangle(x, y, pos.innerWidth, pos.innerHeight);
     }
@@ -192,6 +210,13 @@ export abstract class UIComponent {
     public setPosition(x: number, y: number) {
         this.config.margin.left = x + "px";
         this.config.margin.top = y + "px";
+    }
+
+    public setPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
+        this.config.offset.left = left;
+        this.config.offset.top = top;
+        this.config.offset.right = right;
+        this.config.offset.bottom = bottom;
     }
 
     public setSize(w: number, h: number) {
