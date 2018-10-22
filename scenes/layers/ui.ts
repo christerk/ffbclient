@@ -293,7 +293,6 @@ export class UI implements Types.EventListener {
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();
         this.component.postCreate();
-        this.component.redraw();
         this.container.add(phaserObject);
     }
 

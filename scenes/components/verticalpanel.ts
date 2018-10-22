@@ -11,16 +11,17 @@ export class VerticalPanel extends Comp.LinearPanel {
                 scene: this.ctx.scene,
                 parent: this,
                 x: bounds.x,
-                y: bounds.y + offSet,
+                y: bounds.y,
                 w: bounds.width,
                 h: 100,
                 scale: this.ctx.scale,
             };
+            c.setPositionOffset(0, offSet)
             c.setContext(renderContext);
             c.redraw();
             let newBounds = c.getBounds(renderContext);
             newWidth = Math.max(newBounds.width / this.ctx.scale, newWidth);
-            offSet += newBounds.height;
+            offSet += newBounds.height / this.ctx.scale;
             childNumber++;
         }
 
