@@ -13,7 +13,7 @@ export enum Anchor {
     SOUTHEAST = 8,
 }
 
-type Size = number|string;
+export type Size = number|string;
 
 class Bounds {
     public x: Size;
@@ -223,6 +223,11 @@ export abstract class UIComponent {
         } else {
             this.hide();
         }
+    }
+
+    public setWidth(width: Size) {
+        this.config.width = width;
+        this.redraw();
     }
 
     public abstract show(): void;

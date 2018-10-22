@@ -1,5 +1,5 @@
 
-export { Anchor, ComponentConfiguration, UIComponent, RenderContext } from "./uicomponent";
+export { Anchor, ComponentConfiguration, UIComponent, RenderContext, Size } from "./uicomponent";
 
 export { Label } from "./labelcomponent";
 export { Panel } from "./panelcomponent";
@@ -11,4 +11,4 @@ export { Image } from "./imagecomponent";
 export { LinearPanel } from "./linearpanel";
 export { VerticalPanel } from "./verticalpanel";
 export { HorizontalPanel } from "./horizontalpanel"
-export * from "./menu";
+export * from "./menu/menu";

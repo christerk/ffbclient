@@ -5,7 +5,7 @@ import * as Types from "../../types";
 import * as Model from "../../model";
 import {MenuEntryConfiguration, MenuPanelConfiguration, Orientation} from "../components";
 import {EventType} from "../../types";
-import {MenuBuilder} from "../helper/menubuilder";
+import {MenuBuilder} from "../components/menu/menubuilder";
 
 export class UI implements Types.EventListener {
     public container: Phaser.GameObjects.Container;

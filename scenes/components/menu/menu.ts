@@ -1,5 +1,5 @@
-import * as Comp from "."
-import {EventType} from "../../types";
+import * as Comp from "../index"
+import {EventType} from "../../../types";
 
 
 export type MenuPanelConfiguration = {

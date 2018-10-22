@@ -3,10 +3,15 @@ import * as Comp from '.';
 export abstract class LinearPanel extends Comp.Panel {
 
     public redraw(): void {
+        this.recursiveRedraw();
+    }
+
+    public recursiveRedraw(){
         super.redraw();
         let bounds = this.renderChildren(this.getBounds(this.ctx));
         this.createBackground(bounds);
     }
+
 
     private createBackground(bounds) {
         let bg = this.background;
@@ -21,4 +26,7 @@ export abstract class LinearPanel extends Comp.Panel {
     }
 
     protected abstract renderChildren(bounds: Phaser.Geom.Rectangle): Phaser.Geom.Rectangle;
+
+    protected abstract adjustChildrenWidth(parentWidth: Comp.Size);
+
 }

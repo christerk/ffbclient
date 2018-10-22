@@ -1,6 +1,6 @@
-import * as Comp from "../components";
-import {Anchor, MenuEntryConfiguration, MenuNodeConfiguration, UIComponent} from "../components";
-import {Orientation} from "../components";
+import * as Comp from "../";
+import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
+import {Anchor, UIComponent} from "../uicomponent";
 
 export class MenuBuilder {
 

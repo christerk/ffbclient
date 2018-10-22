@@ -19,7 +19,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 offSet += c.getBounds(renderContext).width / this.ctx.scale
             }
 
-            if (super.shouldAdjustSize() && offSet > 0) {
+            if (super.shouldAdjustSize() && offSet != bounds.x) {
                 this.config.width = offSet;
             }
 
