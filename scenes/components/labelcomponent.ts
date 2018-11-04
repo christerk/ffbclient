@@ -1,4 +1,5 @@
 import * as Comp from ".";
+import {Size} from ".";
 
 export class Label extends Comp.UIComponent {
     private text: string;
@@ -42,8 +43,8 @@ export class Label extends Comp.UIComponent {
         }
     }
 
-    public redraw(): void {
-        super.redraw();
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
         
         this.config.width = 0;
         let col = this.numberToRGBString(this.config.color);
@@ -87,5 +88,9 @@ export class Label extends Comp.UIComponent {
             let bounds = this.getBounds(this.ctx);
             g.setPosition(bounds.x, bounds.y);
         }
+    }
+
+    public adjustWidthToParent(width: Size) {
+        return super.adjustWidthToParent(width);
     }
 }

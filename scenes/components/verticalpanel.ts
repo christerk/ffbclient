@@ -2,7 +2,10 @@ import * as Comp from '.';
 
 export class VerticalPanel extends Comp.LinearPanel {
 
-    protected renderChildren(bounds: Phaser.Geom.Rectangle): Phaser.Geom.Rectangle {
+    public redrawChildren(): void {
+        super.redrawChildren();
+        console.log("DEBUG: VerticalPanel#renderChildren - " + this.config.id)
+        let bounds = this.getBounds(this.ctx);
         let childNumber = 0;
         let newWidth = 0;
         let offSet = 0;
@@ -13,22 +16,24 @@ export class VerticalPanel extends Comp.LinearPanel {
                 x: bounds.x,
                 y: bounds.y,
                 w: bounds.width,
-                h: 100,
+                h: bounds.height,
                 scale: this.ctx.scale,
             };
-            c.setPositionOffset(0, offSet)
+            c.setPositionOffset(0, offSet);
             c.setContext(renderContext);
             c.redraw();
-            let newBounds = c.getBounds(renderContext);
-            newWidth = Math.max(newBounds.width / this.ctx.scale, newWidth);
-            offSet += newBounds.height / this.ctx.scale;
+            newWidth = Math.max( c.getWidthForParent() / this.ctx.scale, newWidth);
+            offSet += c.getBounds(this.ctx).height / this.ctx.scale;
             childNumber++;
         }
 
-        if (super.shouldAdjustSize() && newWidth > 0) {
+        if (super.shouldAdjustSize() && this.children.length > 0) {
             this.config.width = newWidth;
-        }
+            for (let c of this.children) {
+                c.adjustWidthToParent(newWidth)
+                c.redrawSelf();
 
-        return this.getBounds(this.ctx);
+            }
+        }
     }
 }

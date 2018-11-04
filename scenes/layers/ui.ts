@@ -57,6 +57,26 @@ export class UI implements Types.EventListener {
                             label: 'Fullscreen',
                             id: 'fullscreenButton',
                             event: EventType.FullScreen
+                        }, {
+                            orientation: Orientation.Horizontal,
+                            label: "test1",
+                            id: "testlabel1",
+                            panel: {
+                                orientation: Orientation.Vertical,
+                                elements: [{
+                                    label: 'TestSub0',
+                                    id: 'testsub0label',
+                                    event: EventType.FullScreen
+                                },{
+                                    label: 'TestSub1',
+                                    id: 'testsub1label',
+                                    event: EventType.FullScreen
+                                },{
+                                    label: 'TestSub2',
+                                    id: 'testsub1labe2',
+                                    event: EventType.FullScreen
+                                }]
+                            }
                         }]
                     }
                 }]
@@ -234,13 +254,7 @@ export class UI implements Types.EventListener {
                                 this.labelAwayScore,
                                 this.labelTurn
                             ]
-                        }),
-                        //new MenuBuilder(0xFF0000, 0x000000).build(menuConfig, 'TopBar')
-                        /*  new Comp.Menu({
-                              height: 1,
-                              anchor: Comp.Anchor.NORTHWEST,
-                              parentAnchor: Comp.Anchor.NORTHWEST
-                          })*/
+                        })
                     ]
                 }),
 
@@ -288,7 +302,7 @@ export class UI implements Types.EventListener {
             x: 0,
             y: 0,
         };
-
+        console.log("Menu: " + JSON.stringify(new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar')))
         this.component.addChild(new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar'))
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();

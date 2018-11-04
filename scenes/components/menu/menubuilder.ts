@@ -13,14 +13,18 @@ export class MenuBuilder {
     }
 
     public build(panelConfig: Comp.MenuPanelConfiguration, containerId: string): Comp.LinearPanel {
-        return this.convertPanel(panelConfig, containerId);
+        return this.convertPanel(panelConfig, containerId, true);
     }
 
-    private convertPanel(panelConfig: Comp.MenuPanelConfiguration, parentId: string): Comp.LinearPanel {
+    private convertPanel(panelConfig: Comp.MenuPanelConfiguration, parentId: string, isRoot: boolean = false): Comp.LinearPanel {
         let self = this;
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element)});
         let config = this.createConfig(parentId + "_panel", false, "", children);
-        return this.createPanel(config, panelConfig.orientation);
+        if (isRoot) {
+            return new Comp.HorizontalPanel(config)
+        } else {
+            return this.createPanel(config, panelConfig.orientation);
+        }
     }
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration): Comp.LinearPanel {
@@ -51,7 +55,7 @@ export class MenuBuilder {
 
 
     private createPanel(config: Comp.ComponentConfiguration, orientation: Orientation){
-        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
+        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config) : new Comp.VerticalPanel(config);
     }
 
     private createConfig(id: string,  inheritVisibility: boolean, label: string, children: UIComponent[] = []): Comp.ComponentConfiguration {

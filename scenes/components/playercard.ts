@@ -432,8 +432,4 @@ export class PlayerCard extends Comp.BorderPanel {
             this.skillLabels[index].setVisible(false);
         }
     }
-
-    public redraw() {
-        super.redraw();
-    }
 }

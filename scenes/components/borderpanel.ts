@@ -2,9 +2,7 @@ import * as Comp from ".";
 
 export class BorderPanel extends Comp.Panel {
 
-    public redraw(): void {
-        super.redraw();
-
+    public redrawChildren(): void {
         let bounds = this.getBounds(this.ctx);
 
         let renderContext: Comp.RenderContext = {
@@ -16,12 +14,13 @@ export class BorderPanel extends Comp.Panel {
             h: bounds.height,
             scale: this.ctx.scale,
         };
-
         for (let c of this.children) {
             c.setContext(renderContext);
             c.redraw();
         }
-
+    }
+    public redrawSelfAfterChildren(): void {
+        let bounds = this.getBounds(this.ctx);
         let bg = this.background;
         if (bg != null) {
             bg.setPosition(bounds.x, bounds.y);

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import deepmerge from "deepmerge";
+import * as Comp from "./index";
 
 export enum Anchor {
     CENTER = 0,
@@ -219,6 +220,13 @@ export abstract class UIComponent {
         this.config.offset.bottom = bottom;
     }
 
+    public adjustPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
+        this.config.offset.left += left;
+        this.config.offset.top += top;
+        this.config.offset.right += right;
+        this.config.offset.bottom += bottom;
+    }
+
     public setSize(w: number, h: number) {
         this.config.width = w + "px";
         this.config.height = h + "px";
@@ -243,6 +251,17 @@ export abstract class UIComponent {
     }
 
     public redraw(): void {
+        this.redrawSelfBeforeChildren();
+        this.redrawChildren();
+        this.redrawSelfAfterChildren()
+    }
+
+    public redrawSelf(): void {
+        this.redrawSelfBeforeChildren();
+        this.redrawSelfAfterChildren()
+    }
+
+    public redrawSelfBeforeChildren(): void {
         if (this.config.visible) {
             this.show();
         } else {
@@ -250,14 +269,27 @@ export abstract class UIComponent {
         }
     }
 
-    public setWidth(width: Size) {
+    public redrawSelfAfterChildren(): void {
+
+    }
+
+    public redrawChildren(): void {
+
+    }
+
+    public adjustWidthToParent(width: Size): number {
+        let difference = this.translateScalar(width, this.ctx.scale, this.ctx.w) -
+            this.translateScalar(this.config.width, this.ctx.scale, this.ctx.w) ;
         this.config.width = width;
-        this.redraw();
+        return difference;
+    }
+
+    public getWidthForParent(): number {
+        return this.getBounds(this.ctx).width
     }
 
     public abstract show(): void;
     public abstract hide(): void;
     public abstract create(): Phaser.GameObjects.GameObject;
     public abstract destroy(): void;
-
 }

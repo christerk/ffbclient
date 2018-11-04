@@ -28,8 +28,8 @@ export class Image extends Comp.UIComponent {
         this.image.setTexture(key);
     }
 
-    public redraw(): void {
-        super.redraw();
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
         let bounds = this.getBounds(this.ctx);
         this.image.setOrigin(0, 0);
         this.image.setPosition(bounds.x, bounds.y);

@@ -48,8 +48,8 @@ export class Button extends Comp.UIComponent {
         this.button.visible = false;
     }
 
-    public redraw(): void {
-        super.redraw();
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
         let bounds = this.getBounds(this.ctx);
         this.button.setPosition(bounds.x, bounds.y);
         this.button.setDisplaySize(bounds.width, bounds.height);

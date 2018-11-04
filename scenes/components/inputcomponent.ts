@@ -182,8 +182,8 @@ export class Input extends Comp.UIComponent {
         return this.text.substr(this.caretPosition);
     }
 
-    public redraw(): void {
-        super.redraw();
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
 
         let bounds = this.getBounds(this.ctx);
 
