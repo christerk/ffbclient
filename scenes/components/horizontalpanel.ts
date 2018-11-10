@@ -6,7 +6,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
         super.redrawChildren();
         console.log("DEBUG: HorizontalPanel#renderChildren - " + this.config.id)
         let bounds = this.getBounds(this.ctx);
-        let offSet: number = bounds.x / this.ctx.scale;
+        let offSet: number = Math.floor(bounds.x / this.ctx.scale);
         for (let c of this.children) {
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
@@ -25,6 +25,11 @@ export class HorizontalPanel extends Comp.LinearPanel {
 
         if (super.shouldAdjustSize()) {
             this.config.width = offSet;
+            if (super.triggerRedraw()) {
+                for (let c of this.children) {
+                    c.redraw();
+                }
+            }
         }
 
     }

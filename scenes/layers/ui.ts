@@ -57,6 +57,10 @@ export class UI implements Types.EventListener {
                             label: 'Fullscreen',
                             id: 'fullscreenButton',
                             event: EventType.FullScreen
+                        },{
+                            label: 'Fullscreen',
+                            id: 'fullscreenButton2',
+                            event: EventType.FullScreen
                         }, {
                             orientation: Orientation.Horizontal,
                             label: "test1",

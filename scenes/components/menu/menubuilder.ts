@@ -21,6 +21,7 @@ export class MenuBuilder {
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element)});
         let config = this.createConfig(parentId + "_panel", false, "", children);
         if (isRoot) {
+            config.triggerRecursiveRedrawAfterAdjust = true;
             return new Comp.HorizontalPanel(config)
         } else {
             return this.createPanel(config, panelConfig.orientation);
@@ -42,6 +43,7 @@ export class MenuBuilder {
 
     private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
         let config = this.createConfig(entryConfig.id, true, entryConfig.label, []);
+      //      config.color = 0xFF00FF;
         return new Comp.Label(config);
     }
 
@@ -55,6 +57,9 @@ export class MenuBuilder {
 
 
     private createPanel(config: Comp.ComponentConfiguration, orientation: Orientation){
+            config.background = 0xFF00FF;
+
+
         return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config) : new Comp.VerticalPanel(config);
     }
 

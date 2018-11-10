@@ -66,7 +66,8 @@ export type ComponentConfiguration = {
     inheritVisibility?: boolean,
     text?: string,
     image?: string,
-    adjustSize?: boolean
+    adjustSize?: boolean,
+    triggerRecursiveRedrawAfterAdjust?: boolean
 }
 
 export abstract class UIComponent {
@@ -256,11 +257,6 @@ export abstract class UIComponent {
         this.redrawSelfAfterChildren()
     }
 
-    public redrawSelf(): void {
-        this.redrawSelfBeforeChildren();
-        this.redrawSelfAfterChildren()
-    }
-
     public redrawSelfBeforeChildren(): void {
         if (this.config.visible) {
             this.show();
@@ -281,6 +277,7 @@ export abstract class UIComponent {
         let difference = this.translateScalar(width, this.ctx.scale, this.ctx.w) -
             this.translateScalar(this.config.width, this.ctx.scale, this.ctx.w) ;
         this.config.width = width;
+        this.config.adjustSize = false;
         return difference;
     }
 
@@ -292,4 +289,21 @@ export abstract class UIComponent {
     public abstract hide(): void;
     public abstract create(): Phaser.GameObjects.GameObject;
     public abstract destroy(): void;
+
+    protected createBackground(bounds: Phaser.Geom.Rectangle): Phaser.GameObjects.Image {
+        let bg = this.ctx.scene.make.graphics({});
+        let alpha = this.config.backgroundAlpha;
+        if (alpha === null || alpha === undefined) {
+            alpha = 1;
+        }
+        bg.fillStyle(this.config.background, alpha);
+        bg.fillRect(0, 0, bounds.width, bounds.height);
+        let key = Comp.UIComponent.generateKey();
+        bg.generateTexture(key, bounds.width, bounds.height);
+        let background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
+        background.setOrigin(0,0);
+        background.setPosition(bounds.x, bounds.y)
+        return background;
+    }
+
 }

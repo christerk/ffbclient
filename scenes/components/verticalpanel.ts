@@ -31,8 +31,9 @@ export class VerticalPanel extends Comp.LinearPanel {
             this.config.width = newWidth;
             for (let c of this.children) {
                 c.adjustWidthToParent(newWidth)
-                c.redrawSelf();
-
+                if (super.triggerRedraw()) {
+                    c.redraw();
+                }
             }
         }
     }

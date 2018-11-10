@@ -7,10 +7,13 @@ export class Label extends Comp.UIComponent {
     private stroke: number;
     private fontSize: number;
     private numRows: number;
+    private background: Phaser.GameObjects.Image;
+    private container: Phaser.GameObjects.Container;
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
 
+        this.config.adjustSize = true;
         this.text = config.text;
         this.stroke = 0;
         this.fontSize = -1;
@@ -18,17 +21,26 @@ export class Label extends Comp.UIComponent {
     }
 
     public create(): Phaser.GameObjects.GameObject {
+        let bounds = this.getBounds(this.ctx);
+        this.container = this.ctx.scene.make.container({});
+        this.container.setPosition(0, 0);
+
+
         this.textObject = this.ctx.scene.make.text({});
         this.textObject.setFontFamily("arial");
         if (this.stroke > 0) {
             this.textObject.setStroke("#000000", this.stroke);
         }
 
-        return this.textObject;
+        this.container.add(this.textObject)
+        return this.container;
     }
 
     public destroy(): void {
         this.textObject.destroy();
+        if (this.background != null) {
+            this.background.destroy();
+        }
     }
 
     public show() {
@@ -46,9 +58,10 @@ export class Label extends Comp.UIComponent {
     public redrawSelfBeforeChildren(): void {
         super.redrawSelfBeforeChildren();
         
-        this.config.width = 0;
         let col = this.numberToRGBString(this.config.color);
-        let bg = this.numberToRGBString(this.config.background);
+
+
+
         let bounds = this.getBounds(this.ctx);
         let g = this.textObject;
 
@@ -65,12 +78,19 @@ export class Label extends Comp.UIComponent {
         if (g.text != this.text) {
             g.setText(this.text);
         }
-        g.setBackgroundColor(bg);
 
-        this.config.width = g.displayWidth + "px";
+        if (this.config.adjustSize) {
+            this.config.width = g.displayWidth + "px";
+        }
         bounds = this.getBounds(this.ctx);
-
-        g.setPosition(bounds.x, bounds.y);
+        if (this.background != null) {
+            this.container.remove(this.background);
+        }
+        if (this.config.background != null) {
+            this.background = super.createBackground(bounds);
+            this.container.addAt(this.background, 0);
+        }
+        this.textObject.setPosition(bounds.x,bounds.y)
     }
 
     public setStroke(width: number) {
@@ -91,6 +111,7 @@ export class Label extends Comp.UIComponent {
     }
 
     public adjustWidthToParent(width: Size) {
+        this.background.width = this.translateScalar(width, this.ctx.scale, this.ctx.w);
         return super.adjustWidthToParent(width);
     }
 }

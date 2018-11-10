@@ -33,18 +33,8 @@ export abstract class Panel extends Comp.UIComponent {
         container.setPosition(0, 0);
 
         if (this.config.background != null) {
-            let bg = this.ctx.scene.make.graphics({});
-            let alpha = this.config.backgroundAlpha;
-            if (alpha === null || alpha === undefined) {
-                alpha = 1;
-            }
-            bg.fillStyle(this.config.background, alpha);
-            bg.fillRect(0, 0, bounds.width, bounds.height);
-            let key = Comp.UIComponent.generateKey();
-            bg.generateTexture(key, bounds.width, bounds.height);
-            this.background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
-            this.background.setOrigin(0,0);
-            container.add(this.background);
+            this.background = super.createBackground(bounds);
+            container.add(this.background)
         }
 
         let childCtx: Comp.RenderContext = {
@@ -68,7 +58,9 @@ export abstract class Panel extends Comp.UIComponent {
 
     public destroy(): void {
         this.clearChildren();
-        this.background.destroy();
+        if (this.background != null) {
+            this.background.destroy();
+        }
     }
 
     public postCreate() {
