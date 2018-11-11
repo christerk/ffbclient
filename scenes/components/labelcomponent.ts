@@ -32,7 +32,7 @@ export class Label extends Comp.UIComponent {
             this.textObject.setStroke("#000000", this.stroke);
         }
 
-        this.container.add(this.textObject)
+        this.container.add(this.textObject);
         return this.container;
     }
 

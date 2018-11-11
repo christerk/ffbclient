@@ -4,7 +4,6 @@ export class HorizontalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
         super.redrawChildren();
-        console.log("DEBUG: HorizontalPanel#renderChildren - " + this.config.id)
         let bounds = this.getBounds(this.ctx);
         let offSet: number = Math.floor(bounds.x / this.ctx.scale);
         for (let c of this.children) {

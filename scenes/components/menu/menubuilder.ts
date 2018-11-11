@@ -30,8 +30,7 @@ export class MenuBuilder {
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration): Comp.LinearPanel {
         let wrapperConfig = this.createConfig(nodeConfig.id, true, nodeConfig.label);
-        let labelConfig = this.createConfig(nodeConfig.id + "_label", true, nodeConfig.label);
-        let label = new Comp.Label(labelConfig);
+        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label)
         wrapperConfig.children.push(label);
         if (nodeConfig.panel) {
             let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
@@ -42,9 +41,11 @@ export class MenuBuilder {
     }
 
     private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
-        let config = this.createConfig(entryConfig.id, true, entryConfig.label, []);
-      //      config.color = 0xFF00FF;
-        return new Comp.Label(config);
+        return this.createLabel(entryConfig.id, entryConfig.label)
+    }
+
+    private createLabel(id: string, label: string): Comp.Label {
+        return new Comp.Label(this.createConfig(id, true, label));
     }
 
     private convertPanelChild(childConfig: Comp.MenuNodeConfiguration | Comp.MenuEntryConfiguration): Comp.LinearPanel | Comp.Label {

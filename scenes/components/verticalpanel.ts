@@ -4,7 +4,6 @@ export class VerticalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
         super.redrawChildren();
-        console.log("DEBUG: VerticalPanel#renderChildren - " + this.config.id)
         let bounds = this.getBounds(this.ctx);
         let childNumber = 0;
         let newWidth = 0;
