@@ -5,7 +5,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
     public redrawChildren(): void {
         super.redrawChildren();
         let bounds = this.getBounds(this.ctx);
-        let offSet: number = Math.floor(bounds.x / this.ctx.scale);
+        let offSet: number = bounds.x / this.ctx.scale;
         for (let c of this.children) {
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
