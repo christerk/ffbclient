@@ -22,12 +22,13 @@ export class VerticalPanel extends Comp.LinearPanel {
             c.setContext(renderContext);
             c.redraw();
             newWidth = Math.max( c.getWidthForParent() / this.ctx.scale, newWidth);
-            offSet += c.getBounds(this.ctx).height / this.ctx.scale;
+            offSet += c.getBounds(renderContext).height / this.ctx.scale;
             childNumber++;
         }
 
         if (super.shouldAdjustSize() && this.children.length > 0) {
             this.config.width = newWidth;
+            this.config.height = offSet;
             for (let c of this.children) {
                 c.adjustWidthToParent(newWidth)
                 if (super.triggerRedraw()) {

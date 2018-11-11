@@ -221,13 +221,6 @@ export abstract class UIComponent {
         this.config.offset.bottom = bottom;
     }
 
-    public adjustPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
-        this.config.offset.left += left;
-        this.config.offset.top += top;
-        this.config.offset.right += right;
-        this.config.offset.bottom += bottom;
-    }
-
     public setSize(w: number, h: number) {
         this.config.width = w + "px";
         this.config.height = h + "px";

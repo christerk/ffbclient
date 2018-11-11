@@ -6,7 +6,9 @@ export class HorizontalPanel extends Comp.LinearPanel {
         super.redrawChildren();
         let bounds = this.getBounds(this.ctx);
         let offSet: number = bounds.x / this.ctx.scale;
+        var index = 0;
         for (let c of this.children) {
+            console.log("DEBUG: offset " +  offSet + " of child[" +  index++ + "]")
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
                 parent: this,
@@ -21,6 +23,9 @@ export class HorizontalPanel extends Comp.LinearPanel {
             c.redraw();
             offSet += c.getBounds(renderContext).width / this.ctx.scale
         }
+        console.log("DEBUG: offset " +  offSet + " of child[" +  index + "]")
+        console.log("DEBUG: Width: " + this.getBounds(this.ctx).width + " of " + this.config.id )
+
 
         if (super.shouldAdjustSize()) {
             this.config.width = offSet;
