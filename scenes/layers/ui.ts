@@ -306,8 +306,10 @@ export class UI implements Types.EventListener {
             x: 0,
             y: 0,
         };
-        console.log("DEBUG: Menu: " + JSON.stringify(new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar')))
-        this.component.addChild(new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar'))
+
+        let menu = new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar');
+        console.log("DEBUG: Menu: " + JSON.stringify(menu));
+        this.component.addChild(menu);
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();
         this.component.postCreate();

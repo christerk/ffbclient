@@ -14,6 +14,7 @@ export class Label extends Comp.UIComponent {
         super(config);
 
         this.config.adjustSize = true;
+
         this.text = config.text;
         this.stroke = 0;
         this.fontSize = -1;
@@ -25,7 +26,6 @@ export class Label extends Comp.UIComponent {
         this.container = this.ctx.scene.make.container({});
         this.container.setPosition(0, 0);
 
-
         this.textObject = this.ctx.scene.make.text({});
         this.textObject.setFontFamily("arial");
         if (this.stroke > 0) {
@@ -33,6 +33,7 @@ export class Label extends Comp.UIComponent {
         }
 
         this.container.add(this.textObject);
+
         return this.container;
     }
 

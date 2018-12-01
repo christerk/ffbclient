@@ -3,7 +3,6 @@ import * as Comp from '.';
 export class VerticalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
-        console.log("DEBUG: Entering RedrawChildren of " + this.config.id)
         super.redrawChildren();
         let bounds = this.getBounds(this.ctx);
         let childNumber = 0;
@@ -37,6 +36,5 @@ export class VerticalPanel extends Comp.LinearPanel {
                 }
             }
         }
-        console.log("DEBUG: Leaving RedrawChildren of " + this.config.id)
     }
 }

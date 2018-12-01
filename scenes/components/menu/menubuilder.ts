@@ -22,6 +22,7 @@ export class MenuBuilder {
         let config = this.createConfig(parentId + "_panel", false, "", children);
         if (isRoot) {
             config.triggerRecursiveRedrawAfterAdjust = true;
+            config.background = 0xFF00FF;
             return new Comp.HorizontalPanel(config)
         } else {
             return this.createPanel(config, panelConfig.orientation);
@@ -66,7 +67,7 @@ export class MenuBuilder {
         }
 
 
-        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config) : new Comp.VerticalPanel(config);
+        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
     }
 
     private createConfig(id: string,  inheritVisibility: boolean, label: string, children: UIComponent[] = []): Comp.ComponentConfiguration {

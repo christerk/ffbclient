@@ -3,10 +3,9 @@ import * as Comp from '.';
 export class HorizontalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
-        console.log("DEBUG: Entering RedrawChildren of " + this.config.id)
         super.redrawChildren();
         let bounds = this.getBounds(this.ctx);
-        let offSet: number = bounds.x / this.ctx.scale;
+        let offSet: number = (bounds.x) / this.ctx.scale;
         let baseOffset: number = offSet;
         var index = 0;
         for (let c of this.children) {
@@ -23,7 +22,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
             c.setPositionOffset(offSet);
             c.setContext(renderContext);
             c.redraw();
-            offSet += c.getBounds(renderContext).width / this.ctx.scale;
+            offSet += (c.getBounds(renderContext).width ) / this.ctx.scale;
             console.log("DEBUG: Child Width: " + c.getBounds(renderContext).width + " of child[" + index + "]")
             console.log("DEBUG: Parent Width: " + this.getBounds(this.ctx).width + " of " + this.config.id )
             index ++;
@@ -40,6 +39,5 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 }
             }
         }
-        console.log("DEBUG: Leaving RedrawChildren of " + this.config.id)
     }
 }

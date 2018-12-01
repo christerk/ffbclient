@@ -274,6 +274,13 @@ export abstract class UIComponent {
         return difference;
     }
 
+    public adjustPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
+        this.config.offset.left += left;
+        this.config.offset.top += top;
+        this.config.offset.right += right;
+        this.config.offset.bottom += bottom;
+    }
+
     public getWidthForParent(): number {
         return this.getBounds(this.ctx).width
     }
@@ -295,6 +302,7 @@ export abstract class UIComponent {
         bg.generateTexture(key, bounds.width, bounds.height);
         let background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
         background.setOrigin(0,0);
+        background.setDisplayOrigin(0,0)
         background.setPosition(bounds.x, bounds.y)
         return background;
     }
