@@ -20,13 +20,8 @@ export class MenuBuilder {
         let self = this;
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element)});
         let config = this.createConfig(parentId + "_panel", false, "", children);
-        if (isRoot) {
-            config.triggerRecursiveRedrawAfterAdjust = true;
-            config.background = 0xFF00FF;
-            return new Comp.HorizontalPanel(config)
-        } else {
-            return this.createPanel(config, panelConfig.orientation);
-        }
+        config.triggerRecursiveRedrawAfterAdjust = isRoot;
+        return this.createPanel(config, panelConfig.orientation);
     }
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration): Comp.LinearPanel {
@@ -38,7 +33,7 @@ export class MenuBuilder {
             wrapperConfig.children.push(panel);
         }
 
-        return this.createPanel(wrapperConfig, nodeConfig.orientation);
+        return this.createSlot(wrapperConfig, nodeConfig.orientation);
     }
 
     private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
@@ -68,6 +63,19 @@ export class MenuBuilder {
 
 
         return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
+    }
+
+    private createSlot(config: Comp.ComponentConfiguration, orientation: Orientation){
+        if (orientation == Comp.Orientation.Horizontal) {
+            config.background = 0xFF00FF;
+
+        } else {
+            config.background = 0x00FFFF;
+            //config.adjustSize = false;
+        }
+
+
+        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config) : new Comp.VerticalMenuSlot(config);
     }
 
     private createConfig(id: string,  inheritVisibility: boolean, label: string, children: UIComponent[] = []): Comp.ComponentConfiguration {

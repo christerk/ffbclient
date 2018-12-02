@@ -1,4 +1,5 @@
 import * as Comp from '.';
+import {UIComponent} from ".";
 
 export class VerticalPanel extends Comp.LinearPanel {
 
@@ -29,12 +30,16 @@ export class VerticalPanel extends Comp.LinearPanel {
         if (super.shouldAdjustSize() && this.children.length > 0) {
             this.config.width = newWidth;
             this.config.height = offSet;
-            for (let c of this.children) {
+            for (let c of this.childrenToAdjust()) {
                 c.adjustWidthToParent(newWidth)
                 if (super.triggerRedraw()) {
                     c.redraw();
                 }
             }
         }
+    }
+
+    protected childrenToAdjust(): UIComponent[] {
+        return this.children;
     }
 }

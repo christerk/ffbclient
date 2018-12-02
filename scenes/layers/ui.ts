@@ -54,7 +54,7 @@ export class UI implements Types.EventListener {
                     panel: {
                         orientation: Orientation.Vertical,
                         elements: [{
-                            label: 'Fullscreen',
+                            label: 'Fulls',
                             id: 'fullscreenButton',
                             event: EventType.FullScreen
                         },{
@@ -83,7 +83,15 @@ export class UI implements Types.EventListener {
                             }
                         }]
                     }
-                }]
+                }, {
+                    id: 'nextMenu',
+                    orientation: Orientation.Vertical,
+                    label: 'Next',
+                    panel: {
+                        orientation: Orientation.Vertical,
+                        elements: [{label: 'Dummy', id: 'dummy', event: EventType.FullScreen}]
+
+                }}]
         };
 
         /*
