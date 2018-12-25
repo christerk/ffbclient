@@ -5,6 +5,7 @@ import * as Types from "../types";
 import * as Layers from "./layers";
 import * as Scenes from "../scenes";
 import * as Comp from "./components";
+import Point = Phaser.Geom.Point;
 
 export class MainScene extends Scenes.AbstractScene implements Types.EventListener {
     private i: Phaser.Input.InputPlugin;
@@ -17,6 +18,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     private blockDiceKey: string;
     private currentCamera: Layers.CameraView;
     private worldLayer: Layers.World;
+    private uiLayer: Layers.UI
 
 
     public constructor(controller: Core.Controller) {
@@ -65,6 +67,12 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     this.blockDiceKey = null;
                 }
                 break;
+            case Types.EventType.PlayerHoverStart:
+                this.showPlayerCard(data.position, data.player);
+                break;
+            case Types.EventType.PlayerHoverEnd:
+                this.hidePlayerCard();
+                break;
         }
     }
 
@@ -93,10 +101,10 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         const FAR_AWAY = -10000;
 
         // Set up UI overlay
-        let uiLayer = new Layers.UI(this, game, this.controller);
+        this.uiLayer = new Layers.UI(this, game, this.controller);
 
-        uiLayer.container.setPosition(FAR_AWAY, FAR_AWAY);
-        this.add.existing(uiLayer.container);
+        this.uiLayer.container.setPosition(FAR_AWAY, FAR_AWAY);
+        this.add.existing(this.uiLayer.container);
 
         //this.cameras.main.setBounds(0, 0, 0, 0);
         this.cameras.main.setRoundPixels(true);
@@ -119,14 +127,15 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         let prevX = -1;
         let prevY = -1;
         let fieldSquare = new Types.Coordinate(0, 0);
+
         this.input.on('pointermove', (pointer: Phaser.Input.Pointer, gameObject) => {
             let p = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
 
             let x = p.x;
             let y = p.y;
 
-            uiLayer.setDebugText(Math.round(pointer.x) + "," + Math.round(pointer.y) + " :: " + Math.round(p.x) + "," + Math.round(p.y));
-
+            this.uiLayer.setDebugText(Math.round(pointer.x) + "," + Math.round(pointer.y) + " :: " + Math.round(p.x) + "," + Math.round(p.y));
+/*
             let gridSize = this.getGridSize();
             let sX = Math.floor(x / gridSize);
             let sY = Math.floor(y / gridSize);
@@ -150,8 +159,28 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                 } else {
                     uiLayer.setPlayerCard(null);
                 }
-            }
+            }*/
         });
+    }
+
+    private showPlayerCard(pointerPos: Point, player: Model.Player) {
+        let p = this.cameras.main.getWorldPoint(pointerPos.x, pointerPos.y);
+
+        let gridSize = this.getGridSize();
+        let sX = Math.floor(p.x / gridSize);
+        let sY = Math.floor(p.y / gridSize);
+        let fieldSquare = new Types.Coordinate(sX, sY);
+
+        let location = this.controller.findEmptyPatchNearLocation(fieldSquare, 3, 4);
+        let pos = this.controller.convertToPixels(location);
+        let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
+        pos[0] -= this.cameras.main.scrollX;
+        pos[1] -= this.cameras.main.scrollY;
+        this.uiLayer.setPlayerCard(player, pos, sz);
+    }
+
+    private hidePlayerCard() {
+        this.uiLayer.setPlayerCard(null);
     }
 
     public resize() {
@@ -189,7 +218,6 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     }
 
     public update() {
-        let game = this.controller.getGameState();
 
         if (this.dirty) {
             this.redraw(this.controller.getGameState());

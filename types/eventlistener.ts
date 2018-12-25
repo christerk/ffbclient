@@ -11,7 +11,9 @@ export enum EventType {
     ModelChanged,
     Quit,
     Resized,
-    Resizing
+    Resizing,
+    PlayerHoverStart,
+    PlayerHoverEnd
 }
 
 export interface EventListener {

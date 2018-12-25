@@ -2,9 +2,10 @@ import Phaser from "phaser";
 import * as Core from "../../core";
 import * as Model from "../../model";
 import * as Layers from ".";
+import * as Types from "../../types";
 
 export class Player extends Layers.Abstract {
-    private container: Phaser.GameObjects.Container;
+    private readonly container: Phaser.GameObjects.Container;
 
     public constructor(scene: Phaser.Scene, game: Model.Game, controller: Core.Controller) {
         super(scene, game, controller);
@@ -37,9 +38,7 @@ export class Player extends Layers.Abstract {
         for (let i in awayPlayers) {
             let player = awayPlayers[i];
             player.setTeam(Model.Side.Away);
-            player.icon = new Phaser.GameObjects.Sprite(this.scene, 0,0,icons[player.positionId], player.positionIcon * 4 + 2);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
+            player.icon = this.createPlayerIcon(player, icons, 2, this.controller);
             this.container.add(player.icon);
         }
 
@@ -47,11 +46,24 @@ export class Player extends Layers.Abstract {
         for (let i in homePlayers) {
             let player = homePlayers[i];
             player.setTeam(Model.Side.Home);
-            player.icon = new Phaser.GameObjects.Sprite(this.scene, 0,0,icons[player.positionId], player.positionIcon * 4 + 0);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
+            player.icon = this.createPlayerIcon(player, icons, 0, this.controller);
             this.container.add(player.icon);
         }
+    }
+
+    private createPlayerIcon(player: Model.Player, icons: {}, positionIconOffest: number, controller: Core.Controller): Phaser.GameObjects.Sprite {
+        let icon = new Phaser.GameObjects.Sprite(this.scene, 0,0, icons[player.positionId], player.positionIcon * 4 + positionIconOffest);
+        icon.setInteractive();
+        icon.on("pointerover", function (pointer: Phaser.Input.Pointer) {   
+            controller.triggerEvent(Types.EventType.PlayerHoverStart, { position: pointer.position, player: player })
+
+        });
+        icon.on("pointerout", function () {
+            controller.triggerEvent(Types.EventType.PlayerHoverEnd);
+        });
+        icon.setOrigin(0.5,0.5);
+        icon.visible=false;
+        return icon;
     }
 
     public redraw() {
@@ -65,7 +77,6 @@ export class Player extends Layers.Abstract {
                 player.icon.angle = iconState.angle;
                 player.icon.setAlpha(iconState.alpha);
                 player.icon.visible = iconState.visible;
-
                 player.icon.setPosition(pX, pY);
             }
         }
