@@ -39,5 +39,17 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 }
             }
         }
+
+
+        if (this.isInteractive) {
+            bounds = this.getBounds(this.ctx);
+            // let shape = this.getBounds(this.ctx);
+            /*shape.width = shape.width * 2
+            shape.x = shape.x + 100*/
+            let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, offSet * this.ctx.scale, bounds.height)
+            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(shape))
+            this.container.setInteractive(shape, Phaser.Geom.Rectangle.Contains);
+            console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
+        }
     }
 }

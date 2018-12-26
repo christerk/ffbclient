@@ -1,6 +1,33 @@
 import * as Comp from '..';
+import Phaser from "phaser";
 
 export class HorizontalMenuSlot extends Comp.HorizontalPanel {
+
+    private label: Comp.Label;
+    private panel: Comp.HorizontalPanel;
+
+    public constructor(config: Comp.ComponentConfiguration, label: Comp.Label, panel: Comp.HorizontalPanel) {
+        super(config);
+        this.children = [];
+        this.children.push(label, panel);
+        this.label = label;
+        this.panel = panel;
+    }
+
+    public create(): Phaser.GameObjects.GameObject {
+        let container = super.create();
+        this.isInteractive = true;
+        this.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
+            console.log("DEBUG: OVER HSLot: " +" at x=" + pointer.x + ", y=" + pointer.y)
+        });
+        this.panel.isInteractive = true;
+
+        this.panel.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
+            console.log("DEBUG: OVER HPanel: " + " at x=" + pointer.x + ", y=" + pointer.y)
+        });
+
+        return container;
+    }
 
     public adjustWidthToParent(width: Comp.Size): number {
         let additionalOffset = this.children[0].adjustWidthToParent(width);

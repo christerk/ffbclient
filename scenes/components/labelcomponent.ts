@@ -22,7 +22,6 @@ export class Label extends Comp.UIComponent {
     }
 
     public create(): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(this.ctx);
         this.container = this.ctx.scene.make.container({});
         this.container.setPosition(0, 0);
 
@@ -38,30 +37,29 @@ export class Label extends Comp.UIComponent {
     }
 
     public destroy(): void {
-        this.textObject.destroy();
+        if (this.textObject) {
+            this.textObject.destroy();
+        }
         if (this.background != null) {
             this.background.destroy();
         }
+
+        this.container.destroy();
     }
 
     public show() {
-        if (this.textObject != null) {
-            this.textObject.visible = true;
-        }
+        this.container.visible = true;
+
     }
 
     public hide() {
-        if (this.textObject != null) {
-            this.textObject.visible = false;
-        }
+        this.container.visible = false;
     }
 
     public redrawSelfBeforeChildren(): void {
         super.redrawSelfBeforeChildren();
         
         let col = this.numberToRGBString(this.config.color);
-
-
 
         let bounds = this.getBounds(this.ctx);
         let g = this.textObject;
@@ -112,7 +110,9 @@ export class Label extends Comp.UIComponent {
     }
 
     public adjustWidthToParent(width: Size) {
-        this.background.width = this.translateScalar(width, this.ctx.scale, this.ctx.w);
+        if (this.background) {
+            this.background.width = this.translateScalar(width, this.ctx.scale, this.ctx.w);
+        }
         return super.adjustWidthToParent(width);
     }
 }

@@ -54,7 +54,7 @@ export class Player extends Layers.Abstract {
     private createPlayerIcon(player: Model.Player, icons: {}, positionIconOffest: number, controller: Core.Controller): Phaser.GameObjects.Sprite {
         let icon = new Phaser.GameObjects.Sprite(this.scene, 0,0, icons[player.positionId], player.positionIcon * 4 + positionIconOffest);
         icon.setInteractive();
-        icon.on("pointerover", function (pointer: Phaser.Input.Pointer) {   
+        icon.on("pointerover", function (pointer: Phaser.Input.Pointer) {
             controller.triggerEvent(Types.EventType.PlayerHoverStart, { position: pointer.position, player: player })
 
         });

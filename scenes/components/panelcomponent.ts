@@ -4,6 +4,8 @@ export abstract class Panel extends Comp.UIComponent {
     protected background: Phaser.GameObjects.Image;
     protected children: Comp.UIComponent[];
 
+    public container: Phaser.GameObjects.Container
+
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
 
@@ -29,12 +31,12 @@ export abstract class Panel extends Comp.UIComponent {
 
     public create(): Phaser.GameObjects.GameObject {
         let bounds = this.getBounds(this.ctx);
-        let container = this.ctx.scene.make.container({});
-        container.setPosition(0, 0);
+        this.container = this.ctx.scene.make.container({});
+        this.container.setPosition(0, 0);
 
         if (this.config.background != null) {
             this.background = super.createBackground(bounds);
-            container.add(this.background)
+            this.container.add(this.background)
         }
 
         let childCtx: Comp.RenderContext = {
@@ -50,10 +52,10 @@ export abstract class Panel extends Comp.UIComponent {
         for (let c of this.children) {
             c.setContext(childCtx);
             let childGameObject = c.create();
-            container.add(childGameObject);
+            this.container.add(childGameObject);
         }
 
-        return container;
+        return this.container;
     }
 
     public destroy(): void {
@@ -69,27 +71,22 @@ export abstract class Panel extends Comp.UIComponent {
         for (let c of this.children) {
             c.postCreate();
         }
-                }
+    }
 
-            public show() {
+    public show() {
+        this.container.visible = true;
+    }
 
-                    if (this.background != null) {
-                        this.background.visible = true;
-                    }
-                }
+    public hide() {
+        this.container.visible = false;
+    }
 
-            public hide() {
-                    if (this.background != null) {
-                        this.background.visible = false;
-                    }
-                }
+    public setVisible(visible: boolean) {
+        if (this.config.visible != visible) {
+            super.setVisible(visible);
 
-            public setVisible(visible: boolean) {
-                    if (this.config.visible != visible) {
-                        super.setVisible(visible);
-
-                        for (let c of this.children) {
-                            if (c.InheritVisibility) {
+            for (let c of this.children) {
+                if (c.InheritVisibility) {
                     c.setVisible(visible);
                 }
             }

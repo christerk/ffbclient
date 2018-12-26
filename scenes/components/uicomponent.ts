@@ -71,7 +71,7 @@ export type ComponentConfiguration = {
 }
 
 export abstract class UIComponent {
-    protected config: ComponentConfiguration;
+    public config: ComponentConfiguration;
     //public phaserObject: Phaser.GameObjects.GameObject;
     protected ctx: RenderContext;
     private static serialCounter: number = 0;

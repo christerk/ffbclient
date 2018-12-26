@@ -27,6 +27,8 @@ export class VerticalPanel extends Comp.LinearPanel {
             childNumber++;
         }
 
+
+
         if (super.shouldAdjustSize() && this.children.length > 0) {
             this.config.width = newWidth;
             this.config.height = offSet;
@@ -36,6 +38,17 @@ export class VerticalPanel extends Comp.LinearPanel {
                     c.redraw();
                 }
             }
+        }
+
+        if (this.isInteractive) {
+            bounds = this.getBounds(this.ctx);
+           // let shape = this.getBounds(this.ctx);
+            /*shape.width = shape.width * 2
+            shape.x = shape.x + 100*/
+            let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)
+            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(shape))
+            this.container.setInteractive(shape, Phaser.Geom.Rectangle.Contains);
+            console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
         }
     }
 

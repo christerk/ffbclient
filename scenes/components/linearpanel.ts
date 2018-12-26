@@ -2,6 +2,8 @@ import * as Comp from '.';
 
 export abstract class LinearPanel extends Comp.Panel {
 
+    public  isInteractive : boolean = false
+
     public redrawSelfAfterChildren() {
         super.redrawSelfAfterChildren();
         let bounds = this.getBounds(this.ctx);
