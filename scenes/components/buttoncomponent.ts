@@ -13,7 +13,7 @@ export class Button extends Comp.UIComponent {
     }
 
     public create(): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
 
         let g = this.ctx.scene.make.graphics({});
         g.fillStyle(this.config.background, 1);
@@ -50,7 +50,7 @@ export class Button extends Comp.UIComponent {
 
     public redrawSelfBeforeChildren(): void {
         super.redrawSelfBeforeChildren();
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         this.button.setPosition(bounds.x, bounds.y);
         this.button.setDisplaySize(bounds.width, bounds.height);
     }

@@ -5,7 +5,7 @@ export class VerticalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
         super.redrawChildren();
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         let childNumber = 0;
         let newWidth = 0;
         let offSet = 0;
@@ -23,7 +23,7 @@ export class VerticalPanel extends Comp.LinearPanel {
             c.setContext(renderContext);
             c.redraw();
             newWidth = Math.max( c.getWidthForParent() / this.ctx.scale, newWidth);
-            offSet += c.getBounds(renderContext).height / this.ctx.scale;
+            offSet += c.getBoundsForContext(renderContext).height / this.ctx.scale;
             childNumber++;
         }
 
@@ -41,8 +41,8 @@ export class VerticalPanel extends Comp.LinearPanel {
         }
 
         if (this.isInteractive) {
-            bounds = this.getBounds(this.ctx);
-           // let shape = this.getBounds(this.ctx);
+            bounds = this.getBounds();
+           // let shape = this.getBounds();
             /*shape.width = shape.width * 2
             shape.x = shape.x + 100*/
             let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)

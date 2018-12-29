@@ -61,7 +61,7 @@ export class Label extends Comp.UIComponent {
         
         let col = this.numberToRGBString(this.config.color);
 
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         let g = this.textObject;
 
         let rows = this.numRows;
@@ -81,7 +81,7 @@ export class Label extends Comp.UIComponent {
         if (this.config.adjustSize) {
             this.config.width = g.displayWidth + "px";
         }
-        bounds = this.getBounds(this.ctx);
+        bounds = this.getBounds();
         if (this.background != null) {
             this.container.remove(this.background);
         }
@@ -104,7 +104,7 @@ export class Label extends Comp.UIComponent {
             this.numRows = text.split("\n").length;
             g.setText(text);
             this.config.width = g.displayWidth + "px";
-            let bounds = this.getBounds(this.ctx);
+            let bounds = this.getBounds();
             g.setPosition(bounds.x, bounds.y);
         }
     }

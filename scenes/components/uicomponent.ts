@@ -166,7 +166,11 @@ export abstract class UIComponent {
         return result;
     }
 
-    public getBounds(ctx: RenderContext): Phaser.Geom.Rectangle {
+    public getBounds(): Phaser.Geom.Rectangle {
+        return this.getBoundsForContext(this.ctx);
+    }
+
+    public getBoundsForContext(ctx: RenderContext): Phaser.Geom.Rectangle {
         let parentAnchor = this.anchorFactors[this.config.parentAnchor];
         let thisAnchor = this.anchorFactors[this.config.anchor];
 
@@ -282,7 +286,7 @@ export abstract class UIComponent {
     }
 
     public getWidthForParent(): number {
-        return this.getBounds(this.ctx).width
+        return this.getBounds().width
     }
 
     public abstract show(): void;

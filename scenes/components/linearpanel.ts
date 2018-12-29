@@ -6,7 +6,7 @@ export abstract class LinearPanel extends Comp.Panel {
 
     public redrawSelfAfterChildren() {
         super.redrawSelfAfterChildren();
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         let bg = this.background;
         if (bg != null) {
             bg.setPosition(bounds.x, bounds.y);

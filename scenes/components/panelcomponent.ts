@@ -30,7 +30,7 @@ export abstract class Panel extends Comp.UIComponent {
     }
 
     public create(): Phaser.GameObjects.GameObject {
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         this.container = this.ctx.scene.make.container({});
         this.container.setPosition(0, 0);
 

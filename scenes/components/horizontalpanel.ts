@@ -4,7 +4,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
 
     public redrawChildren(): void {
         super.redrawChildren();
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
         let offSet: number = (bounds.x) / this.ctx.scale;
         let baseOffset: number = offSet;
         var index = 0;
@@ -22,13 +22,13 @@ export class HorizontalPanel extends Comp.LinearPanel {
             c.setPositionOffset(offSet);
             c.setContext(renderContext);
             c.redraw();
-            offSet += (c.getBounds(renderContext).width ) / this.ctx.scale;
-            console.log("DEBUG: Child Width: " + c.getBounds(renderContext).width + " of child[" + index + "]")
-            console.log("DEBUG: Parent Width: " + this.getBounds(this.ctx).width + " of " + this.config.id )
+            offSet += (c.getBoundsForContext(renderContext).width ) / this.ctx.scale;
+            console.log("DEBUG: Child Width: " + c.getBoundsForContext(renderContext).width + " of child[" + index + "]")
+            console.log("DEBUG: Parent Width: " + this.getBounds().width + " of " + this.config.id )
             index ++;
         }
         console.log("DEBUG: Scaled offset " +  offSet * this.ctx.scale + " of child[" +  index + "]")
-        console.log("DEBUG: Parent Width: " + this.getBounds(this.ctx).width + " of " + this.config.id )
+        console.log("DEBUG: Parent Width: " + this.getBounds().width + " of " + this.config.id )
 
 
         if (super.shouldAdjustSize()) {
@@ -42,8 +42,8 @@ export class HorizontalPanel extends Comp.LinearPanel {
 
 
         if (this.isInteractive) {
-            bounds = this.getBounds(this.ctx);
-            // let shape = this.getBounds(this.ctx);
+            bounds = this.getBounds();
+            // let shape = this.getBounds();
             /*shape.width = shape.width * 2
             shape.x = shape.x + 100*/
             let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, offSet * this.ctx.scale, bounds.height)
