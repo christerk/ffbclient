@@ -25,7 +25,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
             c.setPositionOffset(offSet);
             c.setContext(renderContext);
             c.redraw();
-            offSet += (c.getBoundsForContext(renderContext).width ) / this.ctx.scale;
+            offSet += (c.getWidthForParent() ) / this.ctx.scale;
             console.log("DEBUG: Child Width: " + c.getBoundsForContext(renderContext).width + " of child[" + index + "]")
             console.log("DEBUG: Parent Width: " + this.getBounds().width + " of " + this.config.id )
             index ++;
