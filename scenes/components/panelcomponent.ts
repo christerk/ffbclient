@@ -92,4 +92,12 @@ export abstract class Panel extends Comp.UIComponent {
             }
         }
     }
+
+    public setAllowHitAreaCalculation(isAllowed: boolean): void {
+        super.setAllowHitAreaCalculation(isAllowed);
+        for (let c of this.children) {
+            c.setAllowHitAreaCalculation(isAllowed);
+        }
+    }
+
 }

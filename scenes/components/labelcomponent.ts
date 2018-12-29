@@ -49,7 +49,10 @@ export class Label extends Comp.UIComponent {
 
     public show() {
         this.container.visible = true;
-
+        let self = this;
+        this.container.on("pointerover", function (pointer) {
+            console.log("DEBUG: Pointer over labwel: " + self.config.id + " at x=" + pointer.x + " y=" + pointer.y)
+        });
     }
 
     public hide() {
@@ -58,7 +61,7 @@ export class Label extends Comp.UIComponent {
 
     public redrawSelfBeforeChildren(): void {
         super.redrawSelfBeforeChildren();
-        
+
         let col = this.numberToRGBString(this.config.color);
 
         let bounds = this.getBounds();
@@ -90,6 +93,24 @@ export class Label extends Comp.UIComponent {
             this.container.addAt(this.background, 0);
         }
         this.textObject.setPosition(bounds.x,bounds.y)
+    }
+
+
+    public redrawSelfAfterChildren(): void {
+        super.redrawSelfAfterChildren();
+
+    }
+
+    public calculateHitArea(): void {
+        super.calculateHitArea()
+        let bounds = this.getBounds();
+        console.log("DEBUG: Label setting shape: " + JSON.stringify(bounds) + " for label " + this.config.id);
+        //   this.container.disableInteractive();
+        this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1),
+            Phaser.Geom.Rectangle.Contains);
+        this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        console.log("DEBUG: Label has hit area: " + JSON.stringify(this.container.input.hitArea) + " for label " + this.config.id)
+
     }
 
     public setStroke(width: number) {

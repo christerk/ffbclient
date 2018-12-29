@@ -9,6 +9,9 @@ export class HorizontalPanel extends Comp.LinearPanel {
         let baseOffset: number = offSet;
         var index = 0;
         for (let c of this.children) {
+            if (super.triggerRedraw()) {
+                c.setAllowHitAreaCalculation(false);
+            }
             console.log("DEBUG: Scaled offset " +  offSet * this.ctx.scale + " of child[" +  index + "]")
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
@@ -35,20 +38,24 @@ export class HorizontalPanel extends Comp.LinearPanel {
             this.config.width = offSet - baseOffset;
             if (super.triggerRedraw()) {
                 for (let c of this.children) {
+                    c.setAllowHitAreaCalculation(true);
                     c.redraw();
                 }
             }
         }
+        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, offSet * this.ctx.scale, bounds.height)
 
+    }
 
+    public calculateHitArea(): void {
         if (this.isInteractive) {
-            bounds = this.getBounds();
+            let bounds = this.getBounds();
             // let shape = this.getBounds();
             /*shape.width = shape.width * 2
             shape.x = shape.x + 100*/
-            let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, offSet * this.ctx.scale, bounds.height)
-            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(shape))
-            this.container.setInteractive(shape, Phaser.Geom.Rectangle.Contains);
+            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(this.shape))
+            this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1), Phaser.Geom.Rectangle.Contains);
+            this.container.input.hitArea = this.shape;
             console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
         }
     }

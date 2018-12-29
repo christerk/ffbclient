@@ -9,7 +9,12 @@ export class VerticalPanel extends Comp.LinearPanel {
         let childNumber = 0;
         let newWidth = 0;
         let offSet = 0;
+
         for (let c of this.children) {
+            if (super.triggerRedraw()) {
+                c.setAllowHitAreaCalculation(false);
+            }
+
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
                 parent: this,
@@ -33,26 +38,32 @@ export class VerticalPanel extends Comp.LinearPanel {
             this.config.width = newWidth;
             this.config.height = offSet;
             for (let c of this.childrenToAdjust()) {
-                c.adjustWidthToParent(newWidth)
+                c.adjustWidthToParent(newWidth);
                 if (super.triggerRedraw()) {
+                    c.setAllowHitAreaCalculation(true);
                     c.redraw();
                 }
             }
         }
 
-        if (this.isInteractive) {
-            bounds = this.getBounds();
-           // let shape = this.getBounds();
-            /*shape.width = shape.width * 2
-            shape.x = shape.x + 100*/
-            let shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)
-            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(shape))
-            this.container.setInteractive(shape, Phaser.Geom.Rectangle.Contains);
-            console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
-        }
+        bounds = this.getBounds();
+        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)
+
     }
 
     protected childrenToAdjust(): UIComponent[] {
         return this.children;
+    }
+
+    public calculateHitArea(): void {
+
+        if (this.isInteractive) {
+            // let shape = this.getBounds();
+            /*shape.width = shape.width * 2
+            shape.x = shape.x + 100*/
+            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(this.shape))
+            this.container.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
+            console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
+        }
     }
 }

@@ -75,6 +75,7 @@ export abstract class UIComponent {
     //public phaserObject: Phaser.GameObjects.GameObject;
     protected ctx: RenderContext;
     private static serialCounter: number = 0;
+    private isHitAreaCalculationAllowed = true;
 
     private anchorFactors: [number,number][] = [
         [0.5, 0.5],
@@ -288,6 +289,18 @@ export abstract class UIComponent {
     public getWidthForParent(): number {
         return this.getBounds().width
     }
+
+    public setAllowHitAreaCalculation(isAllowed: boolean): void {
+        this.isHitAreaCalculationAllowed = isAllowed;
+    }
+
+    public calculateHitAreaIfAllowed(): void {
+        if (this.isHitAreaCalculationAllowed) {
+            this.calculateHitArea();
+        }
+    }
+
+    public calculateHitArea(): void {}
 
     public abstract show(): void;
     public abstract hide(): void;
