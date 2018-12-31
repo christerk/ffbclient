@@ -64,7 +64,7 @@ export class MenuBuilder {
 
     private createSlot(config: Comp.ComponentConfiguration, orientation: Orientation, label: Comp.Label, panel: Comp.LinearPanel){
         if (orientation == Comp.Orientation.Horizontal) {
-          // config.background = 0xFF00FF;
+          // config.background = 0xAAAAAA;
 
         } else {
            // config.background = 0x888888;

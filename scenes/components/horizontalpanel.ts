@@ -43,7 +43,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 }
             }
         }
-        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, offSet * this.ctx.scale, bounds.height)
+        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, (offSet - baseOffset) * this.ctx.scale, bounds.height)
 
     }
 
