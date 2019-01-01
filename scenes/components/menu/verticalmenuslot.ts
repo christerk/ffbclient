@@ -17,23 +17,14 @@ export class VerticalMenuSlot extends Comp.VerticalPanel {
 
     public create(): Phaser.GameObjects.GameObject {
         let container = super.create();
-        this.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
-            console.log("DEBUG: OVER VSLot: " + " at x=" + pointer.x + ", y=" + pointer.y)
-        });
-
-        this.panel.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
-            console.log("DEBUG: OVER VPanel: " + " at x=" + pointer.x + ", y=" + pointer.y)
-        });
 
         let panel = this.panel;
 
         this.label.addHoverIn(function() {
-            console.log("DEBUG: Hiding panel");
             panel.setVisible(true);
         });
 
         this.label.addHoverOut(function() {
-            console.log("DEBUG: Showing panel");
             panel.setVisible(false);
         });
         return container;
@@ -54,21 +45,4 @@ export class VerticalMenuSlot extends Comp.VerticalPanel {
         let childrenCount = this.children.length
         return this.children.slice(Math.min(1), childrenCount);
     }
-
- /*   public redrawChildren(): void {
-        for (let c of this.children){
-            c.redrawChildren()
-        }
-    }*/
-
-    public redraw() {
-        super.redraw();
-     //   this.container.setInteractive();
-       // (this.children[1] as VerticalPanel).show();
-       /* this.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
-            console.log("DEBUG: OVER VSlot: " + self.config.id)
-        });*/
-
-    }
-
 }

@@ -49,10 +49,6 @@ export class Label extends Comp.UIComponent {
 
     public show() {
         this.container.visible = true;
-        let self = this;
-        this.container.on("pointerover", function (pointer) {
-            console.log("DEBUG: Pointer over labwel: " + self.config.id + " at x=" + pointer.x + " y=" + pointer.y)
-        });
     }
 
     public hide() {
@@ -98,12 +94,9 @@ export class Label extends Comp.UIComponent {
     public calculateHitArea(): void {
         super.calculateHitArea()
         let bounds = this.getBounds();
-        console.log("DEBUG: Label setting shape: " + JSON.stringify(bounds) + " for label " + this.config.id);
         this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1),
             Phaser.Geom.Rectangle.Contains);
         this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-        console.log("DEBUG: Label has hit area: " + JSON.stringify(this.container.input.hitArea) + " for label " + this.config.id)
-
     }
 
     protected getHoverElements(): Phaser.GameObjects.GameObject[] {

@@ -56,12 +56,6 @@ export class VerticalPanel extends Comp.LinearPanel {
     }
 
     public calculateHitArea(): void {
-
-            // let shape = this.getBounds();
-            /*shape.width = shape.width * 2
-            shape.x = shape.x + 100*/
-            console.log("DEBUG: Setting interactive: " + this.config.id + " with " + JSON.stringify(this.shape))
             this.container.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
-            console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
     }
 }
