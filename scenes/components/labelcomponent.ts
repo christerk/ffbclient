@@ -37,7 +37,7 @@ export class Label extends Comp.UIComponent {
     }
 
     public destroy(): void {
-        if (this.textObject) {
+        if (this.textObject != null) {
             this.textObject.destroy();
         }
         if (this.background != null) {

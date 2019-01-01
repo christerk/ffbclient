@@ -341,8 +341,8 @@ export abstract class UIComponent {
         bg.generateTexture(key, bounds.width, bounds.height);
         let background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
         background.setOrigin(0,0);
-        background.setDisplayOrigin(0,0)
-        background.setPosition(bounds.x, bounds.y)
+        background.setDisplayOrigin(0,0);
+        background.setPosition(bounds.x, bounds.y);
         return background;
     }
 

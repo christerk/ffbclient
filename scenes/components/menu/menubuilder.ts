@@ -91,7 +91,7 @@ export class MenuBuilder {
            // background: this.background,
             color: this.color,
             children: children,
-            visible: true,
+            visible: visible,
             inheritVisibility: inheritVisibility,
             text: label,
             adjustSize: true,
