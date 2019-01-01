@@ -14,6 +14,11 @@ export enum Anchor {
     SOUTHEAST = 8,
 }
 
+export enum InputEvent {
+    HOVER_IN = "pointerover",
+    HOVER_OUT = "pointerout"
+}
+
 export type Size = number|string;
 
 class Bounds {
@@ -303,6 +308,21 @@ export abstract class UIComponent {
     }
 
     public calculateHitArea(): void {}
+
+    protected getHoverElements(): Phaser.GameObjects.GameObject[] {
+        return [];
+    }
+
+    public addHoverIn(eventHandler: Function): void {
+        this.getHoverElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
+            hoverElement.on(InputEvent.HOVER_IN, eventHandler);
+        });
+    }
+    public addHoverOut(eventHandler: Function): void {
+        this.getHoverElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
+            hoverElement.on(InputEvent.HOVER_OUT, eventHandler);
+        });
+    }
 
     public abstract show(): void;
     public abstract hide(): void;

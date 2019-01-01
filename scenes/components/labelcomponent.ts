@@ -106,6 +106,10 @@ export class Label extends Comp.UIComponent {
 
     }
 
+    protected getHoverElements(): Phaser.GameObjects.GameObject[] {
+        return [this.container];
+    }
+
     public setStroke(width: number) {
         this.stroke = width;
     }

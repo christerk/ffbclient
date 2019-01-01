@@ -24,6 +24,17 @@ export class HorizontalMenuSlot extends Comp.HorizontalPanel {
             console.log("DEBUG: OVER HPanel: " + " at x=" + pointer.x + ", y=" + pointer.y)
         });
 
+        let panel = this.panel;
+
+        this.label.addHoverIn(function() {
+            console.log("DEBUG: Hiding panel");
+            panel.setVisible(true);
+        });
+
+        this.label.addHoverOut(function() {
+            console.log("DEBUG: Showing panel");
+            panel.setVisible(false);
+        });
         return container;
     }
 
