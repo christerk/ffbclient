@@ -67,7 +67,8 @@ export type ComponentConfiguration = {
     text?: string,
     image?: string,
     adjustSize?: boolean,
-    triggerRecursiveRedrawAfterAdjust?: boolean
+    triggerRecursiveRedrawAfterAdjust?: boolean,
+    interactive?: boolean
 }
 
 export abstract class UIComponent {
@@ -252,7 +253,8 @@ export abstract class UIComponent {
     public redraw(): void {
         this.redrawSelfBeforeChildren();
         this.redrawChildren();
-        this.redrawSelfAfterChildren()
+        this.redrawSelfAfterChildren();
+        this.calculateHitAreaIfAllowed();
     }
 
     public redrawSelfBeforeChildren(): void {
@@ -295,7 +297,7 @@ export abstract class UIComponent {
     }
 
     public calculateHitAreaIfAllowed(): void {
-        if (this.isHitAreaCalculationAllowed) {
+        if (this.isHitAreaCalculationAllowed && this.config.interactive) {
             this.calculateHitArea();
         }
     }

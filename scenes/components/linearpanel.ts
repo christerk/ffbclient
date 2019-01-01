@@ -2,8 +2,6 @@ import * as Comp from '.';
 
 export abstract class LinearPanel extends Comp.Panel {
 
-    public isInteractive : boolean = false
-
     protected shape: Phaser.Geom.Rectangle
 
     public redrawSelfAfterChildren() {
@@ -13,10 +11,6 @@ export abstract class LinearPanel extends Comp.Panel {
         if (bg != null) {
             bg.setPosition(bounds.x, bounds.y);
             bg.setDisplaySize(bounds.width, bounds.height);
-        }
-
-        for (let c of this.children) {
-            c.calculateHitAreaIfAllowed();
         }
     }
 

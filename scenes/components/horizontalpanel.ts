@@ -48,7 +48,6 @@ export class HorizontalPanel extends Comp.LinearPanel {
     }
 
     public calculateHitArea(): void {
-        if (this.isInteractive) {
             let bounds = this.getBounds();
             // let shape = this.getBounds();
             /*shape.width = shape.width * 2
@@ -57,6 +56,6 @@ export class HorizontalPanel extends Comp.LinearPanel {
             this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1), Phaser.Geom.Rectangle.Contains);
             this.container.input.hitArea = this.shape;
             console.log("DEBUG: HitArea: " + JSON.stringify(this.container.input.hitArea));
-        }
+
     }
 }

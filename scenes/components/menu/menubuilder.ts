@@ -94,7 +94,8 @@ export class MenuBuilder {
             visible: true,
             inheritVisibility: inheritVisibility,
             text: label,
-            adjustSize: true
+            adjustSize: true,
+            interactive: true
         }
 
 

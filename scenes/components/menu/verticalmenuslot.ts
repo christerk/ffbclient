@@ -17,11 +17,9 @@ export class VerticalMenuSlot extends Comp.VerticalPanel {
 
     public create(): Phaser.GameObjects.GameObject {
         let container = super.create();
-        this.isInteractive = true;
         this.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
             console.log("DEBUG: OVER VSLot: " +" at x=" + pointer.x + ", y=" + pointer.y)
         });
-        this.panel.isInteractive = true;
 
         this.panel.container.on("pointerover", function (pointer: Phaser.Input.Pointer) {
             console.log("DEBUG: OVER VPanel: " + " at x=" + pointer.x + ", y=" + pointer.y)

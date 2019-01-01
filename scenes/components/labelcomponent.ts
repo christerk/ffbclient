@@ -95,17 +95,10 @@ export class Label extends Comp.UIComponent {
         this.textObject.setPosition(bounds.x,bounds.y)
     }
 
-
-    public redrawSelfAfterChildren(): void {
-        super.redrawSelfAfterChildren();
-
-    }
-
     public calculateHitArea(): void {
         super.calculateHitArea()
         let bounds = this.getBounds();
         console.log("DEBUG: Label setting shape: " + JSON.stringify(bounds) + " for label " + this.config.id);
-        //   this.container.disableInteractive();
         this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1),
             Phaser.Geom.Rectangle.Contains);
         this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
