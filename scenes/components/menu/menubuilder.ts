@@ -22,12 +22,18 @@ export class MenuBuilder {
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element, isRoot)});
         let config = this.createConfig(parentId + "_panel", false, "", isRoot, children);
         config.triggerRecursiveRedrawAfterAdjust = isRoot;
-        return this.createPanel(config, panelConfig.orientation);
+        config.interactive = false;
+        let panel = this.createPanel(config, panelConfig.orientation);
+        if (isRoot) {
+            panel.setPosition(1,1)
+        }
+        return panel
     }
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
         let wrapperConfig = this.createConfig(nodeConfig.id, true, nodeConfig.label, isRoot);
-        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot);
+        wrapperConfig.interactive = false;
+        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
 
         return this.createSlot(wrapperConfig, nodeConfig.orientation, label, panel);
@@ -37,8 +43,10 @@ export class MenuBuilder {
         return this.createLabel(entryConfig.id, entryConfig.label)
     }
 
-    private createLabel(id: string, label: string, isRoot: boolean = false): Comp.Label {
-        return new Comp.Label(this.createConfig(id, true, label, isRoot));
+    private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false): Comp.Label {
+        let config = this.createConfig(id, true, label, isRoot);
+        config.interactive = interactive;
+        return new Comp.Label(config);
     }
 
     private convertPanelChild(childConfig: Comp.MenuNodeConfiguration | Comp.MenuEntryConfiguration, isRoot: boolean = false): Comp.LinearPanel | Comp.Label {
@@ -97,7 +105,5 @@ export class MenuBuilder {
             adjustSize: true,
             interactive: true
         }
-
-
     }
 }

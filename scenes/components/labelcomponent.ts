@@ -8,7 +8,7 @@ export class Label extends Comp.UIComponent {
     private fontSize: number;
     private numRows: number;
     private background: Phaser.GameObjects.Image;
-    private container: Phaser.GameObjects.Container;
+    public container: Phaser.GameObjects.Container;
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);

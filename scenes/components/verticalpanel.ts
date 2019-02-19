@@ -48,7 +48,6 @@ export class VerticalPanel extends Comp.LinearPanel {
 
         bounds = this.getBounds();
         this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)
-
     }
 
     protected childrenToAdjust(): UIComponent[] {
@@ -56,6 +55,6 @@ export class VerticalPanel extends Comp.LinearPanel {
     }
 
     public calculateHitArea(): void {
-            this.container.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
+        this.container.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
     }
 }

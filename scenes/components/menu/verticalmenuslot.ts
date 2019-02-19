@@ -20,12 +20,20 @@ export class VerticalMenuSlot extends Comp.VerticalPanel {
 
         let panel = this.panel;
 
+        let self = this;
         this.label.addHoverIn(function() {
             panel.setVisible(true);
+            self.calculateHitArea();
+            self.label.container.disableInteractive();
         });
 
-        this.label.addHoverOut(function() {
+        this.addHoverOut(function() {
             panel.setVisible(false);
+            self.container.disableInteractive();
+            setTimeout(function () {
+                self.label.calculateHitArea();
+            }, 1);
+
         });
         return container;
     }

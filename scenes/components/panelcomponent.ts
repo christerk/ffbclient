@@ -100,4 +100,7 @@ export abstract class Panel extends Comp.UIComponent {
         }
     }
 
+    protected getHoverElements(): Phaser.GameObjects.GameObject[] {
+        return [this.container];
+    }
 }
