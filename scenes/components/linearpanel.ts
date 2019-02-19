@@ -15,7 +15,7 @@ export abstract class LinearPanel extends Comp.Panel {
     }
 
     protected shouldAdjustSize(): boolean {
-        return this.config.visible && this.config.adjustSize;
+        return this.config.adjustSize;
     }
 
     protected triggerRedraw(): boolean {
