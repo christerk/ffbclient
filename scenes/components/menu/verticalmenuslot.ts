@@ -23,18 +23,23 @@ export class VerticalMenuSlot extends Comp.VerticalPanel {
         let self = this;
         this.label.addHoverIn(function() {
             panel.setVisible(true);
-            self.calculateHitArea();
-            self.label.container.disableInteractive();
+            panel.calculateHitArea();
         });
 
-        this.addHoverOut(function() {
+        this.label.addHoverOut(function(pointer: Phaser.Input.Pointer) {
+            //TODO refer to hit area instead of bounds
+            let bounds = self.label.getBounds();
+            if (pointer.y < bounds.y + bounds.height) {
+                panel.setVisible(false);
+                self.container.disableInteractive();
+            }
+        });
+
+        this.panel.addHoverOut(function() {
             panel.setVisible(false);
             self.container.disableInteractive();
-            setTimeout(function () {
-                self.label.calculateHitArea();
-            }, 1);
+        })
 
-        });
         return container;
     }
 

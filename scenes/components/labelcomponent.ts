@@ -92,7 +92,7 @@ export class Label extends Comp.UIComponent {
     }
 
     public calculateHitArea(): void {
-        super.calculateHitArea()
+        super.calculateHitArea();
         let bounds = this.getBounds();
         this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1),
             Phaser.Geom.Rectangle.Contains);
