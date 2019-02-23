@@ -2,7 +2,7 @@ import * as Comp from ".";
 
 export abstract class Panel extends Comp.UIComponent {
     protected background: Phaser.GameObjects.Image;
-    protected children: Comp.UIComponent[];
+    public children: Comp.UIComponent[];
 
     public container: Phaser.GameObjects.Container
 

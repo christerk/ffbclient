@@ -1,7 +1,6 @@
 import * as Comp from "../";
 import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
 import {Anchor, UIComponent} from "../uicomponent";
-import {VerticalPanel} from "../";
 
 export class MenuBuilder {
 
@@ -71,17 +70,17 @@ export class MenuBuilder {
     }
 
     private createSlot(config: Comp.ComponentConfiguration, orientation: Orientation, label: Comp.Label, panel: Comp.LinearPanel){
-        if (orientation == Comp.Orientation.Horizontal) {
-          // config.background = 0xAAAAAA;
-
-        } else {
-           // config.background = 0x888888;
-            //config.adjustSize = false;
-        }
-
-
-        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config, label, panel) :
+        let slot =  orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config, label, panel) :
             new Comp.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
+
+        if (panel.children) {
+            panel.children
+                .filter(function(child: Comp.UIComponent) {
+                    return Comp.isMenuSlot(child)
+                }).forEach(function(child: Comp.UIComponent) {
+                    child["parentSlot"] = slot;
+            });}
+        return slot;
     }
 
     private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, children: UIComponent[] = []): Comp.ComponentConfiguration {
