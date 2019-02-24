@@ -2,7 +2,6 @@ import Phaser from "phaser";
 import * as Core from "../../core";
 import * as Model from "../../model";
 import * as Layers from ".";
-import * as Types from "../../types";
 
 export class Player extends Layers.Abstract {
     private readonly container: Phaser.GameObjects.Container;
@@ -38,7 +37,7 @@ export class Player extends Layers.Abstract {
         for (let i in awayPlayers) {
             let player = awayPlayers[i];
             player.setTeam(Model.Side.Away);
-            player.icon = this.createPlayerIcon(player, icons, 2, this.controller);
+            player.icon = this.createPlayerIcon(player, icons, 2);
             this.container.add(player.icon);
         }
 
@@ -46,21 +45,13 @@ export class Player extends Layers.Abstract {
         for (let i in homePlayers) {
             let player = homePlayers[i];
             player.setTeam(Model.Side.Home);
-            player.icon = this.createPlayerIcon(player, icons, 0, this.controller);
+            player.icon = this.createPlayerIcon(player, icons, 0);
             this.container.add(player.icon);
         }
     }
 
-    private createPlayerIcon(player: Model.Player, icons: {}, positionIconOffest: number, controller: Core.Controller): Phaser.GameObjects.Sprite {
+    private createPlayerIcon(player: Model.Player, icons: {}, positionIconOffest: number): Phaser.GameObjects.Sprite {
         let icon = new Phaser.GameObjects.Sprite(this.scene, 0,0, icons[player.positionId], player.positionIcon * 4 + positionIconOffest);
-        icon.setInteractive();
-        icon.on("pointerover", function (pointer: Phaser.Input.Pointer) {
-            controller.triggerEvent(Types.EventType.PlayerHoverStart, { position: pointer.position, player: player })
-
-        });
-        icon.on("pointerout", function () {
-            controller.triggerEvent(Types.EventType.PlayerHoverEnd);
-        });
         icon.setOrigin(0.5,0.5);
         icon.visible=false;
         return icon;

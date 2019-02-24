@@ -67,12 +67,6 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     this.blockDiceKey = null;
                 }
                 break;
-            case Types.EventType.PlayerHoverStart:
-                this.showPlayerCard(data.position, data.player);
-                break;
-            case Types.EventType.PlayerHoverEnd:
-                this.hidePlayerCard();
-                break;
         }
     }
 
@@ -135,7 +129,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
             let y = p.y;
 
             this.uiLayer.setDebugText(Math.round(pointer.x) + "," + Math.round(pointer.y) + " :: " + Math.round(p.x) + "," + Math.round(p.y));
-/*
+
             let gridSize = this.getGridSize();
             let sX = Math.floor(x / gridSize);
             let sY = Math.floor(y / gridSize);
@@ -155,32 +149,12 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
                     pos[0] -= this.cameras.main.scrollX;
                     pos[1] -= this.cameras.main.scrollY;
-                    uiLayer.setPlayerCard(player, pos, sz);
+                    this.uiLayer.setPlayerCard(player, pos, sz);
                 } else {
-                    uiLayer.setPlayerCard(null);
+                    this.uiLayer.setPlayerCard(null);
                 }
-            }*/
+            }
         });
-    }
-
-    private showPlayerCard(pointerPos: Point, player: Model.Player) {
-        let p = this.cameras.main.getWorldPoint(pointerPos.x, pointerPos.y);
-
-        let gridSize = this.getGridSize();
-        let sX = Math.floor(p.x / gridSize);
-        let sY = Math.floor(p.y / gridSize);
-        let fieldSquare = new Types.Coordinate(sX, sY);
-
-        let location = this.controller.findEmptyPatchNearLocation(fieldSquare, 3, 4);
-        let pos = this.controller.convertToPixels(location);
-        let sz = this.controller.convertToPixels(new Types.Coordinate(3, 4));
-        pos[0] -= this.cameras.main.scrollX;
-        pos[1] -= this.cameras.main.scrollY;
-        this.uiLayer.setPlayerCard(player, pos, sz);
-    }
-
-    private hidePlayerCard() {
-        this.uiLayer.setPlayerCard(null);
     }
 
     public resize() {
