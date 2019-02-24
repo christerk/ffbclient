@@ -15,8 +15,7 @@ export enum Anchor {
 }
 
 export enum InputEvent {
-    HOVER_IN = "pointerover",
-    HOVER_OUT = "pointerout"
+    POINTER_UP = "pointerup",
 }
 
 export type Size = number|string;
@@ -309,18 +308,13 @@ export abstract class UIComponent {
 
     public calculateHitArea(): void {}
 
-    protected getHoverElements(): Phaser.GameObjects.GameObject[] {
+    protected getInputElements(): Phaser.GameObjects.GameObject[] {
         return [];
     }
 
-    public addHoverIn(eventHandler: Function): void {
-        this.getHoverElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
-            hoverElement.on(InputEvent.HOVER_IN, eventHandler);
-        });
-    }
-    public addHoverOut(eventHandler: Function): void {
-        this.getHoverElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
-            hoverElement.on(InputEvent.HOVER_OUT, eventHandler);
+    public addPointerUp(eventHandler: Function): void {
+        this.getInputElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
+            hoverElement.on(InputEvent.POINTER_UP, eventHandler);
         });
     }
 

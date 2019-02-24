@@ -1,6 +1,6 @@
 import * as Comp from "../";
 import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
-import {Anchor, UIComponent} from "../uicomponent";
+import {isMenuSlot} from "./menuslot";
 
 export class MenuBuilder {
 
@@ -66,24 +66,25 @@ export class MenuBuilder {
         }
 
 
-        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
+        let panel =  orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
+
+        if (panel.children) {
+            panel.children.forEach(function(child: Comp.UIComponent){
+                if (isMenuSlot(child)) {
+                    child.parentPanel = panel;
+                }
+            })
+        }
+
+        return panel;
     }
 
     private createSlot(config: Comp.ComponentConfiguration, orientation: Orientation, label: Comp.Label, panel: Comp.LinearPanel){
-        let slot =  orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config, label, panel) :
+        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config, label, panel) :
             new Comp.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
-
-        if (panel.children) {
-            panel.children
-                .filter(function(child: Comp.UIComponent) {
-                    return Comp.isMenuSlot(child)
-                }).forEach(function(child: Comp.UIComponent) {
-                    child["parentSlot"] = slot;
-            });}
-        return slot;
     }
 
-    private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, children: UIComponent[] = []): Comp.ComponentConfiguration {
+    private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, children: Comp.UIComponent[] = []): Comp.ComponentConfiguration {
         return {
             id: id,
             margin: {
@@ -93,8 +94,8 @@ export class MenuBuilder {
                 bottom: 0,
             },
             height: 1,
-            anchor: Anchor.NORTHWEST,
-            parentAnchor: Anchor.NORTHWEST,
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
            // background: this.background,
             color: this.color,
             children: children,

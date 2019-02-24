@@ -99,7 +99,7 @@ export class Label extends Comp.UIComponent {
         this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
-    protected getHoverElements(): Phaser.GameObjects.GameObject[] {
+    protected getInputElements(): Phaser.GameObjects.GameObject[] {
         return [this.container];
     }
 

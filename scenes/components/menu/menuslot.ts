@@ -1,9 +1,11 @@
+import * as Comp from '..'
+
 export interface MenuSlot {
-    parentSlot: MenuSlot
-    childSlotHoverIn()
-    childSlotHoverOut()
+    label: Comp.Label
+    panel: Comp.LinearPanel
+    parentPanel: Comp.LinearPanel
 }
 
 export function isMenuSlot(object: any): object is MenuSlot {
-    return object.parentSlot !== undefined;
+    return object["label"] !== undefined && object["panel"] !== undefined
 }

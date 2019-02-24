@@ -1,12 +1,13 @@
 import * as Comp from '..';
 import Phaser from "phaser";
+import {MenuService} from "./menuservice";
 
 export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Comp.MenuSlot {
 
-    private label: Comp.Label;
-    private panel: Comp.HorizontalPanel;
-    public parentSlot: Comp.MenuSlot;
-    private childHoverCount = 0;
+    public label: Comp.Label;
+    public panel: Comp.HorizontalPanel;
+    public parentPanel: Comp.VerticalPanel;
+    private menuService = new MenuService();
 
     public constructor(config: Comp.ComponentConfiguration, label: Comp.Label, panel: Comp.HorizontalPanel) {
         super(config);
@@ -18,40 +19,7 @@ export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Comp.Men
 
     public create(): Phaser.GameObjects.GameObject {
         let container = super.create();
-        let label = this.label;
-        let panel = this.panel;
-        let self = this;
-
-        label.addHoverIn(function() {
-            panel.setVisible(true);
-            panel.calculateHitArea();
-            self.childSlotHoverIn();
-        });
-
-        label.addHoverOut(function(pointer: Phaser.Input.Pointer) {
-            //TODO refer to hit area instead of bounds
-            let bounds = self.label.getBounds();
-            if (pointer.x < bounds.x + bounds.height) {
-                panel.setVisible(false);
-                self.container.disableInteractive();
-            }
-
-            self.childSlotHoverOut();
-
-        });
-
-        panel.addHoverIn(function() {
-            self.childSlotHoverIn();
-        });
-
-        panel.addHoverOut(function(pointer: Phaser.Input.Pointer) {
-            if (!panel.getBounds().contains(pointer.x, pointer.y)) {
-                panel.setVisible(false);
-                self.container.disableInteractive();
-            }
-            self.childSlotHoverOut();
-        });
-
+        this.menuService.setUpInteraction(this);
         return container;
     }
 
@@ -73,23 +41,4 @@ export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Comp.Men
     public redrawChildren(): void {
         super.redrawChildren();
     }
-
-    public childSlotHoverIn() {
-        this.childHoverCount ++;
-        this.panel.setVisible(true);
-        if(this.parentSlot) {
-            this.parentSlot.childSlotHoverIn()
-        }
-    }
-
-    public childSlotHoverOut() {
-        this.childHoverCount --;
-        if (this.childHoverCount == 0) {
-            this.panel.setVisible(false);
-        }
-        if(this.parentSlot) {
-            this.parentSlot.childSlotHoverOut()
-        }
-    }
-
 }
