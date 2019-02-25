@@ -14,7 +14,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
             let renderContext: Comp.RenderContext = {
                 scene: this.ctx.scene,
                 parent: this,
-                x: offSet,
+                x: 0,
                 y: bounds.y,
                 w: bounds.width,
                 h: bounds.height,
