@@ -23,21 +23,26 @@ export class VerticalMenuSlot extends Comp.VerticalPanel implements Comp.MenuSlo
         return container;
     }
 
-
-
     public adjustWidthToParent(width: Comp.Size): number {
-        return this.children[0].adjustWidthToParent(width);
+        return this.label.adjustWidthToParent(width);
+    }
+
+    public adjustHeightToParent(height: Comp.Size): number {
+        let additionalOffset = this.label.adjustHeightToParent(height);
+        this.panel.adjustTopPositionOffset(additionalOffset);
+        return additionalOffset;
     }
 
     public getWidthForParent(): number {
-        if (this.children.length > 0) {
-            return this.children[0].getWidthForParent();
-        }
-        return 0;
+        return this.label.getWidthForParent();
+    }
+
+    public getHeightForParent(): number {
+        return this.label.getHeightForParent();
     }
 
     public childrenToAdjust(): Comp.UIComponent[] {
-        let childrenCount = this.children.length
+        let childrenCount = this.children.length;
         return this.children.slice(Math.min(1), childrenCount);
     }
 }

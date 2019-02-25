@@ -126,4 +126,11 @@ export class Label extends Comp.UIComponent {
         }
         return super.adjustWidthToParent(width);
     }
+
+    public adjustHeightToParent(height: Size) {
+        if (this.background) {
+            this.background.height = this.translateScalar(height, this.ctx.scale, this.ctx.h);
+        }
+        return super.adjustHeightToParent(height);
+    }
 }

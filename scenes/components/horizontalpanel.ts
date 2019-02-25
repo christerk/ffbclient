@@ -7,6 +7,7 @@ export class HorizontalPanel extends Comp.LinearPanel {
         let bounds = this.getBounds();
         let offSet: number = bounds.x;
         let baseOffset: number = offSet;
+        let newHeight: number = 0;
         for (let c of this.children) {
             if (super.triggerRedraw()) {
                 c.setAllowHitAreaCalculation(false);
@@ -29,12 +30,15 @@ export class HorizontalPanel extends Comp.LinearPanel {
             c.setContext(renderContext);
             c.redraw();
             offSet += c.getWidthForParent();
+            newHeight = Math.max(c.getHeightForParent(), newHeight);
         }
 
         if (super.shouldAdjustSize()) {
             this.config.width = super.pxToSize(offSet - baseOffset);
-            if (super.triggerRedraw()) {
-                for (let c of this.children) {
+            this.config.height = super.pxToSize(newHeight);
+             for (let c of this.childrenToAdjust()) {
+                c.adjustHeightToParent(super.pxToSize(newHeight));
+                if (super.triggerRedraw()) {
                     c.setAllowHitAreaCalculation(true);
                     c.redraw();
                 }

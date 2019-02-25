@@ -272,12 +272,27 @@ export abstract class UIComponent {
         return difference;
     }
 
+    public adjustHeightToParent(height: Size): number {
+        let difference = this.translateScalar(height, this.ctx.scale, this.ctx.h) -
+            this.translateScalar(this.config.height, this.ctx.scale, this.ctx.h) ;
+        this.config.height = height;
+        this.config.adjustSize = false;
+        return difference;
+    }
+
     public adjustLeftPositionOffset(left: number) {
         this.ctx.offset.left = this.pxToSize(this.translateScalar(this.ctx.offset.left, this.ctx.scale, 0) + left);
     }
 
+    public adjustTopPositionOffset(top: number) {
+        this.ctx.offset.top = this.pxToSize(this.translateScalar(this.ctx.offset.top, this.ctx.scale, 0) + top);
+    }
     public getWidthForParent(): number {
         return this.getBounds().width
+    }
+
+    public getHeightForParent(): number {
+        return this.getBounds().height
     }
 
     public setAllowHitAreaCalculation(isAllowed: boolean): void {

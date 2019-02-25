@@ -1,5 +1,4 @@
 import * as Comp from '.';
-import {Size} from ".";
 
 export abstract class LinearPanel extends Comp.Panel {
 
@@ -21,5 +20,9 @@ export abstract class LinearPanel extends Comp.Panel {
 
     protected triggerRedraw(): boolean {
         return this.config.triggerRecursiveRedrawAfterAdjust;
+    }
+
+    protected childrenToAdjust(): Comp.UIComponent[] {
+        return this.children;
     }
 }

@@ -34,7 +34,7 @@ export class VerticalPanel extends Comp.LinearPanel {
             c.setContext(renderContext);
             c.redraw();
             newWidth = Math.max( c.getWidthForParent(), newWidth);
-            offSet += c.getBoundsForContext(renderContext).height;
+            offSet += c.getHeightForParent();
             childNumber++;
         }
 
@@ -54,10 +54,6 @@ export class VerticalPanel extends Comp.LinearPanel {
 
         bounds = this.getBounds();
         this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth, offSet)
-    }
-
-    protected childrenToAdjust(): UIComponent[] {
-        return this.children;
     }
 
     public calculateHitArea(): void {
