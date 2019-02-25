@@ -1,4 +1,5 @@
 import * as Comp from '.';
+import {Size} from ".";
 
 export abstract class LinearPanel extends Comp.Panel {
 

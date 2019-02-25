@@ -42,6 +42,12 @@ export type RenderContext = {
     w: number,
     h: number,
     scale: number,
+    offset: {
+        left: Size,
+        right: Size,
+        top: Size,
+        bottom: Size,
+    }
 }
 
 export type ComponentConfiguration = {
@@ -51,12 +57,6 @@ export type ComponentConfiguration = {
         right?: Size,
         top?: Size,
         bottom?: Size,
-    },
-    offset?: {
-        left?: number,
-        right?: number,
-        top?: number,
-        bottom?: number,
     },
     width?: Size,
     height?: Size,
@@ -97,12 +97,6 @@ export abstract class UIComponent {
     public constructor(config: ComponentConfiguration) {
         let defaults: ComponentConfiguration = {
             margin: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-            },
-            offset: {
                 left: 0,
                 right: 0,
                 top: 0,
@@ -190,10 +184,10 @@ export abstract class UIComponent {
                 bottom: this.translateScalar(this.config.margin.bottom, ctx.scale, ctx.h),
             },
             offset: {
-                left: this.translateScalar(this.config.offset.left, ctx.scale, ctx.w),
-                right: this.translateScalar(this.config.offset.right, ctx.scale, ctx.w),
-                top: this.translateScalar(this.config.offset.top, ctx.scale, ctx.h),
-                bottom: this.translateScalar(this.config.offset.bottom, ctx.scale, ctx.h),
+                left: this.translateScalar(this.ctx.offset.left, ctx.scale, ctx.w),
+                right: this.translateScalar(this.ctx.offset.right, ctx.scale, ctx.w),
+                top: this.translateScalar(this.ctx.offset.top, ctx.scale, ctx.h),
+                bottom: this.translateScalar(this.ctx.offset.bottom, ctx.scale, ctx.h),
             },
             outerWidth: 0,
             outerHeight: 0,
@@ -222,13 +216,6 @@ export abstract class UIComponent {
     public setPosition(x: number, y: number) {
         this.config.margin.left = x + "px";
         this.config.margin.top = y + "px";
-    }
-
-    public setPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
-        this.config.offset.left = left;
-        this.config.offset.top = top;
-        this.config.offset.right = right;
-        this.config.offset.bottom = bottom;
     }
 
     public setSize(w: number, h: number) {
@@ -285,11 +272,8 @@ export abstract class UIComponent {
         return difference;
     }
 
-    public adjustPositionOffset(left: number, top: number = 0, right: number = 0, bottom: number = 0) {
-        this.config.offset.left += left;
-        this.config.offset.top += top;
-        this.config.offset.right += right;
-        this.config.offset.bottom += bottom;
+    public adjustLeftPositionOffset(left: number) {
+        this.ctx.offset.left = this.pxToSize(this.translateScalar(this.ctx.offset.left, this.ctx.scale, 0) + left);
     }
 
     public getWidthForParent(): number {
@@ -340,4 +324,7 @@ export abstract class UIComponent {
         return background;
     }
 
+    protected pxToSize(px: number): Size {
+        return px + 'px'
+    }
 }

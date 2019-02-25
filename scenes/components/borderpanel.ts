@@ -13,6 +13,12 @@ export class BorderPanel extends Comp.Panel {
             w: bounds.width,
             h: bounds.height,
             scale: this.ctx.scale,
+            offset: {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            }
         };
         for (let c of this.children) {
             c.setContext(renderContext);

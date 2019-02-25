@@ -81,6 +81,62 @@ export class UI implements Types.EventListener {
                                     event: EventType.FullScreen
                                 }]
                             }
+                        }, {
+                            orientation: Orientation.Horizontal,
+                            label: "test2",
+                            id: "testlabel2",
+                            panel: {
+                                orientation: Orientation.Vertical,
+                                elements: [{
+                                    label: 'Test2Sub0',
+                                    id: 'test2sub0label',
+                                    event: EventType.FullScreen
+                                },{
+                                    label: 'Test2Sub1',
+                                    id: 'test2sub1label',
+                                    orientation: Orientation.Horizontal,
+                                    panel: {
+                                        orientation: Orientation.Vertical,
+                                        elements: [
+                                            {
+                                                label: 'Test4Sub0',
+                                                id: 'test4sub0label',
+                                                event: EventType.FullScreen
+                                            },{
+                                                label: 'Test4Sub1',
+                                                id: 'test4sub1label',
+                                                event: EventType.FullScreen
+                                            },{
+                                                label: 'Test4Sub2',
+                                                id: 'test4sub1labe2',
+                                                event: EventType.FullScreen
+                                            }
+                                        ]
+                                    }
+                                },{
+                                    label: 'Test2Sub2',
+                                    id: 'test2sub1labe2',
+                                    orientation: Orientation.Horizontal,
+                                    panel: {
+                                        orientation: Orientation.Horizontal,
+                                        elements: [
+                                            {
+                                                label: 'Test4Sub0',
+                                                id: 'test4sub0label',
+                                                event: EventType.FullScreen
+                                            },{
+                                                label: 'Test4Sub1',
+                                                id: 'test4sub1label',
+                                                event: EventType.FullScreen
+                                            },{
+                                                label: 'Test4Sub2',
+                                                id: 'test4sub1labe2',
+                                                event: EventType.FullScreen
+                                            }
+                                        ]
+                                    }
+                                }]
+                            }
                         }]
                     }
                 }, {
@@ -89,7 +145,29 @@ export class UI implements Types.EventListener {
                     label: 'Next',
                     panel: {
                         orientation: Orientation.Vertical,
-                        elements: [{label: 'Dummy', id: 'dummy', event: EventType.FullScreen}]
+                        elements: [
+                            {label: 'Dummy', id: 'dummy', event: EventType.FullScreen}
+                            , {
+                                orientation: Orientation.Horizontal,
+                                label: "test3",
+                                id: "testlabel3",
+                                panel: {
+                                    orientation: Orientation.Vertical,
+                                    elements: [{
+                                        label: 'Test3Sub0',
+                                        id: 'test3sub0label',
+                                        event: EventType.FullScreen
+                                    },{
+                                        label: 'Test3Sub1',
+                                        id: 'test3sub1label',
+                                        event: EventType.FullScreen
+                                    },{
+                                        label: 'Test3Sub2',
+                                        id: 'test3sub1labe2',
+                                        event: EventType.FullScreen
+                                    }]
+                                }
+                            }]
 
                 }}]
         };
@@ -313,6 +391,12 @@ export class UI implements Types.EventListener {
             scale: 30,
             x: 0,
             y: 0,
+            offset: {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            }
         };
 
         let menu = new MenuBuilder(0xFF0000, 0xFFFF00).build(menuConfig, 'TopBar');

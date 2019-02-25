@@ -24,10 +24,8 @@ export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Comp.Men
     }
 
     public adjustWidthToParent(width: Comp.Size): number {
-        let additionalOffset = this.children[0].adjustWidthToParent(width);
-        for (let c of this.children.slice(1)) {
-              c.adjustPositionOffset(additionalOffset/this.ctx.scale);
-        }
+        let additionalOffset = this.label.adjustWidthToParent(width);
+        this.panel.adjustLeftPositionOffset(additionalOffset)
         return additionalOffset;
     }
 

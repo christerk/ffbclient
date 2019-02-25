@@ -23,22 +23,28 @@ export class VerticalPanel extends Comp.LinearPanel {
                 w: bounds.width,
                 h: bounds.height,
                 scale: this.ctx.scale,
+                offset: {
+                    left: 0,
+                    top:  super.pxToSize(offSet),
+                    right: 0,
+                    bottom: 0
+
+                }
             };
-            c.setPositionOffset(0, offSet);
             c.setContext(renderContext);
             c.redraw();
-            newWidth = Math.max( c.getWidthForParent() / this.ctx.scale, newWidth);
-            offSet += c.getBoundsForContext(renderContext).height / this.ctx.scale;
+            newWidth = Math.max( c.getWidthForParent(), newWidth);
+            offSet += c.getBoundsForContext(renderContext).height;
             childNumber++;
         }
 
 
 
         if (super.shouldAdjustSize() && this.children.length > 0) {
-            this.config.width = newWidth;
-            this.config.height = offSet;
+            this.config.width = super.pxToSize(newWidth);
+            this.config.height = super.pxToSize(offSet);
             for (let c of this.childrenToAdjust()) {
-                c.adjustWidthToParent(newWidth);
+                c.adjustWidthToParent(super.pxToSize(newWidth));
                 if (super.triggerRedraw()) {
                     c.setAllowHitAreaCalculation(true);
                     c.redraw();
@@ -47,7 +53,7 @@ export class VerticalPanel extends Comp.LinearPanel {
         }
 
         bounds = this.getBounds();
-        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth * this.ctx.scale, offSet * this.ctx.scale)
+        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth, offSet)
     }
 
     protected childrenToAdjust(): UIComponent[] {
