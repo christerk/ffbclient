@@ -56,14 +56,6 @@ export class MenuBuilder {
 
 
     private createPanel(config: Comp.ComponentConfiguration, orientation: Orientation){
-        if (orientation == Comp.Orientation.Horizontal) {
-           // config.background = 0x00FF00;
-
-        } else {
-           config.background = 0x00FFFF;
-        }
-
-
         let panel =  orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
 
         if (panel.children) {
