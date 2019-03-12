@@ -28,6 +28,7 @@ export class MenuBuilder {
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
         let wrapperConfig = this.createConfig(nodeConfig.id, true, nodeConfig.label, isRoot);
         wrapperConfig.interactive = false;
+        wrapperConfig.adjustSize = false;
         let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
 
@@ -41,6 +42,7 @@ export class MenuBuilder {
     private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false): Comp.Label {
         let config = this.createConfig(id, true, label, isRoot);
         config.interactive = interactive;
+        config.background = this.background;
         return new Comp.Label(config);
     }
 
