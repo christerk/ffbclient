@@ -22,11 +22,7 @@ export class MenuBuilder {
         let config = this.createConfig(parentId + "_panel", false, "", isRoot, children);
         config.triggerRecursiveRedrawAfterAdjust = isRoot;
         config.interactive = false;
-        let panel = this.createPanel(config, panelConfig.orientation);
-        if (isRoot) {
-            panel.setPosition(1,1)
-        }
-        return panel
+        return this.createPanel(config, panelConfig.orientation);
     }
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
