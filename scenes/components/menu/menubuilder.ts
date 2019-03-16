@@ -1,15 +1,19 @@
 import * as Comp from "../";
 import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
 import {isMenuSlot} from "./menuslot";
+import {EventType} from "../../../types";
+import * as Core from "../../../core"
 
 export class MenuBuilder {
 
     private color: number;
     private background: number;
+    private controller: Core.Controller;
 
-    constructor(color: number, background: number) {
+    constructor(color: number, background: number, controller: Core.Controller) {
         this.color = color;
         this.background = background;
+        this.controller = controller;
     }
 
     public build(panelConfig: Comp.MenuPanelConfiguration, containerId: string): Comp.LinearPanel {
@@ -19,7 +23,7 @@ export class MenuBuilder {
     private convertPanel(panelConfig: Comp.MenuPanelConfiguration, parentId: string, isRoot: boolean = false): Comp.LinearPanel {
         let self = this;
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element, isRoot)});
-        let config = this.createConfig(parentId + "_panel", false, "", isRoot, children);
+        let config = this.createConfig(parentId + "_panel", false, "", isRoot, null, children);
         config.triggerRecursiveRedrawAfterAdjust = isRoot;
         config.interactive = false;
         return this.createPanel(config, panelConfig.orientation);
@@ -29,21 +33,21 @@ export class MenuBuilder {
         let wrapperConfig = this.createConfig(nodeConfig.id, true, nodeConfig.label, isRoot);
         wrapperConfig.interactive = false;
         wrapperConfig.adjustSize = false;
-        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true);
+        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true, null);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
 
         return this.createSlot(wrapperConfig, nodeConfig.orientation, label, panel);
     }
 
     private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
-        return this.createLabel(entryConfig.id, entryConfig.label)
+        return this.createLabel(entryConfig.id, entryConfig.label, false, true, entryConfig.event)
     }
 
-    private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false): Comp.Label {
-        let config = this.createConfig(id, true, label, isRoot);
+    private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false, event: EventType): Comp.Label {
+        let config = this.createConfig(id, true, label, isRoot, event);
         config.interactive = interactive;
         config.background = this.background;
-        return new Comp.Label(config);
+        return new Comp.Label(config, this.controller);
     }
 
     private convertPanelChild(childConfig: Comp.MenuNodeConfiguration | Comp.MenuEntryConfiguration, isRoot: boolean = false): Comp.LinearPanel | Comp.Label {
@@ -74,7 +78,8 @@ export class MenuBuilder {
             new Comp.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
     }
 
-    private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, children: Comp.UIComponent[] = []): Comp.ComponentConfiguration {
+    private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, event: EventType = null,
+                         children: Comp.UIComponent[] = []): Comp.ComponentConfiguration {
         return {
             id: id,
             margin: {
@@ -93,7 +98,8 @@ export class MenuBuilder {
             inheritVisibility: inheritVisibility,
             text: label,
             adjustSize: true,
-            interactive: true
+            interactive: true,
+            event: event
         }
     }
 }

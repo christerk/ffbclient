@@ -10,9 +10,11 @@ require('./sass/menu.scss')
 
 export default class App extends Phaser.Game implements EventListener {
     private static controller: Core.Controller;
+    private restartCallback: () => void;
 
-    public constructor() {
+    public constructor(restartCallback: () => void) {
         console.log("Starting Phaser App");
+
 
         let game = new Model.Game();
         let commandManager = new CommandManager(game);
@@ -42,6 +44,7 @@ export default class App extends Phaser.Game implements EventListener {
             }
         };
         super(config);
+        this.restartCallback = restartCallback;
 
         controller.setSceneManager(this.scene);
 
@@ -128,6 +131,7 @@ export default class App extends Phaser.Game implements EventListener {
                 break;
             case EventType.FullScreen: this.canvas[this.device.fullscreen.request](); break;
             case EventType.Quit:
+                setTimeout(this.restartCallback, 1);
                 App.controller.disconnect();
                 super.destroy(true); break;
         }

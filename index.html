@@ -41,7 +41,10 @@
                             $("#wrapper").attr("user", data.user_id);
                             $("#wrapper").attr("auth", data.token);
 
-                            application = new EntryPoint.default();
+                            application = new EntryPoint.default(function() {
+                                $("#match-list").css("display", "block");
+                                refresh();
+                            });
                             $("#match-list").css("display", "none");
                         });
                     });

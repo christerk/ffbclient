@@ -1,5 +1,7 @@
 import * as Comp from ".";
 import {Size} from ".";
+import {EventType} from "../../types";
+import * as Core from "../../core";
 
 export class Label extends Comp.UIComponent {
     private text: string;
@@ -9,9 +11,11 @@ export class Label extends Comp.UIComponent {
     private numRows: number;
     private background: Phaser.GameObjects.Image;
     public container: Phaser.GameObjects.Container;
+    private controller: Core.Controller;
 
-    public constructor(config: Comp.ComponentConfiguration) {
+    public constructor(config: Comp.ComponentConfiguration, controller: Core.Controller = null) {
         super(config);
+        this.controller = controller;
 
         this.config.adjustSize = true;
 
@@ -32,6 +36,19 @@ export class Label extends Comp.UIComponent {
         }
 
         this.container.add(this.textObject);
+
+        let controller = this.controller;
+
+        if (this.config.event) {
+            if (controller) {
+                let event = this.config.event;
+                this.addPointerUp(function () {
+                    controller.triggerEvent(event);
+                });
+            } else {
+               console.error(`Label ${this.config.id} has event ${event} configured but no controller is set.`)
+            }
+        }
 
         return this.container;
     }

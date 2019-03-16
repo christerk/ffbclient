@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import deepmerge from "deepmerge";
 import * as Comp from "./index";
+import {EventType} from "../../types";
 
 export enum Anchor {
     CENTER = 0,
@@ -72,7 +73,8 @@ export type ComponentConfiguration = {
     image?: string,
     adjustSize?: boolean,
     triggerRecursiveRedrawAfterAdjust?: boolean,
-    interactive?: boolean
+    interactive?: boolean,
+    event?: EventType
 }
 
 export abstract class UIComponent {
