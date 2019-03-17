@@ -84,7 +84,7 @@ export class Label extends Comp.UIComponent {
         if (rows < 1) {
             rows = 1;
         }
-        let fontSize = Math.floor((bounds.height - this.translateScalar(this.config.padding.top, this.ctx.scale, this.ctx.h) - this.translateScalar(this.config.padding.bottom, this.ctx.scale, this.ctx.h)) * 0.9) / rows;
+        let fontSize = Math.floor((bounds.height - this.translateScalarHeight(this.config.padding.top) - this.translateScalarHeight(this.config.padding.bottom)) * 0.9) / rows;
         if (fontSize != this.fontSize) {
             g.setFontSize(fontSize);
             this.fontSize = fontSize;
@@ -140,14 +140,14 @@ export class Label extends Comp.UIComponent {
 
     public adjustWidthToParent(width: Size) {
         if (this.background) {
-            this.background.width = this.translateScalar(width, this.ctx.scale, this.ctx.w);
+            this.background.width = this.translateScalarWidth(width);
         }
         return super.adjustWidthToParent(width);
     }
 
     public adjustHeightToParent(height: Size) {
         if (this.background) {
-            this.background.height = this.translateScalar(height, this.ctx.scale, this.ctx.h);
+            this.background.height = this.translateScalarHeight(height);
         }
         return super.adjustHeightToParent(height);
     }
