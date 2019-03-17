@@ -40,8 +40,8 @@ export class MenuBuilder {
     }
 
     private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
-        return this.createLabel(entryConfig.id, entryConfig.label, false, true, entryConfig.event)
-    }
+        let config = this.createEventLabelConfig(entryConfig);
+        return new Comp.Label(config, this.controller);    }
 
     private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false, event: EventType): Comp.Label {
         let config = this.createConfig(id, true, label, isRoot, event);
@@ -89,10 +89,10 @@ export class MenuBuilder {
                 bottom: 0,
             },
             padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
+                left: "5px",
+                right: "5px",
+                top: "1px",
+                bottom: "1px",
             },
             height: 0.5,
             anchor: Comp.Anchor.NORTHWEST,
@@ -106,6 +106,37 @@ export class MenuBuilder {
             adjustSize: true,
             interactive: true,
             event: event
+        }
+    }
+
+    private createEventLabelConfig(entryConfig: Comp.MenuEntryConfiguration) {
+        return {
+            id: entryConfig.id,
+            margin: {
+                left: "1px",
+                right: "1px",
+                top: "1px",
+                bottom: "1px",
+            },
+            padding: {
+                left: "5px",
+                right:"5px",
+                top: "1px",
+                bottom: "1px",
+            },
+            height: 0.5,
+            anchor: Comp.Anchor.NORTHWEST,
+            parentAnchor: Comp.Anchor.NORTHWEST,
+            background: 0xF003300,
+            color: 0xffffff,
+            children: [],
+            visible: false,
+            inheritVisibility: true,
+            text: entryConfig.label,
+            adjustSize: true,
+            triggerRecursiveRedrawAfterAdjust: false,
+            interactive: true,
+            event: entryConfig.event
         }
     }
 }
