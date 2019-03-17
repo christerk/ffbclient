@@ -116,18 +116,8 @@ export class MenuBuilder {
     private createEventLabelConfig(entryConfig: Comp.MenuEntryConfiguration) {
         return {
             id: entryConfig.id,
-            margin: {
-                left: 0.02,
-                right: 0.02,
-                top: 0.02,
-                bottom: "1px",
-            },
-            padding: {
-                left: 0.12,
-                right: 0.12,
-                top: 0.02,
-                bottom: 0.02,
-            },
+            margin: MenuBuilder.labelMargin,
+            padding: MenuBuilder.labelPadding,
             height: 0.5,
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
