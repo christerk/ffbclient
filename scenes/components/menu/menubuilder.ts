@@ -10,6 +10,20 @@ export class MenuBuilder {
     private background: number;
     private controller: Core.Controller;
 
+    private static labelMargin = {
+        left: 0.02,
+        right: 0.02,
+        top: 0.02,
+        bottom: 0.02,
+    };
+
+    private static labelPadding: {
+        left: 0.12,
+        right: 0.12,
+        top: 0.02,
+        bottom: 0.02,
+    };
+
     constructor(color: number, background: number, controller: Core.Controller) {
         this.color = color;
         this.background = background;
@@ -82,18 +96,8 @@ export class MenuBuilder {
                          children: Comp.UIComponent[] = []): Comp.ComponentConfiguration {
         return {
             id: id,
-            margin: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
-            },
-            padding: {
-                left: "5px",
-                right: "5px",
-                top: "1px",
-                bottom: "1px",
-            },
+            margin: MenuBuilder.labelMargin,
+            padding: MenuBuilder.labelPadding,
             height: 0.5,
             anchor: Comp.Anchor.NORTHWEST,
             parentAnchor: Comp.Anchor.NORTHWEST,
