@@ -6,27 +6,28 @@ import * as Core from "../../../core"
 
 export class MenuBuilder {
 
-    private color: number;
-    private background: number;
     private controller: Core.Controller;
 
     private static labelMargin = {
         left: 0.02,
         right: 0.02,
         top: 0.02,
-        bottom: 0.02,
+        bottom: 0.02
     };
 
-    private static labelPadding: {
+    private static labelPadding = {
         left: 0.12,
         right: 0.12,
         top: 0.02,
-        bottom: 0.02,
+        bottom: 0.02
     };
 
-    constructor(color: number, background: number, controller: Core.Controller) {
-        this.color = color;
-        this.background = background;
+    private static labelHeight = 0.5;
+    private static labelBackground = 0xF003300;
+    private static labelColor = 0xffffff;
+    private static anchor = Comp.Anchor.NORTHWEST;
+
+    constructor(controller: Core.Controller) {
         this.controller = controller;
     }
 
@@ -58,9 +59,7 @@ export class MenuBuilder {
         return new Comp.Label(config, this.controller);    }
 
     private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false, event: EventType): Comp.Label {
-        let config = this.createConfig(id, true, label, isRoot, event);
-        config.interactive = interactive;
-        config.background = this.background;
+        let config = this.createSlotLabel(id, label, isRoot);
         return new Comp.Label(config, this.controller);
     }
 
@@ -99,10 +98,10 @@ export class MenuBuilder {
             margin: MenuBuilder.labelMargin,
             padding: MenuBuilder.labelPadding,
             height: 0.5,
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
+            anchor: MenuBuilder.anchor,
+            parentAnchor: MenuBuilder.anchor,
            // background: this.background,
-            color: this.color,
+            color: MenuBuilder.labelColor,
             children: children,
             visible: visible,
             inheritVisibility: inheritVisibility,
@@ -118,19 +117,36 @@ export class MenuBuilder {
             id: entryConfig.id,
             margin: MenuBuilder.labelMargin,
             padding: MenuBuilder.labelPadding,
-            height: 0.5,
-            anchor: Comp.Anchor.NORTHWEST,
-            parentAnchor: Comp.Anchor.NORTHWEST,
-            background: 0xF003300,
-            color: 0xffffff,
+            height: MenuBuilder.labelHeight,
+            anchor: MenuBuilder.anchor,
+            parentAnchor: MenuBuilder.anchor,
+            background: MenuBuilder.labelBackground,
+            color: MenuBuilder.labelColor,
             children: [],
-            visible: false,
             inheritVisibility: true,
             text: entryConfig.label,
             adjustSize: true,
-            triggerRecursiveRedrawAfterAdjust: false,
             interactive: true,
             event: entryConfig.event
+        }
+    }
+
+    private createSlotLabel(id: string, label: string, visible: boolean) {
+        return  {
+            id: id,
+            margin: MenuBuilder.labelMargin,
+            padding: MenuBuilder.labelPadding,
+            height: MenuBuilder.labelHeight,
+            anchor: MenuBuilder.anchor,
+            parentAnchor: MenuBuilder.anchor,
+            background: MenuBuilder.labelBackground,
+            color: MenuBuilder.labelColor,
+            children: [],
+            visible: visible,
+            inheritVisibility: true,
+            text: label,
+            adjustSize: true,
+            interactive: true
         }
     }
 }
