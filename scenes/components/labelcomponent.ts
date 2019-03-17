@@ -84,7 +84,7 @@ export class Label extends Comp.UIComponent {
         if (rows < 1) {
             rows = 1;
         }
-        let fontSize = Math.floor(bounds.height * 0.9) / rows;
+        let fontSize = Math.floor((bounds.height - this.translateScalar(this.config.padding.top, this.ctx.scale, this.ctx.h) - this.translateScalar(this.config.padding.bottom, this.ctx.scale, this.ctx.h)) * 0.9) / rows;
         if (fontSize != this.fontSize) {
             g.setFontSize(fontSize);
             this.fontSize = fontSize;
