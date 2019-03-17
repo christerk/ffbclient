@@ -106,7 +106,7 @@ export class Label extends Comp.UIComponent {
             this.background = super.createBackground(bounds);
             this.container.addAt(this.background, 0);
         }
-        this.textObject.setPosition(bounds.x + this.translateScalarWidth(this.config.padding.left), bounds.y)
+        this.textObject.setPosition(bounds.x + this.translateScalarWidth(this.config.padding.left), bounds.y + this.translateScalarHeight(this.config.padding.top))
     }
 
     public calculateHitArea(): void {
