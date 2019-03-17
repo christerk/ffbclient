@@ -96,6 +96,7 @@ export class Label extends Comp.UIComponent {
 
         if (this.config.adjustSize) {
             this.config.width = g.displayWidth + "px";
+            bounds = this.getBounds();
         }
 
         if (this.background != null) {
