@@ -113,16 +113,16 @@ export class MenuBuilder {
         return {
             id: entryConfig.id,
             margin: {
-                left: "1px",
-                right: "1px",
-                top: "1px",
+                left: 0.02,
+                right: 0.02,
+                top: 0.02,
                 bottom: "1px",
             },
             padding: {
-                left: "5px",
-                right:"5px",
-                top: "1px",
-                bottom: "1px",
+                left: 0.12,
+                right: 0.12,
+                top: 0.02,
+                bottom: 0.02,
             },
             height: 0.5,
             anchor: Comp.Anchor.NORTHWEST,
