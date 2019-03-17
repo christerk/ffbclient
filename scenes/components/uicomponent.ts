@@ -205,12 +205,6 @@ export abstract class UIComponent {
                 top: this.translateScalarHeight(this.config.margin.top),
                 bottom: this.translateScalarHeight(this.config.margin.bottom),
             },
-            padding: {
-                left: this.translateScalarWidth(this.config.padding.left),
-                right: this.translateScalarWidth(this.config.padding.right),
-                top: this.translateScalarHeight(this.config.padding.top),
-                bottom: this.translateScalarHeight(this.config.padding.bottom),
-            },
             offset: {
                 left: this.translateScalarWidth(this.ctx.offset.left),
                 right: this.translateScalarWidth(this.ctx.offset.right),
@@ -221,8 +215,8 @@ export abstract class UIComponent {
             outerHeight: 0,
         };
 
-        pos.outerWidth = pos.innerWidth + pos.padding.left + pos.padding.right + pos.margin.left + pos.margin.right + pos.offset.left + pos.offset.right;
-        pos.outerHeight = pos.innerHeight + pos.padding.top + pos.padding.bottom + pos.margin.top + pos.margin.bottom + pos.offset.top + pos.offset.bottom;
+        pos.outerWidth = pos.innerWidth + this.horizontalPadding() + pos.margin.left + pos.margin.right + pos.offset.left + pos.offset.right;
+        pos.outerHeight = pos.innerHeight + this.verticalPadding() + pos.margin.top + pos.margin.bottom + pos.offset.top + pos.offset.bottom;
 
         let centerX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*pos.outerWidth) + ctx.x;
         let centerY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*pos.outerHeight) + ctx.y;
@@ -294,10 +288,8 @@ export abstract class UIComponent {
 
     public adjustWidthToParent(widthWithExtras: Size): number {
         let width = this.translateScalarWidth(widthWithExtras) -
-            this.translateScalarWidth(this.config.padding.left) -
-            this.translateScalarWidth(this.config.padding.right) -
-            this.translateScalarWidth(this.config.margin.left) -
-            this.translateScalarWidth(this.config.margin.right);
+            this.horizontalPadding() -
+            this.horizontalMargin();
 
         let difference = width -
             this.translateScalarWidth(this.config.width) ;
@@ -308,10 +300,8 @@ export abstract class UIComponent {
 
     public adjustHeightToParent(heightWithExtras: Size): number {
         let height = this.translateScalarHeight(heightWithExtras) -
-            this.translateScalarHeight(this.config.padding.top) -
-            this.translateScalarHeight(this.config.padding.bottom) -
-            this.translateScalarHeight(this.config.margin.top) -
-            this.translateScalarHeight(this.config.margin.bottom);
+            this.verticalPadding() -
+            this.verticalMargin();
 
         let difference = height -
             this.translateScalarHeight(this.config.height) ;
@@ -329,18 +319,14 @@ export abstract class UIComponent {
     }
     public getWidthForParent(): number {
         return this.getBounds().width +
-            this.translateScalarWidth(this.config.padding.left) +
-            this.translateScalarWidth(this.config.padding.right) +
-            this.translateScalarWidth(this.config.margin.left) +
-            this.translateScalarWidth(this.config.margin.right)
+            this.horizontalPadding() +
+            this.horizontalMargin();
     }
 
     public getHeightForParent(): number {
         return this.getBounds().height +
-            this.translateScalarHeight(this.config.padding.top) +
-            this.translateScalarHeight(this.config.padding.bottom) +
-            this.translateScalarHeight(this.config.margin.top) +
-            this.translateScalarHeight(this.config.margin.bottom)
+            this.verticalPadding() +
+            this.verticalMargin();
     }
 
     public setAllowHitAreaCalculation(isAllowed: boolean): void {
@@ -376,12 +362,11 @@ export abstract class UIComponent {
         if (alpha === null || alpha === undefined) {
             alpha = 1;
         }
-        let paddingWidth = this.translateScalarWidth(this.config.padding.left) + this.translateScalarWidth(this.config.padding.right)
-        let paddingHeight = this.translateScalarHeight(this.config.padding.top) + this.translateScalarHeight(this.config.padding.bottom)
+
         bg.fillStyle(this.config.background, alpha);
-        bg.fillRect(0, 0, bounds.width + paddingWidth, bounds.height + paddingHeight);
+        bg.fillRect(0, 0, bounds.width + this.horizontalPadding(), bounds.height + this.verticalPadding());
         let key = Comp.UIComponent.generateKey();
-        bg.generateTexture(key, bounds.width + paddingWidth, bounds.height + paddingHeight);
+        bg.generateTexture(key, bounds.width + this.horizontalPadding(), bounds.height + this.verticalPadding());
         let background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
         background.setOrigin(0,0);
         background.setDisplayOrigin(0,0);
@@ -391,5 +376,21 @@ export abstract class UIComponent {
 
     protected pxToSize(px: number): Size {
         return px + 'px'
+    }
+
+    protected horizontalPadding() {
+        return this.translateScalarWidth(this.config.padding.left) + this.translateScalarWidth(this.config.padding.right);
+    }
+
+    protected verticalPadding() {
+        return this.translateScalarHeight(this.config.padding.top) + this.translateScalarHeight(this.config.padding.bottom);
+    }
+
+    protected horizontalMargin() {
+        return this.translateScalarWidth(this.config.margin.left) + this.translateScalarWidth(this.config.margin.right);
+    }
+
+    protected verticalMargin() {
+        return this.translateScalarHeight(this.config.margin.top) + this.translateScalarHeight(this.config.margin.bottom);
     }
 }
