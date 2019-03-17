@@ -188,6 +188,10 @@ export abstract class UIComponent {
         return result;
     }
 
+    protected pxToSize(px: number): Size {
+        return px + 'px'
+    }
+
     public getBounds(): Phaser.Geom.Rectangle {
         return this.getBoundsForContext(this.ctx);
     }
@@ -236,13 +240,13 @@ export abstract class UIComponent {
     }
 
     public setPosition(x: number, y: number) {
-        this.config.margin.left = x + "px";
-        this.config.margin.top = y + "px";
+        this.config.margin.left = this.pxToSize(x);
+        this.config.margin.top = this.pxToSize(y);
     }
 
     public setSize(w: number, h: number) {
-        this.config.width = w + "px";
-        this.config.height = h + "px";
+        this.config.width = this.pxToSize(w);
+        this.config.height = this.pxToSize(h);
     }
 
     public setVisible(visible: boolean) {
@@ -293,7 +297,7 @@ export abstract class UIComponent {
 
         let difference = width -
             this.translateScalarWidth(this.config.width) ;
-        this.config.width = width + "px";
+        this.config.width = this.pxToSize(width);
         this.config.adjustSize = false;
         return difference;
     }
@@ -305,7 +309,7 @@ export abstract class UIComponent {
 
         let difference = height -
             this.translateScalarHeight(this.config.height) ;
-        this.config.height = height + "px";
+        this.config.height = this.pxToSize(height);
         this.config.adjustSize = false;
         return difference;
     }
@@ -372,10 +376,6 @@ export abstract class UIComponent {
         background.setDisplayOrigin(0,0);
         background.setPosition(bounds.x, bounds.y);
         return background;
-    }
-
-    protected pxToSize(px: number): Size {
-        return px + 'px'
     }
 
     protected horizontalPadding() {
