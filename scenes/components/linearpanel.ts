@@ -23,4 +23,5 @@ export abstract class LinearPanel extends Comp.Panel {
     protected childrenToAdjust(): Comp.UIComponent[] {
         return this.children;
     }
+
 }

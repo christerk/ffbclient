@@ -209,6 +209,7 @@ export class UI implements Types.EventListener {
                 right: 0,
                 bottom: 0
             }
+
         };
 
         let menu = new MenuBuilder(this.controller).build(menuConfig, 'TopBar');

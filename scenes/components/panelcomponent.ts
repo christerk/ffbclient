@@ -6,6 +6,7 @@ export abstract class Panel extends Comp.UIComponent {
 
     public container: Phaser.GameObjects.Container
 
+
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
 
@@ -77,7 +78,7 @@ export abstract class Panel extends Comp.UIComponent {
         for (let c of this.children) {
             c.postCreate();
         }
-    }
+                }
 
     public show() {
         this.container.visible = true;
@@ -87,12 +88,12 @@ export abstract class Panel extends Comp.UIComponent {
         this.container.visible = false;
     }
 
-    public setVisible(visible: boolean) {
-        if (this.config.visible != visible) {
-            super.setVisible(visible);
+            public setVisible(visible: boolean) {
+                    if (this.config.visible != visible) {
+                        super.setVisible(visible);
 
-            for (let c of this.children) {
-                if (c.InheritVisibility) {
+                        for (let c of this.children) {
+                            if (c.InheritVisibility) {
                     c.setVisible(visible);
                 }
             }

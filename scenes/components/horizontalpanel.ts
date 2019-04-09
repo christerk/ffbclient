@@ -1,7 +1,6 @@
 import * as Comp from '.';
 
 export class HorizontalPanel extends Comp.LinearPanel {
-
     public redrawChildren(): void {
         super.redrawChildren();
         let bounds = this.getBounds();
