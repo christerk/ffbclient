@@ -23,7 +23,7 @@ export class Input extends Comp.UIComponent {
 
     public create(): Phaser.GameObjects.GameObject {
         let col = this.numberToRGBString(this.config.color);
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
 
         let bg = this.ctx.scene.make.graphics({});
         bg.clear();
@@ -182,10 +182,10 @@ export class Input extends Comp.UIComponent {
         return this.text.substr(this.caretPosition);
     }
 
-    public redraw(): void {
-        super.redraw();
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
 
-        let bounds = this.getBounds(this.ctx);
+        let bounds = this.getBounds();
 
         let caretSize = Math.floor(this.ctx.scale / 10);
 

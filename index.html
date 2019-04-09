@@ -1,79 +1,83 @@
 <!doctype html>
 <html lang="en">
-    <head>
-<style>
-    .team-logo{
-        width:24px;
-        height:24px;
-    }
-    a:link{
-        text-align:center;
-    }
-</style>
-        <meta charset="UTF-8" />
-        <title>ffbclient</title>
-        <script src="build/bundle.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script>
 
-            $(document).ready(function(){
-                var application;
+<head>
+    <style>
+        .team-logo {
+            width: 24px;
+            height: 24px;
+        }
+        
+        a:link {
+            text-align: center;
+        }
+    </style>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var application;
 
-                var refresh = function(){
-                    $.getJSON('/matches',function(data){
-                        $('#match-list a').remove();
-                        data.forEach(function(match){
-                            var colour_class = match.division == "Blackbox" ? "list-group-item-danger" : match.division == "Ranked" ? "list-group-item-warning" : "list-group-item-info";
-                            var text = "<img class='team-logo pull-left' src='https://fumbbl.com/" + match.teams[0].logo+"'>" + 
-                                match.teams[0].name +
-                                " vs " +"<img class='team-logo pull-right' src='https://fumbbl.com/" + match.teams[1].logo+"'>" + 
-                                match.teams[1].name + 
-                                " Turn: " + match.turn ;
-                            var output='<a class="list-group-item match-link ' + colour_class + ' " match='+ match.id + ' href="#">'+text+'</li>';
-                            $('#match-list').append(output);
-                        });
-                        $(".match-link").click(function(event){
-                            event.preventDefault();
-                            var match_id = $(event.target).attr("match");
-                            $.getJSON('/auth',function(data){
-                                $("#wrapper").attr("game", match_id);
-                                $("#wrapper").attr("user", data.user_id);
-                                $("#wrapper").attr("auth", data.token);
-
-                                application = new EntryPoint.default();
-                                $("#match-list").css("display", "none");
-                            });
-                        });
-
+            var refresh = function() {
+                $.getJSON('/matches', function(data) {
+                    $('#match-list a').remove();
+                    data.forEach(function(match) {
+                        var colour_class = match.division == "Blackbox" ? "list-group-item-danger" : match.division == "Ranked" ? "list-group-item-warning" : "list-group-item-info";
+                        var text = "<img class='team-logo pull-left' src='https://fumbbl.com/" + match.teams[0].logo + "'>" +
+                            match.teams[0].name +
+                            " vs " + "<img class='team-logo pull-right' src='https://fumbbl.com/" + match.teams[1].logo + "'>" +
+                            match.teams[1].name +
+                            " Turn: " + match.turn;
+                        var output = '<a class="list-group-item match-link ' + colour_class + ' " match=' + match.id + ' href="#">' + text + '</li>';
+                        $('#match-list').append(output);
                     });
-                };
-                refresh();
+                    $(".match-link").click(function(event) {
+                        event.preventDefault();
+                        var match_id = $(event.target).attr("match");
+                        $.getJSON('/auth', function(data) {
+                            $("#wrapper").attr("game", match_id);
+                            $("#wrapper").attr("user", data.user_id);
+                            $("#wrapper").attr("auth", data.token);
 
-                $("#quit").click(function(event){
-                    $("#match-list").css("display", "block");
-                    refresh();
+                            application = new EntryPoint.default(function() {
+                                $("#match-list").css("display", "block");
+                                refresh();
+                            });
+
+                            $("#match-list").css("display", "none");
+                        });
+                    });
+
                 });
+            };
+            refresh();
 
+            $("#quit").click(function(event) {
+                $("#match-list").css("display", "block");
+                refresh();
             });
-        </script>
-    </head>
-    <body>
-        <div class="container">
-            <div id="match-list" class="list-group">
-                <h2>Active Matches</h2>
-                <span class="label label-danger">Blackbox</span>
-                <span class="label label-warning">Ranked</span>
-                <span class="label label-info">League</span>
-            </div>
 
-            <div class="phaserapppage" id="wrapper" game="" user="" auth="">
-                <button id="fullscreen">Full Screen</button>
-                <button id="quit">Quit</button>
-                <div id="phaserapp"></div>
-            </div>
+        });
+    </script>
+</head>
 
+<body>
+    <div class="container">
+        <div id="match-list" class="list-group">
+            <h2>Active Matches</h2>
+            <span class="label label-danger">Blackbox</span>
+            <span class="label label-warning">Ranked</span>
+            <span class="label label-info">League</span>
         </div>
-    </body>
+
+        <div class="phaserapppage" id="wrapper" game="" user="" auth="">
+
+            <div id="phaserapp"></div>
+        </div>
+
+    </div>
+</body>
+
 </html>

@@ -4,7 +4,7 @@ import * as Model from "../../model";
 import * as Layers from ".";
 
 export class Player extends Layers.Abstract {
-    private container: Phaser.GameObjects.Container;
+    private readonly container: Phaser.GameObjects.Container;
 
     public constructor(scene: Phaser.Scene, game: Model.Game, controller: Core.Controller) {
         super(scene, game, controller);
@@ -37,9 +37,7 @@ export class Player extends Layers.Abstract {
         for (let i in awayPlayers) {
             let player = awayPlayers[i];
             player.setTeam(Model.Side.Away);
-            player.icon = new Phaser.GameObjects.Sprite(this.scene, 0,0,icons[player.positionId], player.positionIcon * 4 + 2);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
+            player.icon = this.createPlayerIcon(player, icons, 2);
             this.container.add(player.icon);
         }
 
@@ -47,11 +45,16 @@ export class Player extends Layers.Abstract {
         for (let i in homePlayers) {
             let player = homePlayers[i];
             player.setTeam(Model.Side.Home);
-            player.icon = new Phaser.GameObjects.Sprite(this.scene, 0,0,icons[player.positionId], player.positionIcon * 4 + 0);
-            player.icon.setOrigin(0.5,0.5);
-            player.icon.visible=false;
+            player.icon = this.createPlayerIcon(player, icons, 0);
             this.container.add(player.icon);
         }
+    }
+
+    private createPlayerIcon(player: Model.Player, icons: {}, positionIconOffest: number): Phaser.GameObjects.Sprite {
+        let icon = new Phaser.GameObjects.Sprite(this.scene, 0,0, icons[player.positionId], player.positionIcon * 4 + positionIconOffest);
+        icon.setOrigin(0.5,0.5);
+        icon.visible=false;
+        return icon;
     }
 
     public redraw() {
@@ -65,7 +68,6 @@ export class Player extends Layers.Abstract {
                 player.icon.angle = iconState.angle;
                 player.icon.setAlpha(iconState.alpha);
                 player.icon.visible = iconState.visible;
-
                 player.icon.setPosition(pX, pY);
             }
         }

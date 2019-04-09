@@ -1,5 +1,7 @@
 import Phaser from "phaser";
 import deepmerge from "deepmerge";
+import * as Comp from "./index";
+import {EventType} from "../../types";
 
 export enum Anchor {
     CENTER = 0,
@@ -13,7 +15,11 @@ export enum Anchor {
     SOUTHEAST = 8,
 }
 
-type Size = number|string;
+export enum InputEvent {
+    POINTER_UP = "pointerup",
+}
+
+export type Size = number|string;
 
 class Bounds {
     public x: Size;
@@ -37,16 +43,23 @@ export type RenderContext = {
     w: number,
     h: number,
     scale: number,
+    offset: {
+        left: Size,
+        right: Size,
+        top: Size,
+        bottom: Size,
+    }
 }
-
-export enum Layout {
-    Border,
-    VerticalList
-};
 
 export type ComponentConfiguration = {
     id?: string,
     margin?: {
+        left?: Size,
+        right?: Size,
+        top?: Size,
+        bottom?: Size,
+    },
+    padding?: {
         left?: Size,
         right?: Size,
         top?: Size,
@@ -64,14 +77,18 @@ export type ComponentConfiguration = {
     inheritVisibility?: boolean,
     text?: string,
     image?: string,
-    layout?: Layout,
+    adjustSize?: boolean,
+    triggerRecursiveRedrawAfterAdjust?: boolean,
+    interactive?: boolean,
+    event?: EventType
 }
 
 export abstract class UIComponent {
-    protected config: ComponentConfiguration;
+    public config: ComponentConfiguration;
     //public phaserObject: Phaser.GameObjects.GameObject;
     protected ctx: RenderContext;
     private static serialCounter: number = 0;
+    private isHitAreaCalculationAllowed = true;
 
     private anchorFactors: [number,number][] = [
         [0.5, 0.5],
@@ -93,6 +110,12 @@ export abstract class UIComponent {
                 top: 0,
                 bottom: 0,
             },
+            padding: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+            },
             width: 1,
             height: 1,
             anchor: Anchor.CENTER,
@@ -102,8 +125,7 @@ export abstract class UIComponent {
             backgroundAlpha: 1,
             visible: true,
             inheritVisibility: true,
-            children: [],
-            layout: Layout.Border,
+            children: []
         };
 
         // Hack to avoid children being merged (causes problems)
@@ -132,7 +154,15 @@ export abstract class UIComponent {
         return null;
     }
 
-    protected translateScalar(size: Size, scale: number, containerSize: number) {
+    protected translateScalarWidth(size: Size) {
+        return this.translateScalar(size, this.ctx.scale, this.ctx.w);
+    }
+
+    protected translateScalarHeight(size: Size) {
+        return this.translateScalar(size, this.ctx.scale, this.ctx.h);
+    }
+
+    private translateScalar(size: Size, scale: number, containerSize: number) {
         let result = 0;
 
         if (typeof size === "string") {
@@ -158,31 +188,45 @@ export abstract class UIComponent {
         return result;
     }
 
-    public getBounds(ctx: RenderContext): Phaser.Geom.Rectangle {
+    protected pxToSize(px: number): Size {
+        return px + 'px'
+    }
+
+    public getBounds(): Phaser.Geom.Rectangle {
+        return this.getBoundsForContext(this.ctx);
+    }
+
+    public getBoundsForContext(ctx: RenderContext): Phaser.Geom.Rectangle {
         let parentAnchor = this.anchorFactors[this.config.parentAnchor];
         let thisAnchor = this.anchorFactors[this.config.anchor];
 
         let pos = {
-            innerWidth: this.translateScalar(this.config.width, ctx.scale, ctx.w),
-            innerHeight: this.translateScalar(this.config.height, ctx.scale, ctx.h),
+            innerWidth: this.translateScalarWidth(this.config.width),
+            innerHeight: this.translateScalarHeight(this.config.height),
             margin: {
-                left: this.translateScalar(this.config.margin.left, ctx.scale, ctx.h),
-                right: this.translateScalar(this.config.margin.right, ctx.scale, ctx.h),
-                top: this.translateScalar(this.config.margin.top, ctx.scale, ctx.h),
-                bottom: this.translateScalar(this.config.margin.bottom, ctx.scale, ctx.h),
+                left: this.translateScalarWidth(this.config.margin.left),
+                right: this.translateScalarWidth(this.config.margin.right),
+                top: this.translateScalarHeight(this.config.margin.top),
+                bottom: this.translateScalarHeight(this.config.margin.bottom),
+            },
+            offset: {
+                left: this.translateScalarWidth(this.ctx.offset.left),
+                right: this.translateScalarWidth(this.ctx.offset.right),
+                top: this.translateScalarHeight(this.ctx.offset.top),
+                bottom: this.translateScalarHeight(this.ctx.offset.bottom),
             },
             outerWidth: 0,
             outerHeight: 0,
         };
 
-        pos.outerWidth = pos.innerWidth + pos.margin.left + pos.margin.right;
-        pos.outerHeight = pos.innerHeight + pos.margin.top + pos.margin.bottom;
+        pos.outerWidth = pos.innerWidth + this.horizontalPadding() + pos.margin.left + pos.margin.right + pos.offset.left + pos.offset.right;
+        pos.outerHeight = pos.innerHeight + this.verticalPadding() + pos.margin.top + pos.margin.bottom + pos.offset.top + pos.offset.bottom;
 
         let centerX = (parentAnchor[0] * ctx.w) + ((0.5-thisAnchor[0])*pos.outerWidth) + ctx.x;
         let centerY = (parentAnchor[1] * ctx.h) + ((0.5-thisAnchor[1])*pos.outerHeight) + ctx.y;
 
-        let x = centerX - pos.outerWidth / 2 + pos.margin.left;
-        let y = centerY - pos.outerHeight / 2 + pos.margin.top;
+        let x = centerX - pos.outerWidth / 2 + pos.margin.left + pos.offset.left;
+        let y = centerY - pos.outerHeight / 2 + pos.margin.top + pos.offset.top;
 
         return new Phaser.Geom.Rectangle(x, y, pos.innerWidth, pos.innerHeight);
     }
@@ -196,13 +240,13 @@ export abstract class UIComponent {
     }
 
     public setPosition(x: number, y: number) {
-        this.config.margin.left = x + "px";
-        this.config.margin.top = y + "px";
+        this.config.margin.left = this.pxToSize(x);
+        this.config.margin.top = this.pxToSize(y);
     }
 
     public setSize(w: number, h: number) {
-        this.config.width = w + "px";
-        this.config.height = h + "px";
+        this.config.width = this.pxToSize(w);
+        this.config.height = this.pxToSize(h);
     }
 
     public setVisible(visible: boolean) {
@@ -224,6 +268,13 @@ export abstract class UIComponent {
     }
 
     public redraw(): void {
+        this.redrawSelfBeforeChildren();
+        this.redrawChildren();
+        this.redrawSelfAfterChildren();
+        this.calculateHitAreaIfAllowed();
+    }
+
+    public redrawSelfBeforeChildren(): void {
         if (this.config.visible) {
             this.show();
         } else {
@@ -231,9 +282,115 @@ export abstract class UIComponent {
         }
     }
 
+    public redrawSelfAfterChildren(): void {
+
+    }
+
+    public redrawChildren(): void {
+
+    }
+
+    public adjustWidthToParent(widthWithExtras: Size): number {
+        let width = this.translateScalarWidth(widthWithExtras) -
+            this.horizontalPadding() -
+            this.horizontalMargin();
+
+        let difference = width -
+            this.translateScalarWidth(this.config.width) ;
+        this.config.width = this.pxToSize(width);
+        this.config.adjustSize = false;
+        return difference;
+    }
+
+    public adjustHeightToParent(heightWithExtras: Size): number {
+        let height = this.translateScalarHeight(heightWithExtras) -
+            this.verticalPadding() -
+            this.verticalMargin();
+
+        let difference = height -
+            this.translateScalarHeight(this.config.height) ;
+        this.config.height = this.pxToSize(height);
+        this.config.adjustSize = false;
+        return difference;
+    }
+
+    public adjustLeftPositionOffset(left: number) {
+        this.ctx.offset.left = this.pxToSize(this.translateScalarWidth(this.ctx.offset.left) + left);
+    }
+
+    public adjustTopPositionOffset(top: number) {
+        this.ctx.offset.top = this.pxToSize(this.translateScalarHeight(this.ctx.offset.top) + top);
+    }
+    public getWidthForParent(): number {
+        return this.getBounds().width +
+            this.horizontalPadding() +
+            this.horizontalMargin();
+    }
+
+    public getHeightForParent(): number {
+        return this.getBounds().height +
+            this.verticalPadding() +
+            this.verticalMargin();
+    }
+
+    public setAllowHitAreaCalculation(isAllowed: boolean): void {
+        this.isHitAreaCalculationAllowed = isAllowed;
+    }
+
+    public calculateHitAreaIfAllowed(): void {
+        if (this.isHitAreaCalculationAllowed && this.config.interactive) {
+            this.calculateHitArea();
+        }
+    }
+
+    public calculateHitArea(): void {}
+
+    protected getInputElements(): Phaser.GameObjects.GameObject[] {
+        return [];
+    }
+
+    public addPointerUp(eventHandler: Function): void {
+        this.getInputElements().forEach( function(inputElement: Phaser.GameObjects.GameObject) {
+            inputElement.on(InputEvent.POINTER_UP, eventHandler);
+        });
+    }
+
     public abstract show(): void;
     public abstract hide(): void;
     public abstract create(): Phaser.GameObjects.GameObject;
     public abstract destroy(): void;
 
+    protected createBackground(bounds: Phaser.Geom.Rectangle): Phaser.GameObjects.Image {
+        let bg = this.ctx.scene.make.graphics({});
+        let alpha = this.config.backgroundAlpha;
+        if (alpha === null || alpha === undefined) {
+            alpha = 1;
+        }
+
+        bg.fillStyle(this.config.background, alpha);
+        bg.fillRect(0, 0, bounds.width + this.horizontalPadding(), bounds.height + this.verticalPadding());
+        let key = Comp.UIComponent.generateKey();
+        bg.generateTexture(key, bounds.width + this.horizontalPadding(), bounds.height + this.verticalPadding());
+        let background = new Phaser.GameObjects.Image(this.ctx.scene, 0, 0, key);
+        background.setOrigin(0,0);
+        background.setDisplayOrigin(0,0);
+        background.setPosition(bounds.x, bounds.y);
+        return background;
+    }
+
+    protected horizontalPadding() {
+        return this.translateScalarWidth(this.config.padding.left) + this.translateScalarWidth(this.config.padding.right);
+    }
+
+    protected verticalPadding() {
+        return this.translateScalarHeight(this.config.padding.top) + this.translateScalarHeight(this.config.padding.bottom);
+    }
+
+    protected horizontalMargin() {
+        return this.translateScalarWidth(this.config.margin.left) + this.translateScalarWidth(this.config.margin.right);
+    }
+
+    protected verticalMargin() {
+        return this.translateScalarHeight(this.config.margin.top) + this.translateScalarHeight(this.config.margin.bottom);
+    }
 }

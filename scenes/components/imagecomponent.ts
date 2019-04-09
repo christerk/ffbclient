@@ -28,9 +28,9 @@ export class Image extends Comp.UIComponent {
         this.image.setTexture(key);
     }
 
-    public redraw(): void {
-        super.redraw();
-        let bounds = this.getBounds(this.ctx);
+    public redrawSelfBeforeChildren(): void {
+        super.redrawSelfBeforeChildren();
+        let bounds = this.getBounds();
         this.image.setOrigin(0, 0);
         this.image.setPosition(bounds.x, bounds.y);
         this.image.setDisplaySize(bounds.width, bounds.height);

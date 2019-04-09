@@ -1,7 +1,10 @@
 node_modules/
 build/
+.idea/
+.vscode/
 
 tags
 auth.json
+package-lock.json
 
 *.log

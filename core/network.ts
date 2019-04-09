@@ -14,8 +14,8 @@ export class Network {
         this.config = config;
 
         let host = window.location.host;
-        host = host.startsWith("localhost") ? "dev.fumbbl.com" : host;
-        let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:'
+        host = host.startsWith("localhost") || host.startsWith("192.168") ? "dev.fumbbl.com" : host;
+        let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:';
         let port = proto == 'wss:' ? 22224 : 22223;
 
         console.log("Connecting to "+proto+"//"+host+":"+port);

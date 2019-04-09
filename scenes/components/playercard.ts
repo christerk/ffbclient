@@ -1,7 +1,7 @@
 import * as Comp from ".";
 import * as Model from "../../model";
 
-export class PlayerCard extends Comp.Panel {
+export class PlayerCard extends Comp.BorderPanel {
     private numberLabel: Comp.Label;
     private positionLabel: Comp.Label;
     private nameLabel: Comp.Label;
@@ -19,7 +19,7 @@ export class PlayerCard extends Comp.Panel {
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
 
-        this.homeBackground = new Comp.Panel({
+        this.homeBackground = new Comp.BorderPanel({
             id: "HomeBackground",
             height: "100%",
             width: "100%",
@@ -29,7 +29,7 @@ export class PlayerCard extends Comp.Panel {
             visible: false,
         });
 
-        this.awayBackground = new Comp.Panel({
+        this.awayBackground = new Comp.BorderPanel({
             id: "AwayBackground",
             height: "100%",
             width: "100%",
@@ -118,7 +118,7 @@ export class PlayerCard extends Comp.Panel {
             visible: false,
         });
 
-        let maPanel = new Comp.Panel({
+        let maPanel = new Comp.BorderPanel({
             id: "MaPanel",
             height: 0.6,
             width: 0.4,
@@ -131,7 +131,7 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             visible: false,
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "MaHeader",
                     height: 0.2,
                     width: 0.4,
@@ -157,7 +157,7 @@ export class PlayerCard extends Comp.Panel {
             ]
         });
 
-        let stPanel = new Comp.Panel({
+        let stPanel = new Comp.BorderPanel({
             id: "StPanel",
             height: 0.6,
             width: 0.4,
@@ -170,7 +170,7 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             visible: false,
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "StHeader",
                     height: 0.2,
                     width: 0.4,
@@ -196,7 +196,7 @@ export class PlayerCard extends Comp.Panel {
             ]
         });
 
-        let agPanel = new Comp.Panel({
+        let agPanel = new Comp.BorderPanel({
             id: "AgPanel",
             height: 0.6,
             width: 0.4,
@@ -209,7 +209,7 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             visible: false,
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "AgHeader",
                     height: 0.2,
                     width: 0.4,
@@ -235,7 +235,7 @@ export class PlayerCard extends Comp.Panel {
             ]
         });
 
-        let avPanel = new Comp.Panel({
+        let avPanel = new Comp.BorderPanel({
             id: "AvPanel",
             height: 0.6,
             width: 0.4,
@@ -248,7 +248,7 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             visible: false,
             children: [
-                new Comp.Panel({
+                new Comp.BorderPanel({
                     id: "AvHeader",
                     height: 0.2,
                     width: 0.4,
@@ -289,7 +289,7 @@ export class PlayerCard extends Comp.Panel {
             visible: false,
         });
 
-        this.skillLabels = []
+        this.skillLabels = [];
         for (let i=1; i<=20; i++) {
             this.skillLabels.push(new Comp.Label({
                 id: "skill_"+i,
@@ -303,7 +303,7 @@ export class PlayerCard extends Comp.Panel {
             }));
         }
 
-        this.skills = new Comp.Panel({
+        this.skills = new Comp.VerticalPanel({
             id: "Skills",
             height: 2.2,
             width: 1.4,
@@ -316,7 +316,6 @@ export class PlayerCard extends Comp.Panel {
             background: 0xffffff,
             color: 0x0,
             visible: false,
-            layout: Comp.Layout.VerticalList,
             children: this.skillLabels
         });
 
@@ -352,12 +351,6 @@ export class PlayerCard extends Comp.Panel {
         }
     }
 
-    public create(): Phaser.GameObjects.GameObject {
-        let obj = super.create();
-
-        return obj;
-    }
-
     public destroy(): void {
         this.numberLabel.destroy();
         this.positionLabel.destroy();
@@ -374,7 +367,6 @@ export class PlayerCard extends Comp.Panel {
     }
 
     public setPlayer(player: Model.Player) {
-        let positionId = player.positionId;
         let position = player.getPosition();
         let side = player.getTeam();
 

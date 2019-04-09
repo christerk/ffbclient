@@ -6,11 +6,14 @@ export enum EventType {
     Click,
     Connected,
     FloatText,
+    FullScreen,
     Initialized,
     Kickoff,
     ModelChanged,
+    Quit,
     Resized,
-    Resizing
+    Resizing,
+    ToggleDugouts
 }
 
 export interface EventListener {
