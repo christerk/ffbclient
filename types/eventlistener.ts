@@ -8,6 +8,7 @@ export enum EventType {
     FloatText,
     FullScreen,
     Initialized,
+    Kickoff,
     ModelChanged,
     Quit,
     Resized,

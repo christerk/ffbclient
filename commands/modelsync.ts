@@ -35,6 +35,7 @@ export class CommandModelSync extends Command {
             "blockChoice": this.handleBlockChoiceReport,
             "pickUpRoll": this.handlePickupRollReport,
             "catchRoll": this.handleCatchRollReport,
+            "kickoffResult": this.handleKickoffReport,
         }
     }
 
@@ -177,4 +178,7 @@ export class CommandModelSync extends Command {
         return new ClientCommands.BlockChoice(report.diceIndex, report.blockResult);
     }
 
+    private handleKickoffReport(report: FFB.Protocol.Messages.KickoffResultReport): ClientCommands.AbstractCommand {
+        return new ClientCommands.KickoffResult(report.kickoffRoll, report.kickoffResult);
+    }
 }

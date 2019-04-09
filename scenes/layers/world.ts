@@ -113,6 +113,10 @@ export class World {
         this.floatTextLayer.floatText(player, text);
     }
 
+    public kickoff(kickoff: string) {
+        this.floatTextLayer.kickoff(kickoff);
+    }
+
     public getZoomFactor() {
         return this.zoomFactor;
     }

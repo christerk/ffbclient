@@ -6,12 +6,55 @@ import { Dice } from "../scenes/animations/dice";
 export type DieType = "d6" | "db" | "d8" | "d68";
 
 type RollType = {
-    background: Phaser.GameObjects.Graphics,
+    background: Phaser.GameObjects.Image,
     dice: {
         type: DieType,
         sprite: Phaser.GameObjects.Sprite,
     }[];
     location: string;
+}
+
+export enum Pictogram {
+    Apothecary = "Apothecary",
+    ArgueTheCall = "Argue the Call",
+    Armour = "Armour", 
+    Block = "Block",
+    Bribe = "Bribe",
+    CardEffect = "Card Effect",
+    Casualty = "Casualty",
+    Catch = "Catch",
+    Confusion = "Confusion",
+    Dauntless = "Dauntless",
+    Dodge = "Dodge",
+    Fame = "Fame",
+    FanFactor = "Fan Factor",
+    Foul = "Foul",
+    Gaze = "Gaze",
+    GFI = "GFI",
+    Injury = "Injury",
+    Intercept = "Intercept",
+    KickScatter = "Kick Scatter",
+    KickOff = "Kick-off", 
+    KickOffExtraRR = "Kick-off Extra RR",
+    Leap = "Leap",
+    Pass = "Pass",
+    PickUp = "Pick-up",
+    Pro = "Pro",
+    RightStuff = "Right Stuff",
+    Riot = "Riot",
+    ScatterBall = "Scatter Ball",
+    ScatterPlayer = "Scatter Player",
+    Shadowing = "Shadowing",
+    Shootout = "Shootout",
+    StandUp = "Stand Up", 
+    SWBan = "SW Ban",
+    Tentacles = "Tentacles",
+    ThrowRock = "Throw Rock",
+    ThrowIn = "Throw-in",
+    TTM = "TTM",
+    Weather = "Weather",
+    WildAnimal = "Wild Animal",
+    Winnings = "Winnings"
 }
 
 export class DiceManager {
@@ -91,21 +134,21 @@ export class DiceManager {
         }
     }
 
-    public roll(type: DieType, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0): string {
+    public roll(type: DieType, pictogram: Pictogram, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0): string {
         let rollKey = "Roll:" + (++this.rollCounter);
 
         this.rollQueue = this.rollQueue
         .then(() => {
             return new Promise<any>((resolve, reject) => {
                 setTimeout(() => { resolve(); }, 333);
-                this.executeRoll(rollKey, type, targets, coordinate, duration, delay);
+                this.executeRoll(rollKey, type, pictogram, targets, coordinate, duration, delay);
             });
         });
 
         return rollKey;
     }
 
-    public executeRoll(rollKey: string, type: DieType, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0) {
+    public executeRoll(rollKey: string, type: DieType, pictogram: Pictogram, targets: number[], coordinate: Types.Coordinate, duration = 1000, delay = 0) {
         let emptySpace = this.controller.findEmptyPatchNearLocation(coordinate, 2, 2);
 
         let locationKey = this.controller.allocateBoardSpace(emptySpace, 2, 2);
@@ -121,12 +164,10 @@ export class DiceManager {
         let angle = Math.random() * 2 * Math.PI;
         let angleStep = Math.PI / 8;
 
-        let bg = this.scene.add.graphics();
-        bg.clear();
-        bg.fillStyle(0x0, 0.3);
+        let bg = this.scene.add.image(x, y, "pictograms", pictogram);
+        bg.setAlpha(0.3);
         let [w,h] = this.controller.convertToPixels(new Types.Coordinate(2,2));
-        bg.fillRect(-w/2,-h/2,w,h);
-        bg.setPosition(x, y);
+        bg.setDisplaySize(w, h);
 
         if (type == "d68") {
             // Special case for d68 rolls
@@ -264,6 +305,15 @@ export class DiceManager {
         let roll: RollType = this.activeRolls[rollKey];
         if (roll != undefined) {
             this.scene.tweens.add({
+                targets: roll.background,
+                delay: delay,
+                duration: 500,
+                alpha: 0,
+                onComplete: () => {
+                    roll.background.destroy();
+                }
+            });
+            this.scene.tweens.add({
                 targets: roll.dice.map( (d) => d.sprite),
                 delay: delay,
                 duration: 500,
@@ -279,7 +329,6 @@ export class DiceManager {
                     delete this.activeRolls[rollKey];
                 }
             });
-            roll.background.destroy();
         }
     }
 

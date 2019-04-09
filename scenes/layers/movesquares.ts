@@ -26,19 +26,19 @@ export class MoveSquares extends Layers.Abstract {
 
         let i=0;
         let squares = this.game.getMoveSquares();
+        let [w, h] = this.controller.convertToPixels(new Types.Coordinate(0.8, 0.8));
         for (let index in squares) {
             let coordinate = squares[i]
             let [x, y] = this.controller.convertToPixels(coordinate.add(0.5, 0.5));
             if (i == this.moveSquareIcons.length) {
-                let [w, h] = this.controller.convertToPixels(new Types.Coordinate(0.8, 0.8));
                 let icon = new Phaser.GameObjects.Sprite(this.scene, x, y, "moveSquare");
                 icon.setOrigin(0.5, 0.5);
-                icon.setDisplaySize(w, h);
                 this.moveSquareIcons.push(icon);
                 this.container.add(icon);
             }
             let icon = this.moveSquareIcons[i];
             icon.setPosition(x, y);
+            icon.setDisplaySize(w, h);
             icon.visible = true;
             i++;
         }

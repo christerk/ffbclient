@@ -3,11 +3,13 @@ import * as Model from ".";
 export class Roster {
     private id: string;
     private name: string;
+    private logoUrl: string;
     private positions:{[key: string]: Model.Position};
 
     public constructor(data: FFB.Protocol.Messages.RosterType) {
         this.id = data.rosterId;
         this.name = data.rosterName;
+        this.logoUrl = data.logoUrl;
 
         this.positions = {};
         for (let position of data.positionArray) {
@@ -21,6 +23,10 @@ export class Roster {
 
     public getPosition(key: string): Model.Position {
         return this.positions[key];
+    }
+
+    public getLogoUrl() {
+        return this.logoUrl;
     }
 
     public getAssets() {

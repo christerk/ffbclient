@@ -6,8 +6,6 @@ import * as Model from "./model";
 import { EventListener, EventType } from "./types/eventlistener";
 import { AbstractScene } from "./scenes/abstractscene";
 
-require('./sass/menu.scss')
-
 export default class App extends Phaser.Game implements EventListener {
     private static controller: Core.Controller;
     private restartCallback: () => void;
@@ -34,11 +32,11 @@ export default class App extends Phaser.Game implements EventListener {
             parent: 'phaserapp',
             type: Phaser.CANVAS,
             width: 960,
-            height: 554,
+            height: 540,
             scene: <Phaser.Scene[]>scenes,
-            "render.antialias": false,
-            "render.pixelArt": true,
-            "render.roundPixels": true,
+            "render.antialias": true,
+            "render.pixelArt": false,
+            "render.roundPixels": false,
             fps: {
                 target: 60,
             }

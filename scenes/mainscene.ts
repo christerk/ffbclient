@@ -67,6 +67,9 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
                     this.blockDiceKey = null;
                 }
                 break;
+            case Types.EventType.Kickoff:
+                this.worldLayer.kickoff(data.kickoff);
+                break;
         }
     }
 

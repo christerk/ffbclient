@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const buildPath = path.join(__dirname, "build");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -21,18 +20,10 @@ module.exports = {
         }),
         new CleanWebpackPlugin([buildPath]),
         new HtmlWebpackPlugin({title: "ffbclient", template: "index.html"}),
-        // Minify CSS
-        new webpack.LoaderOptionsPlugin({
-            minimize: true,
-        }),
-        new MiniCssExtractPlugin({
-            filename: "[name]-[chunkhash].css",
-            chunkFilename: "[id]-[chunkhash].css"
-        }),
         new webpack.HotModuleReplacementPlugin()
     ],
     resolve: {
-        extensions: ['.ts', '.js', '.scss'],
+        extensions: ['.ts', '.js'],
     },
     node: {
         fs: 'empty'
@@ -43,20 +34,6 @@ module.exports = {
                 test: /\.ts$/,
                 exclude: '/node_modules/',
                 loader: 'ts-loader',
-            }, 
-            {
-                test: /\.scss$/, 
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    }, 
-                    {
-                        loader: "css-loader"
-                    }, 
-                    {
-                        loader: "sass-loader"
-                    }
-                ]
             }
         ]
     },

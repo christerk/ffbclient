@@ -8,6 +8,7 @@ export class ConnectScene extends AbstractScene {
     private height: number;
     private config: any;
     private auth: string;
+    private loadingText: Phaser.GameObjects.Text;
 
     public constructor(controller: Core.Controller) {
         super('connectScene', controller);
@@ -23,7 +24,7 @@ export class ConnectScene extends AbstractScene {
     public preload() {
         let width = this.cameras.main.width;
         let height = this.cameras.main.height;
-        let loadingText = this.make.text({
+        this.loadingText = this.make.text({
             x: width / 2,
             y: height / 2 - 50,
             text: 'Connecting...',
@@ -32,12 +33,14 @@ export class ConnectScene extends AbstractScene {
                 fill: '#ffffff'
             }
         });
-        loadingText.setOrigin(0.5, 0.5);
+        this.loadingText.setOrigin(0.5, 0.5);
 
         this.controller.connect(this.config);
+
     }
 
     public create(config) {
+        this.add.existing(this.loadingText);
     }
 
     public update() {
