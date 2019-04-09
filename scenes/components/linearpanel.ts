@@ -2,7 +2,7 @@ import * as Comp from '.';
 
 export abstract class LinearPanel extends Comp.Panel {
 
-    protected shape: Phaser.Geom.Rectangle
+    protected shape: Phaser.Geom.Rectangle;
 
     public redrawSelfAfterChildren() {
         super.redrawSelfAfterChildren();

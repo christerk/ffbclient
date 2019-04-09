@@ -3,10 +3,18 @@ import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu
 import {isMenuSlot} from "./menuslot";
 import {EventType} from "../../../types";
 import * as Core from "../../../core"
+import {UIComponent} from "../";
 
 export class MenuBuilder {
 
     private controller: Core.Controller;
+
+    private static zeroMarginPadding = {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0
+    };
 
     private static labelMargin = {
         left: 0.02,
@@ -26,6 +34,7 @@ export class MenuBuilder {
     private static labelBackground = 0xF003300;
     private static labelColor = 0xffffff;
     private static anchor = Comp.Anchor.NORTHWEST;
+    private static panelBackground = 0xAAAAAA;
 
     constructor(controller: Core.Controller) {
         this.controller = controller;
@@ -38,9 +47,7 @@ export class MenuBuilder {
     private convertPanel(panelConfig: Comp.MenuPanelConfiguration, parentId: string, isRoot: boolean = false): Comp.LinearPanel {
         let self = this;
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element, isRoot)});
-        let config = this.createConfig(parentId + "_panel", false, "", isRoot, null, children);
-        config.triggerRecursiveRedrawAfterAdjust = isRoot;
-        config.interactive = false;
+        let config = this.createPanelConfig(parentId + "_panel", children, isRoot, isRoot);
         return this.createPanel(config, panelConfig.orientation);
     }
 
@@ -147,6 +154,22 @@ export class MenuBuilder {
             text: label,
             adjustSize: true,
             interactive: true
+        }
+    }
+
+    private createPanelConfig(id: string, children: UIComponent[], visible: boolean, triggerRecursiveRedrawAfterAdjust: boolean) {
+        return {
+            id: id,
+            margin: MenuBuilder.zeroMarginPadding,
+            padding:MenuBuilder.zeroMarginPadding,
+            anchor: MenuBuilder.anchor,
+            parentAnchor: MenuBuilder.anchor,
+            background: MenuBuilder.panelBackground,
+            children: children,
+            adjustSize: true,
+            visible: visible,
+            triggerRecursiveRedrawAfterAdjust: triggerRecursiveRedrawAfterAdjust,
+            inheritVisibility: false
         }
     }
 }
