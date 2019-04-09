@@ -38,8 +38,6 @@ export class VerticalPanel extends Comp.LinearPanel {
             childNumber++;
         }
 
-
-
         if (super.shouldAdjustSize() && this.children.length > 0) {
             this.config.width = super.pxToSize(newWidth);
             this.config.height = super.pxToSize(offSet);
@@ -51,12 +49,5 @@ export class VerticalPanel extends Comp.LinearPanel {
                 }
             }
         }
-
-        bounds = this.getBounds();
-        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y, newWidth, offSet)
-    }
-
-    public calculateHitArea(): void {
-        this.container.setInteractive(this.shape, Phaser.Geom.Rectangle.Contains);
     }
 }

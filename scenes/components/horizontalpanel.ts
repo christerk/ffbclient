@@ -44,13 +44,5 @@ export class HorizontalPanel extends Comp.LinearPanel {
                 }
             }
         }
-        this.shape = new Phaser.Geom.Rectangle(bounds.x, bounds.y,offSet - baseOffset, bounds.height)
-
-    }
-
-    public calculateHitArea(): void {
-        this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1), Phaser.Geom.Rectangle.Contains);
-        this.container.input.hitArea = this.shape;
-
     }
 }
