@@ -53,11 +53,12 @@ export class FloatText extends Layers.Abstract {
         let [x, y] = this.controller.convertToPixels(new Types.Coordinate(13, 7.5));
 
         let t = this.scene.add.text(x, y, kickoff.toUpperCase(), {
-            fontSize: (this.gridSize * 3) + 'px',
+            fontSize: (this.gridSize * 2.5) + 'px',
             fill: 'white',
             stroke: 'black',
             strokeThickness: 2,
         });
+        t.setFontFamily("arial");
         t.setOrigin(0.5);
         t.setScale(0);
 

@@ -5,7 +5,7 @@ import * as Layers from ".";
 import * as Types from "../../types";
 
 export class Ball extends Layers.Abstract {
-    private ballIcon: Phaser.GameObjects.Graphics;
+    private ballIcon: Phaser.GameObjects.Sprite;
 
     public constructor(scene: Phaser.Scene, game: Model.Game, controller: Core.Controller) {
         super(scene, game, controller);
@@ -16,11 +16,12 @@ export class Ball extends Layers.Abstract {
     }
 
     public create() {
-        // Ugly. Needs to be a sprite...
-        this.ballIcon = new Phaser.GameObjects.Graphics(this.scene);
-        this.ballIcon.clear();
-        this.ballIcon.fillStyle(0xffff00, 1);
-        this.ballIcon.fillCircle(0, 0, 5);
+        let ballIcon = new Phaser.GameObjects.Graphics(this.scene);
+        ballIcon.clear();
+        ballIcon.fillStyle(0xffff00, 1);
+        ballIcon.fillCircle(5, 5, 5);
+        ballIcon.generateTexture("ball", 10, 10);
+        this.ballIcon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, "ball");
     }
 
     public redraw() {

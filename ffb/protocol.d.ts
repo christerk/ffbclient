@@ -450,9 +450,7 @@ declare namespace FFB.Protocol.Messages {
         turnTime: number;
     }
 
-    type AnimationType = {
-        name: string;
-    }
+    type AnimationType = string;
 
     type Animation = {
         thrownPlayerId:         string;
