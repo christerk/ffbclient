@@ -1,7 +1,6 @@
 import * as Comp from "../";
 import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
 import {isMenuSlot} from "./menuslot";
-import {EventType} from "../../../types";
 import * as Core from "../../../core"
 import {UIComponent} from "../";
 
@@ -53,7 +52,7 @@ export class MenuBuilder {
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
         let wrapperConfig = this.createNodeConfig(nodeConfig.id,  nodeConfig.label, isRoot);
-        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true, null);
+        let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
 
         return this.createSlot(wrapperConfig, nodeConfig.orientation, label, panel);
@@ -63,7 +62,7 @@ export class MenuBuilder {
         let config = this.createEventLabelConfig(entryConfig);
         return new Comp.Label(config, this.controller);    }
 
-    private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false, event: EventType): Comp.Label {
+    private createLabel(id: string, label: string, isRoot: boolean = false): Comp.Label {
         let config = this.createSlotLabelConfig(id, label, isRoot);
         return new Comp.Label(config, this.controller);
     }
