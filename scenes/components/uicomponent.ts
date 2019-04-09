@@ -350,8 +350,8 @@ export abstract class UIComponent {
     }
 
     public addPointerUp(eventHandler: Function): void {
-        this.getInputElements().forEach( function(hoverElement: Phaser.GameObjects.GameObject) {
-            hoverElement.on(InputEvent.POINTER_UP, eventHandler);
+        this.getInputElements().forEach( function(inputElement: Phaser.GameObjects.GameObject) {
+            inputElement.on(InputEvent.POINTER_UP, eventHandler);
         });
     }
 

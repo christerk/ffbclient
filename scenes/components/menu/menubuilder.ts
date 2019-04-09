@@ -66,7 +66,7 @@ export class MenuBuilder {
         return new Comp.Label(config, this.controller);    }
 
     private createLabel(id: string, label: string, isRoot: boolean = false, interactive: boolean = false, event: EventType): Comp.Label {
-        let config = this.createSlotLabel(id, label, isRoot);
+        let config = this.createSlotLabelConfig(id, label, isRoot);
         return new Comp.Label(config, this.controller);
     }
 
@@ -138,7 +138,7 @@ export class MenuBuilder {
         }
     }
 
-    private createSlotLabel(id: string, label: string, visible: boolean) {
+    private createSlotLabelConfig(id: string, label: string, visible: boolean) {
         return  {
             id: id,
             margin: MenuBuilder.labelMargin,
