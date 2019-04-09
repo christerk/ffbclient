@@ -3,6 +3,9 @@ import * as Core from "../../core";
 import * as Comp from "../components";
 import * as Types from "../../types";
 import * as Model from "../../model";
+import {MenuEntryConfiguration, MenuPanelConfiguration, Orientation} from "../components";
+import {EventType} from "../../types";
+import {MenuBuilder} from "../components/menu/menubuilder";
 
 export class UI implements Types.EventListener {
     public container: Phaser.GameObjects.Container;
@@ -18,7 +21,7 @@ export class UI implements Types.EventListener {
 
     private debugText: Comp.Label;
 
-    private component: Comp.UIComponent;
+    private component: Comp.BorderPanel;
 
     private renderContext: Comp.RenderContext;
 
@@ -27,6 +30,41 @@ export class UI implements Types.EventListener {
         this.scene = scene;
         this.container = scene.make.container({});
         controller.addEventListener(this);
+
+        let menuConfig: MenuPanelConfiguration = {
+            orientation: Orientation.Horizontal,
+            elements: [
+                {
+                    id: 'gameMenu',
+                    orientation: Orientation.Vertical,
+                    label: 'Game',
+                    panel: {
+                        orientation: Orientation.Vertical,
+                        elements: [{
+                            label: 'Quit',
+                            id: 'quitButton',
+                            event: EventType.Quit
+                        }]
+
+                    }
+                }, {
+                    id: 'viewMenu',
+                    orientation: Orientation.Vertical,
+                    label: 'View',
+                    panel: {
+                        orientation: Orientation.Vertical,
+                        elements: [{
+                            label: 'Fullscreen',
+                            id: 'fullscreenButton',
+                            event: EventType.FullScreen
+                        },{
+                            label: 'Toggle Dugouts',
+                            id: 'toggleDugouts',
+                            event: EventType.ToggleDugouts
+                        }]
+                    }
+                }]
+        };
 
         this.labelHomeScore = new Comp.Label({
             id: "HomeScore",
@@ -54,7 +92,7 @@ export class UI implements Types.EventListener {
 
         this.labelHalf = new Comp.Label({
             id: "Half",
-            margin:  {
+            margin: {
                 right: 1.5,
             },
             height: 1,
@@ -66,7 +104,7 @@ export class UI implements Types.EventListener {
 
         this.labelTurn = new Comp.Label({
             id: "Turn",
-            margin:  {
+            margin: {
                 left: 1.5,
             },
             height: 1,
@@ -153,36 +191,6 @@ export class UI implements Types.EventListener {
                 }),
 
                 this.input,
-                new Comp.Button({
-                    id: "DebugButton",
-                    width: 0.9,
-                    height: 0.9,
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
-                new Comp.Button({
-                    id: "TestButton",
-                    width: 0.9,
-                    height: 0.9,
-                    margin: {
-                        bottom: 1.1,
-                    },
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
-                new Comp.Button({
-                    id: "TestButton2",
-                    width: 0.9,
-                    height: 0.9,
-                    margin: {
-                        bottom: 2.2,
-                    },
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
                 this.playerCard,
             ]
         });
@@ -195,12 +203,20 @@ export class UI implements Types.EventListener {
             scale: 30,
             x: 0,
             y: 0,
+            offset: {
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0
+            }
+
         };
 
+        let menu = new MenuBuilder(this.controller).build(menuConfig, 'TopBar');
+        this.component.addChild(menu);
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();
         this.component.postCreate();
-        this.component.redraw();
         this.container.add(phaserObject);
     }
 
@@ -232,8 +248,8 @@ export class UI implements Types.EventListener {
             this.labelHomeScore.setText(g.teamHome.getScore().toString());
             this.labelAwayScore.setText(g.teamAway.getScore().toString());
 
-            let half = "H"+g.getHalf();
-            let turn = "T"+g.teamHome.getTurn()+"/"+g.teamAway.getTurn();
+            let half = "H" + g.getHalf();
+            let turn = "T" + g.teamHome.getTurn() + "/" + g.teamAway.getTurn();
             this.labelHalf.setText(half);
             this.labelTurn.setText(turn);
         }

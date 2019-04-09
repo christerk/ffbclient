@@ -2,13 +2,9 @@ import * as Comp from '.';
 
 export abstract class LinearPanel extends Comp.Panel {
 
-    public redraw(): void {
-        super.redraw();
-        let bounds = this.renderChildren(this.getBounds(this.ctx));
-        this.createBackground(bounds);
-    }
-
-    private createBackground(bounds) {
+    public redrawSelfAfterChildren() {
+        super.redrawSelfAfterChildren();
+        let bounds = this.getBounds();
         let bg = this.background;
         if (bg != null) {
             bg.setPosition(bounds.x, bounds.y);
@@ -17,8 +13,15 @@ export abstract class LinearPanel extends Comp.Panel {
     }
 
     protected shouldAdjustSize(): boolean {
-        return this.config.visible && this.config.adjustSize;
+        return this.config.adjustSize;
     }
 
-    protected abstract renderChildren(bounds: Phaser.Geom.Rectangle): Phaser.Geom.Rectangle;
+    protected triggerRedraw(): boolean {
+        return this.config.triggerRecursiveRedrawAfterAdjust;
+    }
+
+    protected childrenToAdjust(): Comp.UIComponent[] {
+        return this.children;
+    }
+
 }

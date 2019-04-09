@@ -1,28 +1,47 @@
 import * as Comp from '.';
 
 export class HorizontalPanel extends Comp.LinearPanel {
-
-    protected renderChildren(bounds: Phaser.Geom.Rectangle): Phaser.Geom.Rectangle {
-            let offSet: number = bounds.x;
-            for (let c of this.children) {
-                let renderContext: Comp.RenderContext = {
-                    scene: this.ctx.scene,
-                    parent: this,
-                    x: offSet,
-                    y: bounds.y,
-                    w: bounds.width,
-                    h: bounds.height,
-                    scale: this.ctx.scale,
-                };
-                c.setContext(renderContext);
-                c.redraw();
-                offSet += c.getBounds(renderContext).width
+    public redrawChildren(): void {
+        super.redrawChildren();
+        let bounds = this.getBounds();
+        let offSet: number = bounds.x;
+        let baseOffset: number = offSet;
+        let newHeight: number = 0;
+        for (let c of this.children) {
+            if (super.triggerRedraw()) {
+                c.setAllowHitAreaCalculation(false);
             }
-
-            if (super.shouldAdjustSize() && offSet > 0) {
-                this.config.width = offSet;
-            }
-
-            return this.getBounds(this.ctx);
+            let renderContext: Comp.RenderContext = {
+                scene: this.ctx.scene,
+                parent: this,
+                x: 0,
+                y: bounds.y,
+                w: bounds.width,
+                h: bounds.height,
+                scale: this.ctx.scale,
+                offset: {
+                    left: super.pxToSize(offSet),
+                    top: 0,
+                    right: 0,
+                    bottom: 0
+                }
+            };
+            c.setContext(renderContext);
+            c.redraw();
+            offSet += c.getWidthForParent();
+            newHeight = Math.max(c.getHeightForParent(), newHeight);
         }
+
+        if (super.shouldAdjustSize()) {
+            this.config.width = super.pxToSize(offSet - baseOffset);
+            this.config.height = super.pxToSize(newHeight);
+             for (let c of this.childrenToAdjust()) {
+                c.adjustHeightToParent(super.pxToSize(newHeight));
+                if (super.triggerRedraw()) {
+                    c.setAllowHitAreaCalculation(true);
+                    c.redraw();
+                }
+            }
+        }
+    }
 }
