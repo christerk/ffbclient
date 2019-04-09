@@ -1,6 +1,5 @@
 import * as Comp from "../";
-import {MenuEntryConfiguration, MenuNodeConfiguration, Orientation} from "./menu";
-import {isMenuSlot} from "./menuslot";
+import * as Menu from ".";
 import * as Core from "../../../core"
 import {UIComponent} from "../";
 
@@ -39,18 +38,18 @@ export class MenuBuilder {
         this.controller = controller;
     }
 
-    public build(panelConfig: Comp.MenuPanelConfiguration, containerId: string): Comp.LinearPanel {
+    public build(panelConfig: Menu.MenuPanelConfiguration, containerId: string): Comp.LinearPanel {
         return this.convertPanel(panelConfig, containerId, true);
     }
 
-    private convertPanel(panelConfig: Comp.MenuPanelConfiguration, parentId: string, isRoot: boolean = false): Comp.LinearPanel {
+    private convertPanel(panelConfig: Menu.MenuPanelConfiguration, parentId: string, isRoot: boolean = false): Comp.LinearPanel {
         let self = this;
         let children = panelConfig.elements.map(function(element){return self.convertPanelChild(element, isRoot)});
         let config = this.createPanelConfig(parentId + "_panel", children, isRoot, isRoot);
         return this.createPanel(config, panelConfig.orientation);
     }
 
-    private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
+    private convertNode(nodeConfig: Menu.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
         let wrapperConfig = this.createNodeConfig(nodeConfig.id,  nodeConfig.label, isRoot);
         let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
@@ -58,7 +57,7 @@ export class MenuBuilder {
         return this.createSlot(wrapperConfig, nodeConfig.orientation, label, panel);
     }
 
-    private convertEntry(entryConfig: Comp.MenuEntryConfiguration): Comp.Label {
+    private convertEntry(entryConfig: Menu.MenuEntryConfiguration): Comp.Label {
         let config = this.createEventLabelConfig(entryConfig);
         return new Comp.Label(config, this.controller);    }
 
@@ -67,21 +66,21 @@ export class MenuBuilder {
         return new Comp.Label(config, this.controller);
     }
 
-    private convertPanelChild(childConfig: Comp.MenuNodeConfiguration | Comp.MenuEntryConfiguration, isRoot: boolean = false): Comp.LinearPanel | Comp.Label {
+    private convertPanelChild(childConfig: Menu.MenuNodeConfiguration | Menu.MenuEntryConfiguration, isRoot: boolean = false): Comp.LinearPanel | Comp.Label {
         if (childConfig["event"]) {
-            return this.convertEntry(childConfig as MenuEntryConfiguration);
+            return this.convertEntry(childConfig as Menu.MenuEntryConfiguration);
         } else {
-            return this.convertNode(childConfig as MenuNodeConfiguration, isRoot);
+            return this.convertNode(childConfig as Menu.MenuNodeConfiguration, isRoot);
         }
     }
 
 
-    private createPanel(config: Comp.ComponentConfiguration, orientation: Orientation){
-        let panel =  orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
+    private createPanel(config: Comp.ComponentConfiguration, orientation: Menu.Orientation){
+        let panel =  orientation == Menu.Orientation.Horizontal ? new Comp.HorizontalPanel(config) : new Comp.VerticalPanel(config);
 
         if (panel.children) {
             panel.children.forEach(function(child: Comp.UIComponent){
-                if (isMenuSlot(child)) {
+                if (Menu.isMenuSlot(child)) {
                     child.parentPanel = panel;
                 }
             })
@@ -90,9 +89,9 @@ export class MenuBuilder {
         return panel;
     }
 
-    private createSlot(config: Comp.ComponentConfiguration, orientation: Orientation, label: Comp.Label, panel: Comp.LinearPanel){
-        return orientation == Comp.Orientation.Horizontal ? new Comp.HorizontalMenuSlot(config, label, panel) :
-            new Comp.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
+    private createSlot(config: Comp.ComponentConfiguration, orientation: Menu.Orientation, label: Comp.Label, panel: Comp.LinearPanel){
+        return orientation == Menu.Orientation.Horizontal ? new Menu.HorizontalMenuSlot(config, label, panel) :
+            new Menu.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
     }
 
     private createNodeConfig(id: string, label: string, visible: boolean): Comp.ComponentConfiguration {
@@ -110,7 +109,7 @@ export class MenuBuilder {
         }
     }
 
-    private createEventLabelConfig(entryConfig: Comp.MenuEntryConfiguration) {
+    private createEventLabelConfig(entryConfig: Menu.MenuEntryConfiguration): Comp.ComponentConfiguration {
         return {
             id: entryConfig.id,
             margin: MenuBuilder.labelMargin,
@@ -129,7 +128,7 @@ export class MenuBuilder {
         }
     }
 
-    private createSlotLabelConfig(id: string, label: string, visible: boolean) {
+    private createSlotLabelConfig(id: string, label: string, visible: boolean): Comp.ComponentConfiguration {
         return  {
             id: id,
             margin: MenuBuilder.labelMargin,
@@ -148,7 +147,7 @@ export class MenuBuilder {
         }
     }
 
-    private createPanelConfig(id: string, children: UIComponent[], visible: boolean, triggerRecursiveRedrawAfterAdjust: boolean) {
+    private createPanelConfig(id: string, children: UIComponent[], visible: boolean, triggerRecursiveRedrawAfterAdjust: boolean): Comp.ComponentConfiguration {
         return {
             id: id,
             margin: MenuBuilder.zeroMarginPadding,

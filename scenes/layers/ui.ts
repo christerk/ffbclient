@@ -3,7 +3,7 @@ import * as Core from "../../core";
 import * as Comp from "../components";
 import * as Types from "../../types";
 import * as Model from "../../model";
-import {MenuEntryConfiguration, MenuPanelConfiguration, Orientation} from "../components";
+import * as Menu from "../components/menu";
 import {EventType} from "../../types";
 import {MenuBuilder} from "../components/menu/menubuilder";
 
@@ -30,41 +30,6 @@ export class UI implements Types.EventListener {
         this.scene = scene;
         this.container = scene.make.container({});
         controller.addEventListener(this);
-
-        let menuConfig: MenuPanelConfiguration = {
-            orientation: Orientation.Horizontal,
-            elements: [
-                {
-                    id: 'gameMenu',
-                    orientation: Orientation.Vertical,
-                    label: 'Game',
-                    panel: {
-                        orientation: Orientation.Vertical,
-                        elements: [{
-                            label: 'Quit',
-                            id: 'quitButton',
-                            event: EventType.Quit
-                        }]
-
-                    }
-                }, {
-                    id: 'viewMenu',
-                    orientation: Orientation.Vertical,
-                    label: 'View',
-                    panel: {
-                        orientation: Orientation.Vertical,
-                        elements: [{
-                            label: 'Fullscreen',
-                            id: 'fullscreenButton',
-                            event: EventType.FullScreen
-                        },{
-                            label: 'Toggle Dugouts',
-                            id: 'toggleDugouts',
-                            event: EventType.ToggleDugouts
-                        }]
-                    }
-                }]
-        };
 
         this.labelHomeScore = new Comp.Label({
             id: "HomeScore",
@@ -211,7 +176,7 @@ export class UI implements Types.EventListener {
             }
         };
 
-        let menu = new MenuBuilder(this.controller).build(menuConfig, 'TopBar');
+        let menu = new MenuBuilder(this.controller).build(Menu.menuConfig, 'TopBar');
         this.component.addChild(menu);
         this.component.setContext(this.renderContext);
         let phaserObject = this.component.create();

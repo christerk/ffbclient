@@ -1,6 +1,5 @@
 import {EventType} from "../../../types";
 
-
 export type MenuPanelConfiguration = {
     orientation: Orientation;
     elements: (MenuEntryConfiguration | MenuNodeConfiguration)[]
