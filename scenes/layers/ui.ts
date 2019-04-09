@@ -57,6 +57,10 @@ export class UI implements Types.EventListener {
                             label: 'Fullscreen',
                             id: 'fullscreenButton',
                             event: EventType.FullScreen
+                        },{
+                            label: 'Toggle Dugouts',
+                            id: 'toggleDugouts',
+                            event: EventType.ToggleDugouts
                         }]
                     }
                 }]
@@ -187,36 +191,6 @@ export class UI implements Types.EventListener {
                 }),
 
                 this.input,
-                new Comp.Button({
-                    id: "DebugButton",
-                    width: 0.9,
-                    height: 0.9,
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
-                new Comp.Button({
-                    id: "TestButton",
-                    width: 0.9,
-                    height: 0.9,
-                    margin: {
-                        bottom: 1.1,
-                    },
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
-                new Comp.Button({
-                    id: "TestButton2",
-                    width: 0.9,
-                    height: 0.9,
-                    margin: {
-                        bottom: 2.2,
-                    },
-                    anchor: Comp.Anchor.SOUTHWEST,
-                    parentAnchor: Comp.Anchor.SOUTHWEST,
-                    background: 0x999999,
-                }, controller),
                 this.playerCard,
             ]
         });

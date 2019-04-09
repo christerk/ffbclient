@@ -18,7 +18,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     private blockDiceKey: string;
     private currentCamera: Layers.CameraView;
     private worldLayer: Layers.World;
-    private uiLayer: Layers.UI
+    private uiLayer: Layers.UI;
 
 
     public constructor(controller: Core.Controller) {
@@ -40,12 +40,8 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
             case Types.EventType.Resized:
                 this.controller.DiceManager.setScale(data.scale / 30);
                 break;
-            case Types.EventType.Click:
-                if (data.source == "TestButton") {
-                    this.worldLayer.setCamera(this.cameras.main, Layers.CameraView.Field);
-                } else if (data.source == "TestButton2") {
-                    this.worldLayer.setCamera(this.cameras.main, Layers.CameraView.Dugouts);
-                }
+            case Types.EventType.ToggleDugouts:
+                this.worldLayer.toggleDugouts(this.cameras.main);
                 break;
             case Types.EventType.ActivePlayerAction:
                 let activePlayer = this.controller.Game.getActivePlayer();

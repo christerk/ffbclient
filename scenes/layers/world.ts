@@ -24,6 +24,7 @@ export class World {
     private floatTextLayer: Layers.FloatText;
     private container: Phaser.GameObjects.Container;
     private layers: Layers.Abstract[];
+    private showingDugouts: boolean = false;
 
     private zoomFactor: number;
     private gridSize: number;
@@ -82,6 +83,15 @@ export class World {
         });
 
         this.layers.map(l => l.resize(zoomFactor, this.gridSize));
+    }
+
+    public toggleDugouts(camera: Phaser.Cameras.Scene2D.Camera){
+        if (this.showingDugouts) {
+            this.setCamera(camera, Layers.CameraView.Field)
+        } else {
+            this.setCamera(camera, Layers.CameraView.Dugouts)
+        }
+        this.showingDugouts = !this.showingDugouts;
     }
 
     public setCamera(camera: Phaser.Cameras.Scene2D.Camera, view: CameraView, animate: boolean = true) {

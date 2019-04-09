@@ -109,24 +109,6 @@ export default class App extends Phaser.Game implements EventListener {
 
     public handleEvent(eventType: EventType, data: any) {
         switch(eventType) {
-            case EventType.Click:
-                if (data.source == "DebugButton") {
-                    let el = document.getElementById("phaserapp");
-                    if (el.style.position == "fixed") {
-                        el.style.width = "960px";
-                        el.style.height = "554px";
-                        el.style.position = "initial";
-                    } else {
-                        el.style.width = "100%";
-                        el.style.height = "100%";
-                        el.style.top = "0";
-                        el.style.left = "0";
-                        el.style.position = "fixed";
-                        el.style.zIndex = "1000";
-                    }
-                    App.controller.triggerEvent(EventType.Resizing);
-                }
-                break;
             case EventType.FullScreen: this.canvas[this.device.fullscreen.request](); break;
             case EventType.Quit:
                 setTimeout(this.restartCallback, 1);
