@@ -114,7 +114,7 @@ export class Label extends Comp.UIComponent {
         let bounds = this.getBounds();
         this.container.setInteractive(new Phaser.Geom.Rectangle(0, 0, 1, 1),
             Phaser.Geom.Rectangle.Contains);
-        this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.container.input.hitArea = new Phaser.Geom.Rectangle(bounds.x, bounds.y, bounds.width + this.horizontalPadding(), bounds.height + this.verticalPadding());
     }
 
     protected getInputElements(): Phaser.GameObjects.GameObject[] {
