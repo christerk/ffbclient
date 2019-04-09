@@ -15,4 +15,3 @@ export { MenuSlot } from "./menu/menuslot"
 export { HorizontalMenuSlot } from "./menu/horizontalmenuslot"
 export { VerticalMenuSlot } from "./menu/verticalmenuslot"
 export * from "./menu/menu";
-
