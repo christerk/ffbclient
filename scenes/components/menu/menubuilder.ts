@@ -7,7 +7,7 @@ import {UIComponent} from "../";
 
 export class MenuBuilder {
 
-    private controller: Core.Controller;
+    private readonly controller: Core.Controller;
 
     private static zeroMarginPadding = {
         left: 0,
@@ -52,9 +52,7 @@ export class MenuBuilder {
     }
 
     private convertNode(nodeConfig: Comp.MenuNodeConfiguration, isRoot: boolean = false): Comp.LinearPanel {
-        let wrapperConfig = this.createConfig(nodeConfig.id, true, nodeConfig.label, isRoot);
-        wrapperConfig.interactive = false;
-        wrapperConfig.adjustSize = false;
+        let wrapperConfig = this.createNodeConfig(nodeConfig.id,  nodeConfig.label, isRoot);
         let label = this.createLabel(nodeConfig.id + "_label", nodeConfig.label, isRoot, true, null);
         let panel = this.convertPanel(nodeConfig.panel, nodeConfig.id);
 
@@ -98,24 +96,18 @@ export class MenuBuilder {
             new Comp.VerticalMenuSlot(config, label, panel as Comp.VerticalPanel);
     }
 
-    private createConfig(id: string, inheritVisibility: boolean, label: string, visible: boolean, event: EventType = null,
-                         children: Comp.UIComponent[] = []): Comp.ComponentConfiguration {
+    private createNodeConfig(id: string, label: string, visible: boolean): Comp.ComponentConfiguration {
         return {
             id: id,
-            margin: MenuBuilder.labelMargin,
-            padding: MenuBuilder.labelPadding,
-            height: 0.5,
+            margin: MenuBuilder.zeroMarginPadding,
+            padding: MenuBuilder.zeroMarginPadding,
             anchor: MenuBuilder.anchor,
             parentAnchor: MenuBuilder.anchor,
-           // background: this.background,
             color: MenuBuilder.labelColor,
-            children: children,
+            children: [],
             visible: visible,
-            inheritVisibility: inheritVisibility,
-            text: label,
-            adjustSize: true,
-            interactive: true,
-            event: event
+            inheritVisibility: true,
+            text: label
         }
     }
 
