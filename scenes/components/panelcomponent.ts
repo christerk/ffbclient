@@ -4,7 +4,7 @@ export abstract class Panel extends Comp.UIComponent {
     protected background: Phaser.GameObjects.Image;
     public children: Comp.UIComponent[];
 
-    public container: Phaser.GameObjects.Container
+    public container: Phaser.GameObjects.Container;
 
     public constructor(config: Comp.ComponentConfiguration) {
         super(config);
