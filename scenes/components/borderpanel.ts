@@ -20,7 +20,6 @@ export class BorderPanel extends Comp.Panel {
                 bottom: 0
             }
         };
-
         for (let c of this.children) {
             c.setContext(renderContext);
             c.redraw();
@@ -28,7 +27,6 @@ export class BorderPanel extends Comp.Panel {
     }
     public redrawSelfAfterChildren(): void {
         let bounds = this.getBounds();
-
         let bg = this.background;
         if (bg != null) {
             bg.setPosition(bounds.x, bounds.y);
