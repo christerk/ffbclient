@@ -1,13 +1,13 @@
 import * as Comp from '..';
+import * as Menu from '.';
 import Phaser from "phaser";
-import {MenuService} from "./menuservice";
 
-export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Comp.MenuSlot {
+export class HorizontalMenuSlot extends Comp.HorizontalPanel implements Menu.MenuSlot {
 
     public label: Comp.Label;
     public panel: Comp.HorizontalPanel;
     public parentPanel: Comp.VerticalPanel;
-    private menuService = new MenuService();
+    private menuService = new Menu.MenuService();
 
     public constructor(config: Comp.ComponentConfiguration, label: Comp.Label, panel: Comp.HorizontalPanel) {
         super(config);
