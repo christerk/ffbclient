@@ -3,7 +3,7 @@ export class Position {
     public id: string;
     public name: string;
     public iconURI: string;
-    private portrait: string;
+    private readonly portrait: string;
 
     public constructor(data: FFB.Protocol.Messages.PositionType) {
         this.id = data.positionId;
