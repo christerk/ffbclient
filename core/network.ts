@@ -30,9 +30,8 @@ export class Network {
             this.join();
         };
 
-        ws.onmessage = (evt) => {
-            let compressed = evt.data;
-            // FIXME: Getting an error "Uncaught TypeError: compressed.charCodeAt is not a function" from the line below.
+        ws.onmessage = async (evt) => {
+            let compressed = await evt.data.text();
             let msg = LZString.decompressFromUTF16(compressed);
             commandHandler.handleCommand(JSON.parse(msg));
         };
