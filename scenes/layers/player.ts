@@ -80,7 +80,8 @@ export class Player extends Layers.Abstract {
         for (let player of this.game.getPlayers()) {
             if (player) {
                 player.icon.setScale(iconScale);
-                player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
+                // FIXME: setScaleMode is no longer available on the icon.
+                // player.icon.setScaleMode(Phaser.ScaleModes.NEAREST);
             }
         }        
     }
