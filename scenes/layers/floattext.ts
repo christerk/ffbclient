@@ -32,7 +32,7 @@ export class FloatText extends Layers.Abstract {
     public floatText(player: Model.Player, text: string) {
         this.floatTextQueue = this.floatTextQueue
         .then(() => {
-            return new Promise<any>((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 setTimeout(() => { resolve(); }, 333);
                 this.executeFloatText(player, text);
             });
@@ -42,8 +42,8 @@ export class FloatText extends Layers.Abstract {
     public kickoff(kickoff: string) {
         this.floatTextQueue = this.floatTextQueue
         .then(() => {
-            return new Promise<any>((resolve, reject) => {
-                setTimeout(() => { resolve(); }, 333);
+            return new Promise<void>((resolve, reject) => {
+                setTimeout(() => { resolve();}, 333);
                 this.executeKickoff(kickoff);
             });            
         });
@@ -54,7 +54,7 @@ export class FloatText extends Layers.Abstract {
 
         let t = this.scene.add.text(x, y, kickoff.toUpperCase(), {
             fontSize: (this.gridSize * 2.5) + 'px',
-            fill: 'white',
+            color: 'white',
             stroke: 'black',
             strokeThickness: 2,
         });
@@ -95,7 +95,7 @@ export class FloatText extends Layers.Abstract {
         let [x, y] = this.controller.convertToPixels(pos);
         let t = this.scene.add.text(x, y, text.toUpperCase(), {
             fontSize: (this.gridSize / 3) + 'px',
-            fill: 'white',
+            color: 'white',
             stroke: 'black',
             strokeThickness: 2,
 

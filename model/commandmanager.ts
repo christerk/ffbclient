@@ -46,7 +46,7 @@ export default class CommandManager {
                 this.controller.triggerEvent(EventType.ModelChanged);
             }
 
-            return new Promise<any>((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 setTimeout(() => {
                     resolve();
                 }, delay);

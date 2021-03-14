@@ -95,7 +95,7 @@ export class BootScene extends AbstractScene {
             y: 0,
             text: this.texts[Math.floor(Math.random() * this.texts.length)] + "...",
             style: {
-                fill: '#ffffff',
+                color: '#ffffff',
             }
         });
         this.loadingText.setFontFamily("arial");
@@ -113,7 +113,7 @@ export class BootScene extends AbstractScene {
             y: 0,
             text: "VS",
             style: {
-                fill: '#ffffff',
+                color: '#ffffff',
             }
         });
 

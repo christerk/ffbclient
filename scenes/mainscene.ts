@@ -10,7 +10,8 @@ import Point = Phaser.Geom.Point;
 export class MainScene extends Scenes.AbstractScene implements Types.EventListener {
     private i: Phaser.Input.InputPlugin;
     private dragStart: Phaser.Geom.Point;
-    private scale: number;
+    // FIXME: There is a conflict with the superclass for this field.
+    // private scale: number;
     private width: number;
     private height: number;
     private dirty: boolean;
@@ -72,7 +73,8 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
     public init(config) {
         console.log('Main Scene: init', config);
 
-        this.scale = 1.0;
+        // FIXME: Part of the scale issue above.
+        // this.scale = 1.0;
 
         this.width = this.sys.canvas.width;
         this.height = this.sys.canvas.height;
@@ -166,7 +168,7 @@ export class MainScene extends Scenes.AbstractScene implements Types.EventListen
         this.width = w;
         this.height = h;
 
-        this.sys.game.resize(w, h);
+        this.sys.game.renderer.resize(w, h);
 
         let marginTop = h / 16;
         let marginBottom = 0;

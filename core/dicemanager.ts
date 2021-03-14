@@ -139,7 +139,7 @@ export class DiceManager {
 
         this.rollQueue = this.rollQueue
         .then(() => {
-            return new Promise<any>((resolve, reject) => {
+            return new Promise<void>((resolve, reject) => {
                 setTimeout(() => { resolve(); }, 333);
                 this.executeRoll(rollKey, type, pictogram, targets, coordinate, duration, delay);
             });

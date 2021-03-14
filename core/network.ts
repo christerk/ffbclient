@@ -13,8 +13,11 @@ export class Network {
     public connect(commandHandler: any, config: any) {
         this.config = config;
 
-        let host = window.location.host;
-        host = host.startsWith("localhost") || host.startsWith("192.168") ? "dev.fumbbl.com" : host;
+
+        // FIXME: What should the host be? Is it possible to run locally?
+        let host = "dev.fumbbl.com";
+        // let host = window.location.host;
+        // host = host.startsWith("localhost") || host.startsWith("192.168") ? "dev.fumbbl.com" : host;
         let proto = window.location.protocol == 'https:' ? 'wss:' : 'ws:';
         let port = proto == 'wss:' ? 22224 : 22223;
 
@@ -27,8 +30,8 @@ export class Network {
             this.join();
         };
 
-        ws.onmessage = (evt) => {
-            let compressed = evt.data;
+        ws.onmessage = async (evt) => {
+            let compressed = await evt.data.text();
             let msg = LZString.decompressFromUTF16(compressed);
             commandHandler.handleCommand(JSON.parse(msg));
         };

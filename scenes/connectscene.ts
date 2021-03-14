@@ -30,7 +30,7 @@ export class ConnectScene extends AbstractScene {
             text: 'Connecting...',
             style: {
                 font: '20px monospace',
-                fill: '#ffffff'
+                color: '#ffffff'
             }
         });
         this.loadingText.setOrigin(0.5, 0.5);
