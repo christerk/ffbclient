@@ -54,7 +54,7 @@ export class FloatText extends Layers.Abstract {
 
         let t = this.scene.add.text(x, y, kickoff.toUpperCase(), {
             fontSize: (this.gridSize * 2.5) + 'px',
-            fill: 'white',
+            color: 'white',
             stroke: 'black',
             strokeThickness: 2,
         });
@@ -95,7 +95,7 @@ export class FloatText extends Layers.Abstract {
         let [x, y] = this.controller.convertToPixels(pos);
         let t = this.scene.add.text(x, y, text.toUpperCase(), {
             fontSize: (this.gridSize / 3) + 'px',
-            fill: 'white',
+            color: 'white',
             stroke: 'black',
             strokeThickness: 2,
 
